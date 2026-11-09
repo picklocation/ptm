@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
-import { publicContent, settings } from "@/lib/store";
+import { publicContent, settings, catalogueState } from "@/lib/store";
 import { Catalogue } from "@/components/catalogue";
 import { visaGuides } from "@/lib/visa-guides";
 import { southIndiaLocations } from "@/lib/south-india";
@@ -93,6 +93,7 @@ export default async function Page({
   const { section } = await params;
   const c = catalogues[section];
   if (c) {
+    const unavailable = (await catalogueState()).unavailable;
     const items = (await publicContent()).filter(
       (x) =>
         x.kind === c.kind &&
@@ -136,13 +137,15 @@ export default async function Page({
               </div>
             </section>
           )}
-          <Suspense>
-            <Catalogue
-              items={items}
-              stays={c.kind === "resort"}
-              destinations={c.kind === "destination"}
-            />
-          </Suspense>
+          {!unavailable && (
+            <Suspense>
+              <Catalogue
+                items={items}
+                stays={c.kind === "resort"}
+                destinations={c.kind === "destination"}
+              />
+            </Suspense>
+          )}
         </main>
         <Footer />
       </>

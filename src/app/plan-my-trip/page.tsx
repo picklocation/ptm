@@ -60,6 +60,13 @@ export default async function Plan({
                   : "holiday"
             }
             whatsappEnabled={!!s.whatsapp}
+            places={items.flatMap((x) =>
+              [
+                x.location,
+                x.kind === "destination" ? x.title : "",
+                x.country || "",
+              ].filter(Boolean),
+            )}
           />
         </div>
       </main>
