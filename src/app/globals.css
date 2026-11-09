@@ -536,8 +536,8 @@ img {
   border-radius: 50%;
   height: 33px;
   width: 33px;
-  background: var(--action-green);
-  color: var(--action-ink);
+  background: #fff;
+  color: var(--action-green);
   display: grid;
   place-items: center;
 }
@@ -2799,7 +2799,6 @@ body:has(.hero-wrap) .hero-wrap {
   color: var(--action-ink);
 }
 .destination-row-controls button:hover:not(:disabled),
-.card-photo:hover .photo-arrow,
 .button.light:hover .round-arrow {
   background: var(--action-hover);
 }
