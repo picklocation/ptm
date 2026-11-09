@@ -160,7 +160,7 @@ export default async function Home() {
               <Check size={15} />A real person to plan with
             </span>
           </div>
-          {demoEnabled() && (
+          {(await demoEnabled()) && (
             <p className="demo-notice">
               Development preview · Trips and property details below are
               illustrative, not bookable offers.

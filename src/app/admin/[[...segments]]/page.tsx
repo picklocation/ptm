@@ -103,8 +103,8 @@ export default async function Admin({
           ))}
         </div>
         <div className="notice">
-          Local development workspace. Review sample content and add approved
-          business details before production.
+          Your content workspace. Review sample content, replace fictional prices
+          and add approved business details before launching real offers.
         </div>
         {staff.role !== "editor" && (
           <>

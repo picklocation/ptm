@@ -4,6 +4,7 @@ import {
   publicContent,
   rateLimit,
   settings,
+  demoEnabled,
 } from "@/lib/store";
 import { checkOrigin, digest, errorResponse } from "@/lib/auth";
 import type { Enquiry } from "@/lib/types";
@@ -67,7 +68,10 @@ export async function POST(request: Request) {
       notes: [],
       history: [{ status: "new", at: now, author: "Visitor" }],
       excelStatus: "pending",
-      demo: process.env.VERCEL_ENV !== "production",
+      demo:
+        !!item?.demo ||
+        (await demoEnabled()) ||
+        process.env.VERCEL_ENV !== "production",
     };
     const saved = await createEnquiryOnce(enquiry);
     if (

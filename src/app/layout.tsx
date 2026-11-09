@@ -8,20 +8,28 @@ import "@fontsource/plus-jakarta-sans/700.css";
 import "@fontsource/plus-jakarta-sans/800.css";
 import "./globals.css";
 import { Header } from "@/components/header";
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
-  title: {
-    default: "PickTheMap — A place in mind. A journey made yours.",
-    template: "%s | PickTheMap",
-  },
-  description:
-    "Personalised holidays, scenic Europe road trips and beautiful Kerala stays. Pick the place. We’ll plan the way.",
-  robots:
-    process.env.VERCEL_ENV === "production"
-      ? { index: true, follow: true }
-      : { index: false, follow: false },
-};
-export default function Layout({ children }: { children: React.ReactNode }) {
+import { demoEnabled } from "@/lib/store";
+export const dynamic = "force-dynamic";
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
+    title: {
+      default: "PickTheMap — A place in mind. A journey made yours.",
+      template: "%s | PickTheMap",
+    },
+    description:
+      "Personalised holidays, scenic Europe road trips and beautiful Kerala stays. Pick the place. We’ll plan the way.",
+    robots:
+      process.env.VERCEL_ENV === "production" && !(await demoEnabled())
+        ? { index: true, follow: true }
+        : { index: false, follow: false },
+  };
+}
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
@@ -29,6 +37,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           Skip to content
         </a>
         <Header />
+        {(await demoEnabled()) && (
+          <p className="demo-notice" role="note">
+            Demo catalogue · All sample package prices are fictional. No
+            availability or booking is offered. Enquiries here are marked as
+            demonstration enquiries.
+          </p>
+        )}
         {children}
       </body>
     </html>

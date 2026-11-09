@@ -8,7 +8,7 @@ async function main() {
   const { defaultSettings } = await import("../src/lib/types");
   if (process.env.VERCEL_ENV === "production")
     throw new Error("Demo seeding is disabled in production.");
-  if (demoEnabled()) {
+  if (await demoEnabled()) {
     for (const content of seedContent) {
       if (!(await get("content", content.id))) {
         await put("content", content.id, content);

@@ -5,10 +5,15 @@ import { getApps, initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import type { Content, Enquiry, Settings } from "./types";
 import { defaultSettings } from "./types";
+import { cache } from "react";
 export const firebaseMode = () => process.env.DATA_BACKEND === "firebase";
-export const demoEnabled = () =>
-  process.env.ENABLE_DEMO_CONTENT === "true" &&
-  process.env.VERCEL_ENV !== "production";
+export const demoEnabled = cache(
+  async () =>
+    (process.env.ENABLE_DEMO_CONTENT === "true" &&
+      process.env.VERCEL_ENV !== "production") ||
+    (await get<{ enabled: boolean }>("runtimeConfig", "demoShowcase"))
+      ?.enabled === true,
+);
 let sqlite: DatabaseSync | undefined;
 function local() {
   if (process.env.VERCEL)
@@ -207,8 +212,9 @@ export async function rateLimit(key: string, max = 8, windowMs = 600000) {
   }
 }
 export async function publicContent() {
+  const showDemo = await demoEnabled();
   return (await list<Content>("publishedContent"))
-    .filter((x) => x.status === "published" && (!x.demo || demoEnabled()))
+    .filter((x) => x.status === "published" && (!x.demo || showDemo))
     .sort((a, b) => a.order - b.order);
 }
 export async function settings(): Promise<Settings> {

@@ -111,7 +111,7 @@ export default async function Page({
             <h1>{c.title}</h1>
             <p>{c.description}</p>
           </div>
-          {demoEnabled() && (
+          {(await demoEnabled()) && (
             <p className="demo-notice">
               Development preview · Sample content for exploring the experience.
             </p>

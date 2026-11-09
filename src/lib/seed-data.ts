@@ -1,4 +1,5 @@
 import { southIndiaLocations } from "./south-india";
+import { expandedCatalogue } from "./expanded-catalogue";
 import type { Content } from "./types";
 export const photos = {
   hero: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=85",
@@ -86,6 +87,7 @@ const item = (
   ...extra,
 });
 export const seedContent: Content[] = [
+  ...expandedCatalogue,
   item(
     "bali-slow-days",
     "A little Bali, a lot of beautiful",

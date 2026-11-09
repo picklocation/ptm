@@ -50,9 +50,13 @@ test("rejects invalid dates, empty groups, spam, missing consent and email prefe
 });
 test("requires price basis and conditions when publishing a price", () =>
   assert.ok(
-    publishErrors({ ...seedContent[0], currency: "INR", price: 100 }).some(
-      (x) => x.includes("basis"),
-    ),
+    publishErrors({
+      ...seedContent[0],
+      currency: "INR",
+      price: 100,
+      priceBasis: "",
+      priceConditions: "",
+    }).some((x) => x.includes("basis")),
   ));
 test("neutralises spreadsheet formulas in exported visitor input", () => {
   assert.equal(

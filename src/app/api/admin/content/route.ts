@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { requireStaff, checkOrigin, errorResponse } from "@/lib/auth";
 import { contentSchema, publishErrors } from "@/lib/validation";
-import { batch, list, get } from "@/lib/store";
+import { batch, list, get, demoEnabled } from "@/lib/store";
 import type { Content } from "@/lib/types";
 export async function POST(req: Request) {
   try {
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       const errors = publishErrors(c);
       if (errors.length)
         return Response.json({ error: errors.join(" ") }, { status: 400 });
-      if (c.demo && process.env.VERCEL_ENV === "production")
+      if (c.demo && process.env.VERCEL_ENV === "production" && !(await demoEnabled()))
         return Response.json(
           { error: "Demonstration content cannot be published in production." },
           { status: 400 },

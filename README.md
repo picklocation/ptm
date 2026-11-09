@@ -2,6 +2,8 @@
 
 A responsive Next.js travel discovery website with a protected content admin, enquiry capture, WhatsApp handoff, and Excel tracking. Built for local development first; no deployment or paid service is required to explore it.
 
+Cloud handover: [Setup, demo catalogue and admin access](docs/SETUP-AND-ADMIN.md) · [Schema and API reference](docs/SCHEMA-AND-API.md).
+
 ## Start locally
 
 Requirements: Node.js 24 LTS, npm. Firebase emulators also require Java 21+.
@@ -51,7 +53,7 @@ Run `npm run seed`, then restart the website. Emulator import/export persists de
 
 Saving edits to an existing published item leaves its public snapshot unchanged. Publish replaces the snapshot. Unpublish removes it from public browsing; archive retains its history. Feature and display-order fields control homepage selection. FAQs, policies, contact channels and social links live under **Site settings**.
 
-Sample records are labelled demonstration content. Production publication rejects demo records and public reads exclude them. Only clear a demo flag after verifying the content, rights and property photographs. Policy placeholders are not approved legal documents.
+Sample records are labelled demonstration content. Production normally rejects and hides demo records. The explicitly enabled temporary showroom (`runtimeConfig/demoShowcase`) allows samples with a sitewide fictional-pricing notice and disables search indexing. See the cloud handover for seeding and turning it off. Only clear a demo flag after verifying the content, rights and property photographs. Policy placeholders are not approved legal documents.
 
 ## Enquiries and WhatsApp
 
@@ -110,7 +112,7 @@ npm run build
 7. Add approved content/policies; WhatsApp is configured to +91 79022 20044. Confirm the Excel worker/CRM and notification processing schedule.
 8. Re-run acceptance tests in an isolated staging environment before making production public.
 
-No cloud services or paid subscriptions have been created. The Git remote is https://github.com/picklocation/ptm.git; the initial push was denied because the local Git account lacks write access. Source is committed on codex/build-pickthemap.
+The user connected Vercel project `ptm` to https://github.com/picklocation/ptm.git, branch `codex/build-pickthemap`, and configured Firebase project `pickthemap-fe68b`. No paid subscription is enabled by the setup scripts. Cloud owner provisioning is separate from sample-data seeding; follow the handover above.
 
 ## Current scope and practical limits
 
