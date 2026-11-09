@@ -10,8 +10,9 @@
   --text: #53635c;
   --green: #063f2e;
   --accent: #05a660;
-  --action-ink: #071e16;
-  --action-hover: #16b975;
+  --action-green: #09b468;
+  --action-ink: #fff;
+  --action-hover: #08a660;
   --mint: #e6f4ec;
   --paper: #f6f8f5;
   --line: #e1e7e2;
@@ -171,7 +172,7 @@ img {
   border: 1px solid transparent;
   border-radius: 50px;
   padding: 15px 25px;
-  background: var(--accent);
+  background: var(--action-green);
   color: var(--action-ink);
   font-weight: 700;
   font-size: 14px;
@@ -214,7 +215,7 @@ img {
 }
 .round-arrow {
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--action-green);
   color: var(--action-ink);
   width: 43px;
   height: 43px;
@@ -547,7 +548,7 @@ img {
   border-radius: 50%;
   height: 33px;
   width: 33px;
-  background: var(--accent);
+  background: var(--action-green);
   color: var(--action-ink);
   display: grid;
   place-items: center;
@@ -2804,9 +2805,9 @@ body:has(.hero-wrap) .hero-wrap {
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--action-green);
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--action-green);
   color: var(--action-ink);
 }
 .destination-row-controls button:hover:not(:disabled),
