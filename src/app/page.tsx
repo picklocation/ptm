@@ -13,6 +13,11 @@ import { publicContent, settings, demoEnabled } from "@/lib/store";
 import { photos } from "@/lib/seed-data";
 import { Finder } from "@/components/finder";
 import { SectionTitle, TripCard } from "@/components/ui";
+import {
+  DestinationRow,
+  type DestinationTile,
+} from "@/components/destination-row";
+import { visaGuides } from "@/lib/visa-guides";
 import { Footer } from "@/components/footer";
 export const dynamic = "force-dynamic";
 export default async function Home() {
@@ -24,6 +29,67 @@ export default async function Home() {
     resorts = items
       .filter((x) => x.kind === "resort" && x.featured)
       .slice(0, 4);
+  const tile = (
+    name: string,
+    item: (typeof items)[number],
+    href: string,
+  ): DestinationTile => ({ name, image: item.image, alt: item.imageAlt, href });
+  const popularTiles = destinations.map((d) =>
+    tile(d.title, d, "/destinations/" + d.slug),
+  );
+  const internationalTiles = popularTiles.filter(
+    (_, i) => destinations[i].region !== "India",
+  );
+  for (const item of items.filter(
+    (x) => x.kind === "holiday" && x.country && x.region !== "India",
+  )) {
+    if (
+      item.country!.includes("/") ||
+      internationalTiles.some(
+        (d) =>
+          d.name === item.country ||
+          (d.name === "Bali" && item.country === "Indonesia"),
+      )
+    )
+      continue;
+    internationalTiles.push(
+      tile(
+        item.country!,
+        item,
+        "/international-trips?q=" + encodeURIComponent(item.country!),
+      ),
+    );
+  }
+  const visaTiles = visaGuides.flatMap((v) => {
+    const item = items.find(
+      (x) => x.kind === "holiday" && x.country === v.country,
+    );
+    return item
+      ? [
+          tile(
+            v.country,
+            item,
+            "/visa-free-destinations?q=" + encodeURIComponent(v.country),
+          ),
+        ]
+      : [];
+  });
+  const domesticTiles = [
+    ["Kerala", "kerala", "Kerala"],
+    ["Kashmir", "kashmir-valley", "Kashmir"],
+    ["Rajasthan", "rajasthan-royal-trail", "Rajasthan"],
+    ["Delhi, Agra & Jaipur", "golden-triangle", "Delhi"],
+    ["Goa", "goa-coastal-break", "Goa"],
+    ["Andaman", "andaman-island-days", "Andaman"],
+    ["Bhutan", "bhutan-valley-journey", "Bhutan"],
+    ["Nepal", "nepal-valleys-lakes", "Nepal"],
+    ["Sri Lanka", "sri-lanka-tea-coast", "Sri Lanka"],
+  ].flatMap(([name, id, query]) => {
+    const item = items.find((x) => x.id === id);
+    return item
+      ? [tile(name, item, "/holidays?q=" + encodeURIComponent(query))]
+      : [];
+  });
   return (
     <>
       <main id="main">
@@ -95,36 +161,27 @@ export default async function Home() {
               illustrative, not bookable offers.
             </p>
           )}
-          <section className="section destinations">
-            <SectionTitle
-              eyebrow="A little inspiration"
-              title="Where will your curiosity take you?"
-              href="/destinations"
-              label="All destinations"
+          <DestinationRow
+            title="Popular destinations"
+            items={popularTiles}
+            popular
+            href="/destinations"
+          />
+          <div className="destination-groups">
+            <DestinationRow
+              title="International destinations"
+              items={internationalTiles}
             />
-            <div className="destination-grid">
-              {destinations.map((d) => (
-                <Link
-                  key={d.id}
-                  href={`/destinations/${d.slug}`}
-                  className="destination-tile"
-                >
-                  <Image
-                    src={d.image}
-                    unoptimized={d.image.startsWith("/api/media/")}
-                    alt={d.imageAlt}
-                    fill
-                    sizes="(max-width:640px) 44vw, 16vw"
-                  />
-                  <div />
-                  <span>
-                    {d.title}
-                    <ArrowUpRight size={18} />
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </section>
+            <DestinationRow
+              title="Visa-free destinations"
+              items={visaTiles}
+              href="/visa-free-destinations"
+            />
+            <DestinationRow
+              title="Domestic & neighbouring destinations"
+              items={domesticTiles}
+            />
+          </div>
           <section
             className="collection-links"
             aria-label="Explore our collections"

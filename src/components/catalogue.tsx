@@ -28,7 +28,7 @@ export function Catalogue({
   const filtered = items.filter(
     (x) =>
       (!query ||
-        `${x.title} ${x.location} ${x.region}`
+        `${x.title} ${x.location} ${x.region} ${x.country || ""}`
           .toLowerCase()
           .includes(query.toLowerCase())) &&
       (!region || x.region === region) &&
