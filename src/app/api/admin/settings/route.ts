@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { revalidateTag } from "next/cache";
 import { randomUUID } from "node:crypto";
 import { requireStaff, checkOrigin, errorResponse } from "@/lib/auth";
 import { batch } from "@/lib/store";
@@ -58,6 +59,7 @@ export async function POST(req: Request) {
         },
       },
     ]);
+    revalidateTag("ptm-public", { expire: 0 });
     return Response.json({ ok: true });
   } catch (e) {
     return errorResponse(e);

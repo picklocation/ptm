@@ -19,6 +19,7 @@ import {
 } from "@/components/destination-row";
 import { visaGuides } from "@/lib/visa-guides";
 import { Footer } from "@/components/footer";
+import { CatalogueStatus } from "@/components/catalogue-status";
 export const dynamic = "force-dynamic";
 export default async function Home() {
   const [items, s] = await Promise.all([publicContent(), settings()]);
@@ -160,6 +161,7 @@ export default async function Home() {
               <Check size={15} />A real person to plan with
             </span>
           </div>
+          <CatalogueStatus />
           <DestinationRow
             title="Popular destinations"
             items={popularTiles}

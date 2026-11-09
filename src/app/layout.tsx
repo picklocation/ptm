@@ -8,7 +8,7 @@ import "@fontsource/plus-jakarta-sans/700.css";
 import "@fontsource/plus-jakarta-sans/800.css";
 import "./globals.css";
 import { Header } from "@/components/header";
-import { demoEnabled } from "@/lib/store";
+import { demoEnabled, catalogueState } from "@/lib/store";
 export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -20,7 +20,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Personalised holidays, scenic Europe road trips and beautiful Kerala stays. Pick the place. We’ll plan the way.",
     robots:
-      process.env.VERCEL_ENV === "production" && !(await demoEnabled())
+      process.env.VERCEL_ENV === "production" &&
+      !(await demoEnabled()) &&
+      !(await catalogueState()).unavailable
         ? { index: true, follow: true }
         : { index: false, follow: false },
   };

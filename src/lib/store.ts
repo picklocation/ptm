@@ -6,13 +6,34 @@ import { getFirestore } from "firebase-admin/firestore";
 import type { Content, Enquiry, Settings } from "./types";
 import { defaultSettings } from "./types";
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
+import { isDatabaseUnavailable, publicReadDeadline } from "./service-errors";
+const persistentPublicCache = () =>
+  firebaseMode() && !process.env.FIRESTORE_EMULATOR_HOST;
 export const firebaseMode = () => process.env.DATA_BACKEND === "firebase";
+async function readShowcase() {
+  try {
+    return (
+      (
+        await publicReadDeadline(
+          get<{ enabled: boolean }>("runtimeConfig", "demoShowcase"),
+        )
+      )?.enabled === true
+    );
+  } catch (error) {
+    if (!isDatabaseUnavailable(error)) throw error;
+    return false;
+  } // Never enable sample publication when the mode cannot be verified.
+}
+const cachedShowcase = unstable_cache(readShowcase, ["ptm-showcase-v1"], {
+  revalidate: 900,
+  tags: ["ptm-public"],
+});
 export const demoEnabled = cache(
   async () =>
     (process.env.ENABLE_DEMO_CONTENT === "true" &&
       process.env.VERCEL_ENV !== "production") ||
-    (await get<{ enabled: boolean }>("runtimeConfig", "demoShowcase"))
-      ?.enabled === true,
+    (await (persistentPublicCache() ? cachedShowcase() : readShowcase())),
 );
 let sqlite: DatabaseSync | undefined;
 function local() {
@@ -211,12 +232,45 @@ export async function rateLimit(key: string, max = 8, windowMs = 600000) {
     throw e;
   }
 }
-export async function publicContent() {
+async function readCatalogue() {
+  try {
+    return {
+      items: await publicReadDeadline(list<Content>("publishedContent")),
+      unavailable: false,
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailable(error)) throw error;
+    return { items: [] as Content[], unavailable: true };
+  }
+}
+const cachedCatalogue = unstable_cache(readCatalogue, ["ptm-catalogue-v1"], {
+  revalidate: 900,
+  tags: ["ptm-public"],
+});
+export const catalogueState = cache(() =>
+  persistentPublicCache() ? cachedCatalogue() : readCatalogue(),
+);
+export const publicContent = cache(async () => {
   const showDemo = await demoEnabled();
-  return (await list<Content>("publishedContent"))
+  return (await catalogueState()).items
     .filter((x) => x.status === "published" && (!x.demo || showDemo))
     .sort((a, b) => a.order - b.order);
+});
+async function readSettings(): Promise<Settings> {
+  try {
+    return {
+      ...defaultSettings,
+      ...(await publicReadDeadline(get<Settings>("settings", "site"))),
+    };
+  } catch (error) {
+    if (!isDatabaseUnavailable(error)) throw error;
+    return defaultSettings;
+  }
 }
-export async function settings(): Promise<Settings> {
-  return { ...defaultSettings, ...(await get<Settings>("settings", "site")) };
-}
+const cachedSettings = unstable_cache(readSettings, ["ptm-settings-v1"], {
+  revalidate: 900,
+  tags: ["ptm-public"],
+});
+export const settings = cache(() =>
+  persistentPublicCache() ? cachedSettings() : readSettings(),
+);

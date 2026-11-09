@@ -46,6 +46,10 @@ Errors generally use `{error:string}`; enquiry validation also supplies `fields`
 
 ## Verification and operations
 
+Public catalogue, site settings and showcase reads use a shared Next.js cache for 15 minutes in cloud mode, plus request-level deduplication. Publishing, unpublishing, archiving and settings saves expire the public cache immediately. Private staff, sessions, enquiries and writes are never cached. Local/emulator reads stay immediate. External edits (including the showcase administration script) can take up to 15 minutes to appear.
+
+During a database quota/network outage, public reads have a five-second response deadline and show unavailable listings rather than fabricated or resurrected content. Site contact defaults remain accessible. Sample publication is not enabled when its setting cannot be verified; search indexing is disabled while the catalogue is unavailable. Failed mutations return an explicit service-unavailable response when Firebase reports quota/unavailability; they never report successful enquiry storage. Free quota recovery is controlled by Firebase, not a deployment. Failed public results may take up to 15 minutes to refresh after recovery.
+
 Run `npm run typecheck`, `npm test`, `npm run build`. Catalogue tests check all record schemas, publication rules, unique IDs/routes, five variants per market, complete day counts and mock pricing. `npm run test:flow` is an isolated local/emulator integration flow; do not run it against real customer data. `npm run test:rules` verifies Firestore rules with the emulator.
 
 Cloud status without sensitive record contents:

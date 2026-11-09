@@ -3,6 +3,7 @@ import { EnquiryForm } from "@/components/enquiry-form";
 import { Footer } from "@/components/footer";
 import { publicContent, settings } from "@/lib/store";
 import { photos } from "@/lib/seed-data";
+import { CatalogueStatus } from "@/components/catalogue-status";
 export const metadata = {
   title: "Plan your personalised trip",
   alternates: { canonical: "/plan-my-trip" },
@@ -45,19 +46,22 @@ export default async function Plan({
             No payment. No instant booking. Just the start of a good journey.
           </p>
         </div>
-        <EnquiryForm
-          itemId={item?.id || ""}
-          itemTitle={item?.title || ""}
-          destination={item?.location || q.destination || ""}
-          kind={
-            item && item.kind !== "destination"
-              ? item.kind
-              : ["holiday", "resort", "road-trip"].includes(q.kind || "")
-                ? q.kind!
-                : "holiday"
-          }
-          whatsappEnabled={!!s.whatsapp}
-        />
+        <div>
+          <CatalogueStatus />
+          <EnquiryForm
+            itemId={item?.id || ""}
+            itemTitle={item?.title || ""}
+            destination={item?.location || q.destination || ""}
+            kind={
+              item && item.kind !== "destination"
+                ? item.kind
+                : ["holiday", "resort", "road-trip"].includes(q.kind || "")
+                  ? q.kind!
+                  : "holiday"
+            }
+            whatsappEnabled={!!s.whatsapp}
+          />
+        </div>
       </main>
       <Footer />
     </>

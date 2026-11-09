@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
-import { demoEnabled } from "@/lib/store";
+import { demoEnabled, catalogueState } from "@/lib/store";
 export const dynamic = "force-dynamic";
 export default async function robots(): Promise<MetadataRoute.Robots> {
   return {
     rules: {
       userAgent: "*",
-      ...(process.env.VERCEL_ENV === "production" && !(await demoEnabled())
+      ...(process.env.VERCEL_ENV === "production" &&
+      !(await demoEnabled()) &&
+      !(await catalogueState()).unavailable
         ? { allow: "/", disallow: ["/admin", "/api", "/preview"] }
         : { disallow: "/" }),
     },

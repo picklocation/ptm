@@ -3,8 +3,14 @@ import Image from "next/image";
 import { redirect, notFound } from "next/navigation";
 import { randomUUID } from "node:crypto";
 import { currentStaff } from "@/lib/auth";
-import { list, get, settings } from "@/lib/store";
-import type { Content, Enquiry, Staff } from "@/lib/types";
+import { list, get } from "@/lib/store";
+import {
+  defaultSettings,
+  type Settings,
+  type Content,
+  type Enquiry,
+  type Staff,
+} from "@/lib/types";
 import { AdminShell } from "@/components/admin-shell";
 import { ContentEditor } from "@/components/content-editor";
 import { EnquiryList, EnquiryDetail } from "@/components/admin-enquiries";
@@ -103,8 +109,8 @@ export default async function Admin({
           ))}
         </div>
         <div className="notice">
-          Your content workspace. Review sample content, replace fictional prices
-          and add approved business details before launching real offers.
+          Your content workspace. Review sample content, replace fictional
+          prices and add approved business details before launching real offers.
         </div>
         {staff.role !== "editor" && (
           <>
@@ -253,7 +259,14 @@ export default async function Admin({
       );
   } else if (section === "settings") {
     if (staff.role !== "owner") redirect("/admin");
-    body = <SettingsEditor initial={await settings()} />;
+    body = (
+      <SettingsEditor
+        initial={{
+          ...defaultSettings,
+          ...(await get<Settings>("settings", "site")),
+        }}
+      />
+    );
   } else if (section === "staff") {
     if (staff.role !== "owner") redirect("/admin");
     body = (

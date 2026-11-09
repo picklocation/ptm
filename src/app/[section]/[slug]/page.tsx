@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { MapPin, Check, ArrowUpRight } from "lucide-react";
-import { publicContent } from "@/lib/store";
+import { publicContent, catalogueState } from "@/lib/store";
+import { CatalogueStatus } from "@/components/catalogue-status";
 import { paths } from "@/lib/types";
 import { Price, CheckList, TripCard } from "@/components/ui";
 import { Footer } from "@/components/footer";
@@ -17,7 +18,7 @@ export async function generateMetadata({
     (x) => x.slug === slug && paths[x.kind] === section,
   );
   return {
-    title: item?.seoTitle || item?.title || "Not found",
+    title: item?.seoTitle || item?.title || ((await catalogueState()).unavailable ? "Trip details temporarily unavailable" : "Not found"),
     description: item?.seoDescription || item?.summary,
     alternates: { canonical: `/${section}/${slug}` },
     robots: item?.demo ? { index: false, follow: false } : undefined,
@@ -31,6 +32,13 @@ export default async function Detail({
   const { section, slug } = await params;
   if (section === "kerala-resorts") redirect(`/resorts-and-villas/${slug}`);
   const all = await publicContent();
+  if ((await catalogueState()).unavailable)
+    return (
+      <main id="main" className="container page-main">
+        <h1>Trip details temporarily unavailable</h1>
+        <CatalogueStatus />
+      </main>
+    );
   const item = all.find((x) => x.slug === slug && paths[x.kind] === section);
   if (!item) notFound();
   const href = `/plan-my-trip?item=${encodeURIComponent(item.id)}&destination=${encodeURIComponent(item.location)}&kind=${item.kind === "destination" ? "holiday" : item.kind}`;

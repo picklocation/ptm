@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import { getAuth } from "firebase-admin/auth";
 import { get, put, remove, firebaseMode, firebaseApp } from "./store";
 import type { Staff } from "./types";
+import { isDatabaseUnavailable } from "./service-errors";
 export function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   return salt + ":" + scryptSync(password, salt, 64).toString("hex");
@@ -88,6 +89,14 @@ export function checkOrigin(request: Request) {
   if (!origin || origin !== expected) throw new Error("FORBIDDEN");
 }
 export function errorResponse(error: unknown) {
+  if (isDatabaseUnavailable(error))
+    return Response.json(
+      {
+        error:
+          "Our database is temporarily unavailable. This action could not be confirmed. Please try later or contact us on WhatsApp.",
+      },
+      { status: 503, headers: { "Retry-After": "900" } },
+    );
   const message = error instanceof Error ? error.message : "Unexpected error";
   if (message === "UNAUTHENTICATED")
     return Response.json({ error: "Please sign in." }, { status: 401 });

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { revalidateTag } from "next/cache";
 import { requireStaff, checkOrigin, errorResponse } from "@/lib/auth";
 import { contentSchema, publishErrors } from "@/lib/validation";
 import { batch, list, get, demoEnabled } from "@/lib/store";
@@ -73,6 +74,7 @@ export async function POST(req: Request) {
     if (action === "archive" || action === "unpublish")
       writes.push({ collection: "publishedContent", id: c.id, data: null });
     await batch(writes);
+    if (action !== "save") revalidateTag("ptm-public", { expire: 0 });
     return Response.json({
       content: updated,
       message:

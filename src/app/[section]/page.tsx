@@ -6,6 +6,7 @@ import { Catalogue } from "@/components/catalogue";
 import { visaGuides } from "@/lib/visa-guides";
 import { southIndiaLocations } from "@/lib/south-india";
 import { Footer } from "@/components/footer";
+import { CatalogueStatus } from "@/components/catalogue-status";
 const catalogues: Record<
   string,
   { kind: string; title: string; description: string }
@@ -111,6 +112,7 @@ export default async function Page({
             <h1>{c.title}</h1>
             <p>{c.description}</p>
           </div>
+          <CatalogueStatus />
           {section === "visa-free-destinations" && (
             <section className="visa-guidance">
               <h2>Before choosing your trip</h2>
