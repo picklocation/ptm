@@ -14,28 +14,7 @@ type Props = {
   destination: string;
   kind: string;
   whatsappEnabled: boolean;
-  places?: string[];
 };
-const departureCities = [
-  "Mumbai",
-  "Delhi",
-  "Bengaluru",
-  "Chennai",
-  "Hyderabad",
-  "Kolkata",
-  "Pune",
-  "Kochi",
-  "Thiruvananthapuram",
-  "Kozhikode",
-  "Ahmedabad",
-  "Jaipur",
-  "Goa",
-  "Lucknow",
-  "Chandigarh",
-  "Coimbatore",
-  "Mangaluru",
-  "Dubai",
-];
 export function EnquiryForm(p: Props) {
   const [step, setStep] = useState(0),
     [busy, setBusy] = useState(false),
@@ -107,16 +86,6 @@ export function EnquiryForm(p: Props) {
                 : undefined
           }
           max={type === "number" ? 100 : undefined}
-          list={
-            key === "destination"
-              ? "place-options"
-              : key === "departure"
-                ? "city-options"
-                : undefined
-          }
-          inputMode={
-            key === "phone" ? "tel" : key === "budget" ? "numeric" : undefined
-          }
           autoComplete={
             key === "name"
               ? "name"
@@ -124,9 +93,7 @@ export function EnquiryForm(p: Props) {
                 ? "email"
                 : key === "phone"
                   ? "tel"
-                  : key === "departure"
-                    ? "address-level2"
-                    : undefined
+                  : undefined
           }
           aria-invalid={!!errors[key]}
           aria-describedby={errors[key] ? `${key}-error` : undefined}
@@ -328,16 +295,6 @@ export function EnquiryForm(p: Props) {
           )}
         </div>
       )}
-      <datalist id="place-options">
-        {[...new Set(p.places || [])].map((x) => (
-          <option key={x} value={x} />
-        ))}
-      </datalist>
-      <datalist id="city-options">
-        {departureCities.map((x) => (
-          <option key={x} value={x} />
-        ))}
-      </datalist>
       <div className="form-grid">
         {step === 0 && (
           <>
@@ -513,7 +470,7 @@ export function EnquiryForm(p: Props) {
             <ArrowRight size={17} />
           </button>
         ) : (
-          <div className="submit-actions">
+          <div className="submit-actions" style={{ flex: 3 }}>
             <button className="button" disabled={busy}>
               <Send size={16} />
               {busy ? "Saving your enquiry…" : "Submit enquiry"}
