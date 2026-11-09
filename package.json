@@ -1,0 +1,46 @@
+{
+  "name": "pickthemap",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build --webpack",
+    "start": "next start --hostname 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "seed": "tsx scripts/seed.ts",
+    "excel:sync": "tsx scripts/excel-sync.ts",
+    "emulators": "firebase emulators:start --project demo-pickthemap --import=.emulator-data --export-on-exit=.emulator-data",
+    "test:flow": "tsx scripts/verify-flow.ts",
+    "test:rules": "tsx scripts/verify-rules.ts",
+    "notifications:send": "tsx scripts/notifications.ts"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.0",
+    "@fontsource/plus-jakarta-sans": "^5.2.0",
+    "exceljs": "^4.4.0",
+    "firebase": "^12.0.0",
+    "firebase-admin": "^13.0.0",
+    "lucide-react": "^0.468.0",
+    "next": "^16.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sharp": "^0.34.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "@playwright/test": "^1.65.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "firebase-tools": "^15.35.0",
+    "prettier": "^3.9.10",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  },
+  "type": "module"
+}
