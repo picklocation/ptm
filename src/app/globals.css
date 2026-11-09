@@ -2817,8 +2817,11 @@ body:has(.hero-wrap) .hero-wrap {
   overscroll-behavior-x: contain;
   padding: 3px 3px 12px;
   scroll-padding: 3px;
-  scrollbar-width: thin;
-  scrollbar-color: #d6e2d5 transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.destination-name-track::-webkit-scrollbar {
+  display: none;
 }
 .destination-name-track > .destination-tile {
   height: 205px;
