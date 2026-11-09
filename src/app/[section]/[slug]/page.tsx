@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { MapPin, Check, ArrowUpRight } from "lucide-react";
 import { publicContent } from "@/lib/store";
 import { paths } from "@/lib/types";
@@ -29,6 +29,7 @@ export default async function Detail({
   params: Promise<{ section: string; slug: string }>;
 }) {
   const { section, slug } = await params;
+  if (section === "kerala-resorts") redirect(`/resorts-and-villas/${slug}`);
   const all = await publicContent();
   const item = all.find((x) => x.slug === slug && paths[x.kind] === section);
   if (!item) notFound();

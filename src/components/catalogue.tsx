@@ -9,9 +9,11 @@ import type { Content } from "@/lib/types";
 export function Catalogue({
   items,
   destinations = false,
+  stays = false,
 }: {
   items: Content[];
   destinations?: boolean;
+  stays?: boolean;
 }) {
   const search = useSearchParams(),
     router = useRouter(),
@@ -21,6 +23,8 @@ export function Catalogue({
     [duration, setDuration] = useState(search.get("duration") || ""),
     [theme, setTheme] = useState(search.get("theme") || ""),
     [page, setPage] = useState(1);
+  const normalTheme = (value: string) =>
+    value === "Couple" ? "Couples" : value;
   const filtered = items.filter(
     (x) =>
       (!query ||
@@ -28,7 +32,7 @@ export function Catalogue({
           .toLowerCase()
           .includes(query.toLowerCase())) &&
       (!region || x.region === region) &&
-      (!theme || x.themes.includes(theme)) &&
+      (!theme || x.themes.map(normalTheme).includes(normalTheme(theme))) &&
       (!duration ||
         (duration === "short"
           ? x.days <= 5
@@ -75,7 +79,9 @@ export function Catalogue({
             Travel style
             <select value={theme} onChange={(e) => setTheme(e.target.value)}>
               <option value="">Any style</option>
-              {[...new Set(items.flatMap((x) => x.themes))].map((x) => (
+              {[
+                ...new Set(items.flatMap((x) => x.themes.map(normalTheme))),
+              ].map((x) => (
                 <option key={x}>{x}</option>
               ))}
             </select>
@@ -104,6 +110,26 @@ export function Catalogue({
   );
   return (
     <>
+      {stays && (
+        <div className="stay-tabs" aria-label="Stay preferences">
+          {["", "Budget", "Family", "Couples", "Villa"].map((value) => (
+            <button
+              key={value}
+              className="stay-tab"
+              aria-pressed={theme === value}
+              onClick={() => {
+                setTheme(value);
+                setPage(1);
+                const p = new URLSearchParams(search.toString());
+                value ? p.set("theme", value) : p.delete("theme");
+                router.replace(`?${p}`, { scroll: false });
+              }}
+            >
+              {value || "All stays"}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="catalogue-search">
         <form
           onSubmit={(e) => {
@@ -147,13 +173,17 @@ export function Catalogue({
       </dialog>
       <p className="result-count" aria-live="polite">
         {filtered.length}{" "}
-        {destinations
+        {stays
           ? filtered.length === 1
-            ? "destination"
-            : "destinations"
-          : filtered.length === 1
-            ? "journey"
-            : "journeys"}{" "}
+            ? "stay"
+            : "stays"
+          : destinations
+            ? filtered.length === 1
+              ? "destination"
+              : "destinations"
+            : filtered.length === 1
+              ? "journey"
+              : "journeys"}{" "}
         to explore
       </p>
       {!filtered.length ? (
@@ -170,7 +200,7 @@ export function Catalogue({
             destinations ? "destination-grid listing-destinations" : "trip-grid"
           }
         >
-          {filtered.slice((page - 1) * 9, page * 9).map((item) =>
+          {filtered.slice((page - 1) * 12, page * 12).map((item) =>
             destinations ? (
               <Link
                 key={item.id}
@@ -193,7 +223,7 @@ export function Catalogue({
           )}
         </div>
       )}
-      {filtered.length > 9 && (
+      {filtered.length > 12 && (
         <div className="pagination">
           <button
             className="button secondary"
@@ -203,11 +233,11 @@ export function Catalogue({
             Previous
           </button>
           <span>
-            Page {page} of {Math.ceil(filtered.length / 9)}
+            Page {page} of {Math.ceil(filtered.length / 12)}
           </span>
           <button
             className="button secondary"
-            disabled={page * 9 >= filtered.length}
+            disabled={page * 12 >= filtered.length}
             onClick={() => setPage(page + 1)}
           >
             Next

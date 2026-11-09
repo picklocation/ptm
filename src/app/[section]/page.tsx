@@ -3,11 +3,36 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { publicContent, settings, demoEnabled } from "@/lib/store";
 import { Catalogue } from "@/components/catalogue";
+import { visaGuides } from "@/lib/visa-guides";
 import { Footer } from "@/components/footer";
 const catalogues: Record<
   string,
   { kind: string; title: string; description: string }
 > = {
+  "international-trips": {
+    kind: "holiday",
+    title: "International trips",
+    description:
+      "South Asia, Southeast Asia and Europe. Explore a holiday shaped around your favourite places.",
+  },
+  "domestic-trips": {
+    kind: "holiday",
+    title: "Discover more of India",
+    description:
+      "Kashmir valleys, Rajasthan palaces, Kerala backwaters and everything in between.",
+  },
+  "resorts-and-villas": {
+    kind: "resort",
+    title: "Resorts & villas",
+    description:
+      "Find your kind of downtime. Budget-friendly escapes, family stays and quiet places for two.",
+  },
+  "visa-free-destinations": {
+    kind: "holiday",
+    title: "Visa-free destinations",
+    description:
+      "Travel inspiration for Indian passport holders, with entry conditions explained.",
+  },
   holidays: {
     kind: "holiday",
     title: "Find your next great story.",
@@ -60,7 +85,15 @@ export default async function Page({
   const { section } = await params;
   const c = catalogues[section];
   if (c) {
-    const items = (await publicContent()).filter((x) => x.kind === c.kind);
+    const items = (await publicContent()).filter(
+      (x) =>
+        x.kind === c.kind &&
+        (section !== "domestic-trips" || x.region === "India") &&
+        (section !== "international-trips" || x.region !== "India") &&
+        (section !== "kerala-resorts" || /kerala/i.test(x.location)) &&
+        (section !== "visa-free-destinations" ||
+          visaGuides.some((v) => v.country === x.country)),
+    );
     return (
       <>
         <main id="main" className="container page-main">
@@ -74,9 +107,32 @@ export default async function Page({
               Development preview · Sample content for exploring the experience.
             </p>
           )}
+          {section === "visa-free-destinations" && (
+            <section className="visa-guidance">
+              <h2>Before choosing your trip</h2>
+              <p>
+                For Indian ordinary passport holders travelling for tourism.
+                Checked 9 November 2026. Visa exemption does not waive entry
+                documents, permits or fees. Confirm the rules for your travel
+                date before making arrangements.
+              </p>
+              <div className="visa-guide-grid">
+                {visaGuides.map((v) => (
+                  <article key={v.country}>
+                    <h3>{v.country}</h3>
+                    <p>{v.note}</p>
+                    <a href={v.source} target="_blank" rel="noreferrer">
+                      Official entry guidance ↗
+                    </a>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
           <Suspense>
             <Catalogue
               items={items}
+              stays={c.kind === "resort"}
               destinations={section === "destinations"}
             />
           </Suspense>

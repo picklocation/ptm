@@ -92,6 +92,7 @@ export const contentSchema = z.object({
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   location: text,
   region: z.string().max(100),
+  country: z.string().max(100).optional(),
   summary: z.string().max(400),
   description: z.string().max(10000),
   image,

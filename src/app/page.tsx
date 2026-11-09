@@ -19,11 +19,11 @@ export default async function Home() {
   const [items, s] = await Promise.all([publicContent(), settings()]);
   const holidays = items
       .filter((x) => x.kind === "holiday" && x.featured)
-      .slice(0, 3),
+      .slice(0, 8),
     destinations = items.filter((x) => x.kind === "destination").slice(0, 6),
     resorts = items
       .filter((x) => x.kind === "resort" && x.featured)
-      .slice(0, 2);
+      .slice(0, 4);
   return (
     <>
       <main id="main">
@@ -125,13 +125,30 @@ export default async function Home() {
               ))}
             </div>
           </section>
+          <section
+            className="collection-links"
+            aria-label="Explore our collections"
+          >
+            {[
+              ["International trips", "international-trips"],
+              ["Domestic trips", "domestic-trips"],
+              ["Resorts & villas", "resorts-and-villas"],
+              ["Europe road trips", "europe-road-trips"],
+              ["Visa-free destinations", "visa-free-destinations"],
+            ].map(([label, url]) => (
+              <Link key={url} href={`/${url}`}>
+                {label}
+                <ArrowUpRight size={18} />
+              </Link>
+            ))}
+          </section>
           <section className="service-grid">
             {[
               {
                 icon: Globe2,
-                title: "Holidays, made personal",
+                title: "International trips",
                 text: "Big adventures. Little escapes. All yours.",
-                href: "/holidays",
+                href: "/international-trips",
               },
               {
                 icon: Route,
@@ -141,9 +158,9 @@ export default async function Home() {
               },
               {
                 icon: Palmtree,
-                title: "A slower kind of Kerala",
+                title: "Resorts & villas",
                 text: "Beautiful stays. Room to unwind.",
-                href: "/kerala-resorts",
+                href: "/resorts-and-villas",
               },
             ].map((c) => (
               <Link href={c.href} key={c.title} className="service-card">
@@ -226,7 +243,7 @@ export default async function Home() {
           </div>
         </section>
         <div className="container">
-          <section className="section kerala-section">
+          <section className="section stays-section">
             <div className="kerala-intro">
               <p className="eyebrow">Closer to calm</p>
               <h2>
@@ -238,12 +255,12 @@ export default async function Home() {
                 Wake up by the water. Wander through the green. Find a stay that
                 lets you simply be.
               </p>
-              <Link href="/kerala-resorts" className="text-link">
-                Find your Kerala stay
+              <Link href="/resorts-and-villas" className="text-link">
+                Explore resorts & villas
                 <ArrowUpRight size={18} />
               </Link>
             </div>
-            <div className="kerala-cards">
+            <div className="trip-grid">
               {resorts.map((x) => (
                 <TripCard key={x.id} item={x} />
               ))}

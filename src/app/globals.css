@@ -2620,3 +2620,134 @@ body:has(.hero-wrap) .hero-wrap {
     margin-top: -30px;
   }
 }
+
+/* Reference-inspired, airy mint cards and four-column laptop browsing. */
+.trip-card {
+  background: #eff5ed;
+  border-color: #eff5ed;
+  display: flex;
+  flex-direction: column;
+}
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.card-bottom {
+  margin-top: auto;
+  padding-top: 18px;
+  border-color: #dce8da;
+}
+.card-summary {
+  margin-bottom: 16px;
+}
+.trip-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.trip-grid .card-photo {
+  height: 210px;
+}
+.trip-grid .card-body {
+  padding: 12px 16px 18px;
+}
+.trip-grid .card-body h3 {
+  font-size: 17px;
+  line-height: 1.45;
+}
+.stay-tabs,
+.collection-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0;
+}
+.stay-tab,
+.collection-links a {
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid #dbe7dc;
+  border-radius: 28px;
+  background: #eff5ed;
+  color: #063f2e;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.stay-tab[aria-pressed="true"] {
+  background: #063f2e;
+  color: white;
+}
+.visa-guidance {
+  padding: 24px;
+  background: #f3f7f1;
+  border-radius: 20px;
+  margin-bottom: 28px;
+}
+.visa-guidance > p {
+  max-width: 85ch;
+  margin: 12px 0 20px;
+}
+.visa-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.visa-guide-grid h3 {
+  font-size: 17px;
+}
+.visa-guide-grid p {
+  font-size: 13px;
+  margin: 10px 0;
+}
+.visa-guide-grid a {
+  font-size: 13px;
+  text-decoration: underline;
+}
+@media (min-width: 1100px) {
+  .desktop-nav {
+    gap: 2px;
+  }
+  .desktop-nav a {
+    padding: 10px 9px;
+    font-size: 12px;
+  }
+}
+@media (max-width: 1099px) {
+  .trip-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .trip-grid {
+    grid-template-columns: 1fr;
+  }
+  .trip-grid .card-photo {
+    height: 235px;
+  }
+  .visa-guide-grid {
+    grid-template-columns: 1fr;
+  }
+  .collection-links a {
+    font-size: 12px;
+    padding: 10px 13px;
+  }
+}
+.stays-section .kerala-intro {
+  margin-bottom: 28px;
+}
+.stays-section .kerala-intro h2 {
+  font-size: clamp(26px, 3vw, 38px);
+}
+.stays-section .kerala-intro h2 br {
+  display: none;
+}
+.stays-section .kerala-intro > p:not(.eyebrow) {
+  max-width: 600px;
+  margin: 12px 0;
+}
+@media (min-width: 1100px) {
+  .destination-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

@@ -16,9 +16,11 @@ export async function Footer() {
         </div>
         <div>
           <h3>Find your next place</h3>
-          <Link href="/holidays">All holidays</Link>
+          <Link href="/international-trips">International trips</Link>
+          <Link href="/domestic-trips">Domestic trips</Link>
+          <Link href="/visa-free-destinations">Visa-free destinations</Link>
           <Link href="/europe-road-trips">Europe road trips</Link>
-          <Link href="/kerala-resorts">Kerala resorts</Link>
+          <Link href="/resorts-and-villas">Resorts & villas</Link>
           <Link href="/destinations">Destinations</Link>
         </div>
         <div>

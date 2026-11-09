@@ -12,11 +12,11 @@ import {
 } from "lucide-react";
 import { Logo } from "./ui";
 const links = [
-  ["Holidays", "/holidays"],
-  ["Destinations", "/destinations"],
+  ["International", "/international-trips"],
+  ["Domestic", "/domestic-trips"],
+  ["Resorts & villas", "/resorts-and-villas"],
   ["Europe road trips", "/europe-road-trips"],
-  ["Kerala resorts", "/kerala-resorts"],
-  ["About us", "/about"],
+  ["Visa-free", "/visa-free-destinations"],
 ];
 export function Header() {
   const path = usePathname();

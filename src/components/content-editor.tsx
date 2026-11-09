@@ -151,14 +151,16 @@ export function ContentEditor({ initial }: { initial: Content }) {
                 </select>
               </label>
               {field("location", "Destinations / location")}
-              {field("region", "Region")}
+              {field("region", "Region (use India for domestic trips)")}
+              {field("country", "Country (e.g. Malaysia, Nepal or Bhutan)")}
               {field("days", "Days", "number")}
               {field("nights", "Nights", "number")}
             </div>
             {area("summary", "Short introduction", 2)}
             {area("description", "Full description", 6)}
             <label className="field">
-              Travel styles (comma separated)
+              Travel styles (comma separated; use Budget, Family, Couples or
+              Villa for stays)
               <input
                 value={c.themes.join(", ")}
                 onChange={(e) =>

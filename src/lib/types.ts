@@ -6,6 +6,7 @@ export type Content = {
   slug: string;
   location: string;
   region: string;
+  country?: string;
   summary: string;
   description: string;
   image: string;
@@ -100,7 +101,7 @@ export const statuses = [
 export const paths: Record<Kind, string> = {
   holiday: "holidays",
   "road-trip": "europe-road-trips",
-  resort: "kerala-resorts",
+  resort: "resorts-and-villas",
   destination: "destinations",
 };
 export const defaultSettings: Settings = {

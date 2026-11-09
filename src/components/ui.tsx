@@ -86,7 +86,7 @@ export function TripCard({ item }: { item: Content }) {
           unoptimized={item.image.startsWith("/api/media/")}
           alt={item.imageAlt || item.title}
           fill
-          sizes="(max-width: 640px) 92vw, (max-width: 1000px) 45vw, 30vw"
+          sizes="(max-width: 640px) 92vw, (max-width: 1099px) 45vw, 24vw"
         />
         {item.days > 0 && (
           <span className="duration">
@@ -110,7 +110,11 @@ export function TripCard({ item }: { item: Content }) {
         <div className="card-bottom">
           <Price item={item} />
         </div>
-        {item.demo && <span className="demo-tag">Sample itinerary</span>}
+        {item.demo && (
+          <span className="demo-tag">
+            {item.kind === "resort" ? "Sample stay" : "Sample itinerary"}
+          </span>
+        )}
       </div>
     </article>
   );
