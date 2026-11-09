@@ -4,22 +4,11 @@ import { Suspense } from "react";
 import { publicContent, settings, demoEnabled } from "@/lib/store";
 import { Catalogue } from "@/components/catalogue";
 import { visaGuides } from "@/lib/visa-guides";
-import { isBeachTrip, isDomesticOrNeighbour } from "@/lib/collections";
 import { Footer } from "@/components/footer";
 const catalogues: Record<
   string,
   { kind: string; title: string; description: string }
 > = {
-  "beach-escapes": {
-    kind: "holiday",
-    title: "Beach escapes",
-    description: "Coastal holidays and island days, tailored to your pace.",
-  },
-  "domestic-and-neighbouring": {
-    kind: "holiday",
-    title: "Domestic & neighbouring destinations",
-    description: "Discover India and nearby South Asian escapes.",
-  },
   "international-trips": {
     kind: "holiday",
     title: "International trips",
@@ -99,8 +88,6 @@ export default async function Page({
     const items = (await publicContent()).filter(
       (x) =>
         x.kind === c.kind &&
-        (section !== "beach-escapes" || isBeachTrip(x)) &&
-        (section !== "domestic-and-neighbouring" || isDomesticOrNeighbour(x)) &&
         (section !== "domestic-trips" || x.region === "India") &&
         (section !== "international-trips" || x.region !== "India") &&
         (section !== "kerala-resorts" || /kerala/i.test(x.location)) &&

@@ -1,62 +1,29 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, MoveRight, Check, MapPin } from "lucide-react";
+import {
+  ArrowUpRight,
+  Globe2,
+  Route,
+  Palmtree,
+  MoveRight,
+  Check,
+  MapPin,
+} from "lucide-react";
 import { publicContent, settings, demoEnabled } from "@/lib/store";
 import { photos } from "@/lib/seed-data";
 import { Finder } from "@/components/finder";
 import { SectionTitle, TripCard } from "@/components/ui";
-import { HomeRail } from "@/components/home-rail";
-import { isBeachTrip, isDomesticOrNeighbour } from "@/lib/collections";
-import { visaGuides } from "@/lib/visa-guides";
 import { Footer } from "@/components/footer";
 export const dynamic = "force-dynamic";
 export default async function Home() {
   const [items, s] = await Promise.all([publicContent(), settings()]);
-  const destinations = items.filter((x) => x.kind === "destination");
-  const collections = [
-    {
-      title: "International trips",
-      description: "South Asia, Southeast Asia and Europe, planned around you.",
-      href: "/international-trips",
-      items: items.filter((x) => x.kind === "holiday" && x.region !== "India"),
-    },
-    {
-      title: "Beach escapes",
-      description: "Island days, coastal towns and time by the sea.",
-      href: "/beach-escapes",
-      items: items.filter(isBeachTrip),
-    },
-    {
-      title: "Domestic & neighbouring destinations",
-      description: "Explore India, then discover a little more close to home.",
-      href: "/domestic-and-neighbouring",
-      items: items.filter(isDomesticOrNeighbour),
-    },
-    {
-      title: "Visa-free destinations",
-      description:
-        "Trip ideas for Indian passport holders. Check entry conditions on the collection page.",
-      href: "/visa-free-destinations",
-      items: items.filter(
-        (x) =>
-          x.kind === "holiday" &&
-          visaGuides.some((v) => v.country === x.country),
-      ),
-    },
-    {
-      title: "Europe road trips",
-      description: "Beautiful routes with room for your own little detours.",
-      href: "/europe-road-trips",
-      items: items.filter((x) => x.kind === "road-trip"),
-    },
-    {
-      title: "Resorts & villas",
-      description:
-        "Budget-friendly breaks, family stays and quiet escapes for two.",
-      href: "/resorts-and-villas",
-      items: items.filter((x) => x.kind === "resort"),
-    },
-  ];
+  const holidays = items
+      .filter((x) => x.kind === "holiday" && x.featured)
+      .slice(0, 8),
+    destinations = items.filter((x) => x.kind === "destination").slice(0, 6),
+    resorts = items
+      .filter((x) => x.kind === "resort" && x.featured)
+      .slice(0, 4);
   return (
     <>
       <main id="main">
@@ -128,49 +95,110 @@ export default async function Home() {
               illustrative, not bookable offers.
             </p>
           )}
-          <HomeRail
-            title="Popular destinations"
-            href="/destinations"
-            destinations
-          >
-            {destinations.map((d) => (
-              <Link
-                key={d.id}
-                href={`/destinations/${d.slug}`}
-                className="destination-tile"
-              >
-                <Image
-                  src={d.image}
-                  alt={d.imageAlt}
-                  unoptimized={d.image.startsWith("/api/media/")}
-                  fill
-                  sizes="(max-width:600px) 65vw, 19vw"
-                />
-                <div />
-                <span>
+          <section className="section destinations">
+            <SectionTitle
+              eyebrow="A little inspiration"
+              title="Where will your curiosity take you?"
+              href="/destinations"
+              label="All destinations"
+            />
+            <div className="destination-grid">
+              {destinations.map((d) => (
+                <Link
+                  key={d.id}
+                  href={`/destinations/${d.slug}`}
+                  className="destination-tile"
+                >
+                  <Image
+                    src={d.image}
+                    unoptimized={d.image.startsWith("/api/media/")}
+                    alt={d.imageAlt}
+                    fill
+                    sizes="(max-width:640px) 44vw, 16vw"
+                  />
+                  <div />
                   <span>
                     {d.title}
-                    <small>{d.region}</small>
+                    <ArrowUpRight size={18} />
                   </span>
-                  <ArrowUpRight size={18} />
-                </span>
+                </Link>
+              ))}
+            </div>
+          </section>
+          <section
+            className="collection-links"
+            aria-label="Explore our collections"
+          >
+            {[
+              ["International trips", "international-trips"],
+              ["Domestic trips", "domestic-trips"],
+              ["Resorts & villas", "resorts-and-villas"],
+              ["Europe road trips", "europe-road-trips"],
+              ["Visa-free destinations", "visa-free-destinations"],
+            ].map(([label, url]) => (
+              <Link key={url} href={`/${url}`}>
+                {label}
+                <ArrowUpRight size={18} />
               </Link>
             ))}
-          </HomeRail>
-          {collections
-            .filter((c) => c.items.length)
-            .map((c) => (
-              <HomeRail
-                key={c.href}
-                title={c.title}
-                description={c.description}
-                href={c.href}
-              >
-                {c.items.slice(0, 12).map((item) => (
-                  <TripCard key={item.id} item={item} />
-                ))}
-              </HomeRail>
+          </section>
+          <section className="service-grid">
+            {[
+              {
+                icon: Globe2,
+                title: "International trips",
+                text: "Big adventures. Little escapes. All yours.",
+                href: "/international-trips",
+              },
+              {
+                icon: Route,
+                title: "Europe, one road at a time",
+                text: "The freedom to take the scenic route.",
+                href: "/europe-road-trips",
+              },
+              {
+                icon: Palmtree,
+                title: "Resorts & villas",
+                text: "Beautiful stays. Room to unwind.",
+                href: "/resorts-and-villas",
+              },
+            ].map((c) => (
+              <Link href={c.href} key={c.title} className="service-card">
+                <span className="service-icon">
+                  <c.icon size={24} />
+                </span>
+                <div>
+                  <h3>{c.title}</h3>
+                  <p>{c.text}</p>
+                </div>
+                <ArrowUpRight size={20} />
+              </Link>
             ))}
+          </section>
+          <section className="section">
+            <SectionTitle
+              eyebrow="Good places to start"
+              title="Your next great story starts here"
+              description="A few journeys to spark an idea. We’ll make the details your own."
+              href="/holidays"
+              label="Explore holidays"
+            />
+            {holidays.length ? (
+              <div className="trip-grid">
+                {holidays.map((x) => (
+                  <TripCard key={x.id} item={x} />
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <h3>Your next journey starts with a conversation.</h3>
+                <Link href="/plan-my-trip" className="button">
+                  Plan my trip
+                  <ArrowUpRight size={18} />
+                </Link>
+              </div>
+            )}
+          </section>
         </div>
         <section className="road-feature">
           <div className="container road-feature-inner">
@@ -215,6 +243,29 @@ export default async function Home() {
           </div>
         </section>
         <div className="container">
+          <section className="section stays-section">
+            <div className="kerala-intro">
+              <p className="eyebrow">Closer to calm</p>
+              <h2>
+                Kerala. <br />
+                Breathe a little <br />
+                deeper.
+              </h2>
+              <p>
+                Wake up by the water. Wander through the green. Find a stay that
+                lets you simply be.
+              </p>
+              <Link href="/resorts-and-villas" className="text-link">
+                Explore resorts & villas
+                <ArrowUpRight size={18} />
+              </Link>
+            </div>
+            <div className="trip-grid">
+              {resorts.map((x) => (
+                <TripCard key={x.id} item={x} />
+              ))}
+            </div>
+          </section>
           <section className="section process-section">
             <SectionTitle
               eyebrow="Less planning. More looking forward."
