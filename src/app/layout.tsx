@@ -37,13 +37,6 @@ export default async function Layout({
           Skip to content
         </a>
         <Header />
-        {(await demoEnabled()) && (
-          <p className="demo-notice" role="note">
-            Demo catalogue · All sample package prices are fictional. No
-            availability or booking is offered. Enquiries here are marked as
-            demonstration enquiries.
-          </p>
-        )}
         {children}
       </body>
     </html>

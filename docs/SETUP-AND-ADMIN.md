@@ -20,7 +20,7 @@ Dashboard: https://ptm-alpha.vercel.app/admin
 
 Every new package has day-by-day detail, duration, route, accommodation notes, proposed inclusions/exclusions, meal plan, theme, illustrative image/alt text and fictional INR pricing with basis and conditions. Images may depict other places; they are not supplier/property evidence. These records are examples, not contracted inventory.
 
-The owner-authorised temporary showroom uses private Firestore document `runtimeConfig/demoShowcase` with `enabled: true`. It enables visible sample records even on the production deployment, adds an unmistakable sitewide notice, sets noindex, blocks robots and empties the sitemap. This is an intentional preview exception to the normal rule that production hides demo content. Demo enquiries are marked accordingly. Local demo flags continue to work independently.
+The owner-authorised temporary showroom uses private Firestore document `runtimeConfig/demoShowcase` with `enabled: true`. It enables visible sample records even on the production deployment, retains explicit fictional-price conditions, sets noindex, blocks robots and empties the sitemap. This is an intentional preview exception to the normal rule that production hides demo content. Demo enquiries are marked accordingly. Local demo flags continue to work independently.
 
 Seed cloud data from a trusted computer (never from a public HTTP endpoint):
 

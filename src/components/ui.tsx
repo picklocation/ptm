@@ -110,11 +110,6 @@ export function TripCard({ item }: { item: Content }) {
         <div className="card-bottom">
           <Price item={item} />
         </div>
-        {item.demo && (
-          <span className="demo-tag">
-            {item.kind === "resort" ? "Sample stay" : "Sample itinerary"}
-          </span>
-        )}
       </div>
     </article>
   );

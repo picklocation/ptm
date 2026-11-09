@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
-import { publicContent, settings, demoEnabled } from "@/lib/store";
+import { publicContent, settings } from "@/lib/store";
 import { Catalogue } from "@/components/catalogue";
 import { visaGuides } from "@/lib/visa-guides";
 import { southIndiaLocations } from "@/lib/south-india";
@@ -111,11 +111,6 @@ export default async function Page({
             <h1>{c.title}</h1>
             <p>{c.description}</p>
           </div>
-          {(await demoEnabled()) && (
-            <p className="demo-notice">
-              Development preview · Sample content for exploring the experience.
-            </p>
-          )}
           {section === "visa-free-destinations" && (
             <section className="visa-guidance">
               <h2>Before choosing your trip</h2>

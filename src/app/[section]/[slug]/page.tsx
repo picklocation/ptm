@@ -66,12 +66,6 @@ export default async function Detail({
             </p>
           </div>
         </div>
-        {item.demo && (
-          <p className="demo-notice">
-            Demonstration content · This is travel inspiration, not a verified
-            offer. Resort imagery is illustrative.
-          </p>
-        )}
         <div className="detail-grid">
           <div>
             <section className="detail-section">

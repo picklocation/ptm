@@ -53,7 +53,7 @@ Run `npm run seed`, then restart the website. Emulator import/export persists de
 
 Saving edits to an existing published item leaves its public snapshot unchanged. Publish replaces the snapshot. Unpublish removes it from public browsing; archive retains its history. Feature and display-order fields control homepage selection. FAQs, policies, contact channels and social links live under **Site settings**.
 
-Sample records are labelled demonstration content. Production normally rejects and hides demo records. The explicitly enabled temporary showroom (`runtimeConfig/demoShowcase`) allows samples with a sitewide fictional-pricing notice and disables search indexing. See the cloud handover for seeding and turning it off. Only clear a demo flag after verifying the content, rights and property photographs. Policy placeholders are not approved legal documents.
+Sample records are labelled demonstration content. Production normally rejects and hides demo records. The explicitly enabled temporary showroom (`runtimeConfig/demoShowcase`) allows samples with explicit fictional-price conditions and disables search indexing. See the cloud handover for seeding and turning it off. Only clear a demo flag after verifying the content, rights and property photographs. Policy placeholders are not approved legal documents.
 
 ## Enquiries and WhatsApp
 

@@ -9,7 +9,7 @@ import {
   Check,
   MapPin,
 } from "lucide-react";
-import { publicContent, settings, demoEnabled } from "@/lib/store";
+import { publicContent, settings } from "@/lib/store";
 import { photos } from "@/lib/seed-data";
 import { Finder } from "@/components/finder";
 import { SectionTitle, TripCard } from "@/components/ui";
@@ -160,12 +160,6 @@ export default async function Home() {
               <Check size={15} />A real person to plan with
             </span>
           </div>
-          {(await demoEnabled()) && (
-            <p className="demo-notice">
-              Development preview · Trips and property details below are
-              illustrative, not bookable offers.
-            </p>
-          )}
           <DestinationRow
             title="Popular destinations"
             items={popularTiles}
