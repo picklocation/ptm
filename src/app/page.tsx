@@ -1,6 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, MoveRight, Check, MapPin } from "lucide-react";
+import {
+  ArrowUpRight,
+  Globe2,
+  Route,
+  Palmtree,
+  MoveRight,
+  Check,
+  MapPin,
+} from "lucide-react";
 import { publicContent, settings } from "@/lib/store";
 import { photos } from "@/lib/seed-data";
 import { Finder } from "@/components/finder";
@@ -189,6 +197,39 @@ export default async function Home() {
               <Link key={url} href={`/${url}`}>
                 {label}
                 <ArrowUpRight size={18} />
+              </Link>
+            ))}
+          </section>
+          <section className="service-grid">
+            {[
+              {
+                icon: Globe2,
+                title: "International trips",
+                text: "Big adventures. Little escapes. All yours.",
+                href: "/international-trips",
+              },
+              {
+                icon: Route,
+                title: "Europe, one road at a time",
+                text: "The freedom to take the scenic route.",
+                href: "/europe-road-trips",
+              },
+              {
+                icon: Palmtree,
+                title: "Resorts & villas",
+                text: "Beautiful stays. Room to unwind.",
+                href: "/resorts-and-villas",
+              },
+            ].map((c) => (
+              <Link href={c.href} key={c.title} className="service-card">
+                <span className="service-icon">
+                  <c.icon size={24} />
+                </span>
+                <div>
+                  <h3>{c.title}</h3>
+                  <p>{c.text}</p>
+                </div>
+                <ArrowUpRight size={20} />
               </Link>
             ))}
           </section>
