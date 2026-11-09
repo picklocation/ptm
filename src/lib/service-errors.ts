@@ -31,19 +31,3 @@ export async function publicReadDeadline<T>(
     if (timer) clearTimeout(timer);
   }
 }
-// Wraps a strict read so a database outage serves the last good snapshot
-// (or an explicit "unavailable" state) instead of failing the page.
-export function resilient<T>(read: () => Promise<T[]>) {
-  let lastGood: T[] | undefined;
-  return async (): Promise<{ items: T[]; unavailable: boolean }> => {
-    try {
-      lastGood = await read();
-      return { items: lastGood, unavailable: false };
-    } catch (error) {
-      if (!isDatabaseUnavailable(error)) throw error;
-      return lastGood
-        ? { items: lastGood, unavailable: false }
-        : { items: [], unavailable: true };
-    }
-  };
-}
