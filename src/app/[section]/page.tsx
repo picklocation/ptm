@@ -4,11 +4,18 @@ import { Suspense } from "react";
 import { publicContent, settings, demoEnabled } from "@/lib/store";
 import { Catalogue } from "@/components/catalogue";
 import { visaGuides } from "@/lib/visa-guides";
+import { southIndiaLocations } from "@/lib/south-india";
 import { Footer } from "@/components/footer";
 const catalogues: Record<
   string,
   { kind: string; title: string; description: string }
 > = {
+  "south-india": {
+    kind: "destination",
+    title: "South India",
+    description:
+      "From Wayanad and Munnar to the coast: choose a place and make the journey your own.",
+  },
   "international-trips": {
     kind: "holiday",
     title: "International trips",
@@ -29,7 +36,7 @@ const catalogues: Record<
   },
   "visa-free-destinations": {
     kind: "holiday",
-    title: "Visa-free destinations",
+    title: "Visa-free & free-visa destinations",
     description:
       "Travel inspiration for Indian passport holders, with entry conditions explained.",
   },
@@ -88,6 +95,8 @@ export default async function Page({
     const items = (await publicContent()).filter(
       (x) =>
         x.kind === c.kind &&
+        (section !== "south-india" ||
+          southIndiaLocations.some((place) => place.slug === x.slug)) &&
         (section !== "domestic-trips" || x.region === "India") &&
         (section !== "international-trips" || x.region !== "India") &&
         (section !== "kerala-resorts" || /kerala/i.test(x.location)) &&
@@ -112,9 +121,10 @@ export default async function Page({
               <h2>Before choosing your trip</h2>
               <p>
                 For Indian ordinary passport holders travelling for tourism.
-                Checked 9 November 2026. Visa exemption does not waive entry
-                documents, permits or fees. Confirm the rules for your travel
-                date before making arrangements.
+                Checked 9 November 2026. Visa exemptions and free visas have
+                different requirements. They do not waive entry documents,
+                permits or fees. Confirm the rules for your travel date before
+                making arrangements.
               </p>
               <div className="visa-guide-grid">
                 {visaGuides.map((v) => (
@@ -133,7 +143,7 @@ export default async function Page({
             <Catalogue
               items={items}
               stays={c.kind === "resort"}
-              destinations={section === "destinations"}
+              destinations={c.kind === "destination"}
             />
           </Suspense>
         </main>

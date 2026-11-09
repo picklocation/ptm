@@ -90,6 +90,11 @@ export default async function Home() {
       ? [tile(name, item, "/holidays?q=" + encodeURIComponent(query))]
       : [];
   });
+  const southIndiaCover =
+    items.find((x) => x.id === "wayanad") ||
+    items.find((x) => x.id === "kerala");
+  if (southIndiaCover)
+    domesticTiles.unshift(tile("South India", southIndiaCover, "/south-india"));
   return (
     <>
       <main id="main">
@@ -173,7 +178,7 @@ export default async function Home() {
               items={internationalTiles}
             />
             <DestinationRow
-              title="Visa-free destinations"
+              title="Visa-free & free-visa destinations"
               items={visaTiles}
               href="/visa-free-destinations"
             />
@@ -191,7 +196,7 @@ export default async function Home() {
               ["Domestic trips", "domestic-trips"],
               ["Resorts & villas", "resorts-and-villas"],
               ["Europe road trips", "europe-road-trips"],
-              ["Visa-free destinations", "visa-free-destinations"],
+              ["Visa-free & free-visa destinations", "visa-free-destinations"],
             ].map(([label, url]) => (
               <Link key={url} href={`/${url}`}>
                 {label}

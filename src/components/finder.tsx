@@ -36,7 +36,7 @@ export function Finder() {
             <option value="/international-trips">International trips</option>
             <option value="/domestic-trips">Domestic trips</option>
             <option value="/visa-free-destinations">
-              Visa-free destinations
+              Visa-free & free-visa destinations
             </option>
             <option value="/europe-road-trips">Europe road trip</option>
             <option value="/resorts-and-villas">Resorts & villas</option>

@@ -1,3 +1,4 @@
+import { southIndiaLocations } from "./south-india";
 import type { Content } from "./types";
 export const photos = {
   hero: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=85",
@@ -598,5 +599,98 @@ for (const [id, title, location, styles, photo] of sampleStays) {
       accommodation:
         "Illustrative rooms and amenities only. Property name, room category, meal plan, pool access and child policies must be confirmed in your quote.",
     }),
+  );
+}
+
+// South India sample destination pages and matching enquiry-first holidays.
+for (const [index, place] of southIndiaLocations.entries()) {
+  const image = ["varkala", "kochi", "calicut"].includes(place.slug)
+    ? photos.resort
+    : photos.kerala;
+  seedContent.push(
+    item(
+      place.slug,
+      place.name,
+      `${place.name}, ${place.state}`,
+      "India",
+      image,
+      {
+        kind: "destination",
+        country: "India",
+        order: 200 + index,
+        days: 0,
+        nights: 0,
+        themes: ["South India"],
+        summary: place.mood + ". Plan a visit around your dates and interests.",
+        description: `Discover ${place.name} in ${place.state}. ${place.mood}. Use this sample destination page as a starting point for a personalised holiday, with accommodation and experiences chosen around your group. Photography is illustrative.`,
+        imageAlt: `Illustrative South India scenery for ${place.name}; not a verified location photograph`,
+      },
+    ),
+  );
+  seedContent.push(
+    item(
+      `${place.slug}-short-escape`,
+      `${place.name}: a little escape`,
+      `${place.name}, ${place.state}`,
+      "India",
+      image,
+      {
+        country: "India",
+        order: 220 + index,
+        days: 3,
+        nights: 2,
+        themes: ["South India", "Family", "Couples"],
+        featured: false,
+        summary: place.mood + ". A customisable three-day sample itinerary.",
+        description: `A sample three-day stay in ${place.name}. Choose your preferred pace, accommodation and local experiences. Transport, access permissions, weather-dependent activities and inclusions must be confirmed in your personalised quote.`,
+        itinerary: sampleJourney([
+          `Arrive in ${place.name}`,
+          `Explore ${place.name} at your own pace`,
+          "Check-out and onward travel",
+        ]),
+        accommodation:
+          "Two nights in a hotel, resort or homestay to suit your budget. The property and room category will be confirmed in your quote.",
+        imageAlt: `Illustrative South India scenery for ${place.name}; not a verified location photograph`,
+      },
+    ),
+  );
+}
+for (const [id, title, country, route, photo] of [
+  [
+    "thailand-city-beach",
+    "Thailand: city stories & beach days",
+    "Thailand",
+    "Bangkok|Bangkok temples and neighbourhoods|Phuket|Beach leisure|Island activity options|Departure",
+    photos.thailand,
+  ],
+  [
+    "mauritius-island-escape",
+    "Mauritius: a slower island escape",
+    "Mauritius",
+    "Arrival and settle in|Coastal leisure|Port Louis options|Island scenery|A day at your own pace|Departure",
+    photos.resort,
+  ],
+]) {
+  const stops = route.split("|");
+  seedContent.push(
+    item(
+      id,
+      title,
+      country,
+      country === "Thailand" ? "Southeast Asia" : "Indian Ocean",
+      photo,
+      {
+        country,
+        days: 6,
+        nights: 5,
+        order: 250 + seedContent.length,
+        featured: false,
+        description: `A six-day sample holiday in ${country}. Personalise your accommodation, transfers and experiences with your travel planner. This is demonstration content; no availability or supplier arrangements are guaranteed.`,
+        itinerary: sampleJourney(stops),
+        accommodation:
+          "Five nights in accommodation selected around your budget and preferences. The property, room and meal plan will be confirmed in your quote.",
+        imageAlt: `Illustrative holiday imagery for ${country}; not a verified property photograph`,
+      },
+    ),
   );
 }

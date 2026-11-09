@@ -245,7 +245,8 @@ export default async function Detail({
                     (x.location
                       .toLowerCase()
                       .includes(item.title.toLowerCase()) ||
-                      x.region === item.region),
+                      x.country?.toLowerCase() === item.title.toLowerCase() ||
+                      x.title.toLowerCase().includes(item.title.toLowerCase())),
                 )
                 .slice(0, 6)
                 .map((x) => (
