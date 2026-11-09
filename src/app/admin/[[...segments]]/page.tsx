@@ -206,7 +206,13 @@ export default async function Admin({
         </div>
         {c.image && (
           <div className="detail-hero">
-            <Image src={c.image} alt={c.imageAlt} fill sizes="100vw" />
+            <Image
+              src={c.image}
+              alt={c.imageAlt}
+              fill
+              sizes="100vw"
+              unoptimized={c.image.startsWith("/api/media/")}
+            />
           </div>
         )}
         <section className="admin-card">

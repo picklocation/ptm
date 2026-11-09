@@ -107,10 +107,10 @@ npm run build
 4. Import the GitHub repository into Vercel and configure server-only Firebase credentials and public Firebase client configuration separately.
 5. Set `DATA_BACKEND=firebase`, `SITE_URL` to the HTTPS domain, disable demo flags, and remove all emulator variables.
 6. Configure Firebase authorised domains, storage billing/quotas, IAM, backups and monitoring. Cloud Storage requires a billing-enabled Firebase plan; Vercel commercial plan terms apply at launch.
-7. Add approved content/policies and the real WhatsApp number. Confirm the Excel worker/CRM and notification processing schedule.
+7. Add approved content/policies; WhatsApp is configured to +91 79022 20044. Confirm the Excel worker/CRM and notification processing schedule.
 8. Re-run acceptance tests in an isolated staging environment before making production public.
 
-No cloud services, GitHub remote or paid subscriptions have been created by this implementation.
+No cloud services or paid subscriptions have been created. The Git remote is https://github.com/picklocation/ptm.git; the initial push was denied because the local Git account lacks write access. Source is committed on codex/build-pickthemap.
 
 ## Current scope and practical limits
 
