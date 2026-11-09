@@ -10,6 +10,8 @@
   --text: #53635c;
   --green: #063f2e;
   --accent: #05a660;
+  --action-ink: #071e16;
+  --action-hover: #16b975;
   --mint: #e6f4ec;
   --paper: #f6f8f5;
   --line: #e1e7e2;
@@ -169,16 +171,25 @@ img {
   border: 1px solid transparent;
   border-radius: 50px;
   padding: 15px 25px;
-  background: var(--green);
-  color: #fff;
-  font-weight: 600;
+  background: var(--accent);
+  color: var(--action-ink);
+  font-weight: 700;
   font-size: 14px;
   min-height: 48px;
   line-height: 1.4;
-  transition: background 0.18s;
+  box-shadow: 0 2px 0 rgb(6 63 46 / 18%);
+  transition: background 0.18s, box-shadow 0.18s;
 }
-.button:hover {
-  background: #0a583f;
+.button:hover:not(:disabled) {
+  background: var(--action-hover);
+  box-shadow: 0 3px 10px rgb(6 63 46 / 16%);
+}
+.button:active:not(:disabled) {
+  box-shadow: inset 0 2px 3px rgb(6 63 46 / 20%);
+}
+.button:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 4px;
 }
 .button.small {
   padding: 12px 20px;
@@ -193,6 +204,9 @@ img {
 .button.secondary:hover {
   background: var(--paper);
 }
+.button.secondary {
+  box-shadow: none;
+}
 .button.light {
   background: #fff;
   color: var(--green);
@@ -200,7 +214,8 @@ img {
 }
 .round-arrow {
   border-radius: 50%;
-  background: #d9f1e3;
+  background: var(--accent);
+  color: var(--action-ink);
   width: 43px;
   height: 43px;
   display: grid;
@@ -532,7 +547,8 @@ img {
   border-radius: 50%;
   height: 33px;
   width: 33px;
-  background: #fff;
+  background: var(--accent);
+  color: var(--action-ink);
   display: grid;
   place-items: center;
 }
@@ -2788,10 +2804,22 @@ body:has(.hero-wrap) .hero-wrap {
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 1px solid #dce7dc;
+  border: 1px solid var(--accent);
   border-radius: 50%;
-  background: #f6f8f5;
-  color: #063f2e;
+  background: var(--accent);
+  color: var(--action-ink);
+}
+.destination-row-controls button:hover:not(:disabled),
+.card-photo:hover .photo-arrow,
+.button.light:hover .round-arrow {
+  background: var(--action-hover);
+}
+.button.secondary:hover:not(:disabled) {
+  background: var(--paper);
+  box-shadow: none;
+}
+.button.light:hover:not(:disabled) {
+  background: var(--mint);
 }
 .destination-row-controls button:disabled {
   opacity: 0.35;
