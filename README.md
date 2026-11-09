@@ -94,6 +94,8 @@ Before public launch: configure strong staff authentication/MFA at the identity-
 ```powershell
 npm run typecheck
 npm test
+npx playwright install chromium   # first run only
+npm run test:e2e
 npm run test:flow
 npx firebase emulators:exec --only firestore --project demo-pickthemap "npm run test:rules"
 npm run build
