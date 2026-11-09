@@ -1,6 +1,16 @@
 import Link from "next/link";
 import { Logo } from "./ui";
+import { FooterColumns } from "./footer-columns";
 import { settings } from "@/lib/store";
+const explore: [string, string][] = [
+  ["International trips", "/international-trips"],
+  ["Domestic trips", "/domestic-trips"],
+  ["South India", "/south-india"],
+  ["Visa-free destinations", "/visa-free-destinations"],
+  ["Europe road trips", "/europe-road-trips"],
+  ["Resorts & villas", "/resorts-and-villas"],
+  ["Destinations", "/destinations"],
+];
 export async function Footer() {
   const s = await settings();
   return (
@@ -8,53 +18,52 @@ export async function Footer() {
       <div className="container footer-grid">
         <div className="footer-brand">
           <Logo />
-          <p>
-            A place in mind.
-            <br />A journey made yours.
-          </p>
-          <span className="muted">Custom holidays, thoughtful details.</span>
-        </div>
-        <div>
-          <h3>Find your next place</h3>
-          <Link href="/international-trips">International trips</Link>
-          <Link href="/domestic-trips">Domestic trips</Link>
-          <Link href="/south-india">South India</Link>
-          <Link href="/visa-free-destinations">
-            Visa-free & free-visa destinations
-          </Link>
-          <Link href="/europe-road-trips">Europe road trips</Link>
-          <Link href="/resorts-and-villas">Resorts & villas</Link>
-          <Link href="/destinations">Destinations</Link>
-        </div>
-        <div>
-          <h3>A little about us</h3>
-          <Link href="/about">Our story</Link>
-          <Link href="/contact">Get in touch</Link>
-          <Link href="/faqs">Your questions, answered</Link>
-          <Link href="/plan-my-trip">Plan a personalised trip</Link>
-        </div>
-        <div>
-          <h3>Let’s talk travel</h3>
-          {s.email && <a href={`mailto:${s.email}`}>{s.email}</a>}
-          {s.phone && <a href={`tel:${s.phone}`}>{s.phone}</a>}
-          {s.whatsapp && (
-            <a
-              href={`https://wa.me/${s.whatsapp}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Chat on WhatsApp ↗
-            </a>
-          )}
-          {s.instagram && (
-            <a href={s.instagram} target="_blank" rel="noreferrer">
-              Instagram ↗
-            </a>
-          )}
-          <Link href="/plan-my-trip" className="text-link">
-            Tell us your travel idea ↗
+          <p>A place in mind. A journey made yours.</p>
+          <Link href="/plan-my-trip" className="button small">
+            Plan my trip
           </Link>
         </div>
+        <FooterColumns>
+          <details className="footer-col" open>
+            <summary>Find your next place</summary>
+            <nav>
+              {explore.map(([label, href]) => (
+                <Link key={href} href={href}>
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </details>
+          <details className="footer-col" open>
+            <summary>About &amp; help</summary>
+            <nav>
+              <Link href="/about">Our story</Link>
+              <Link href="/faqs">Your questions, answered</Link>
+              <Link href="/contact">Get in touch</Link>
+            </nav>
+          </details>
+          <details className="footer-col" open>
+            <summary>Let’s talk travel</summary>
+            <nav>
+              {s.email && <a href={`mailto:${s.email}`}>{s.email}</a>}
+              {s.phone && <a href={`tel:${s.phone}`}>{s.phone}</a>}
+              {s.whatsapp && (
+                <a
+                  href={`https://wa.me/${s.whatsapp}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Chat on WhatsApp ↗
+                </a>
+              )}
+              {s.instagram && (
+                <a href={s.instagram} target="_blank" rel="noreferrer">
+                  Instagram ↗
+                </a>
+              )}
+            </nav>
+          </details>
+        </FooterColumns>
       </div>
       <div className="container footer-bottom">
         <span>© {new Date().getFullYear()} PickTheMap</span>

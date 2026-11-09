@@ -1,13 +1,25 @@
-import { catalogueState } from "@/lib/store";
+import Link from "next/link";
+import { catalogueState, settings } from "@/lib/store";
 export async function CatalogueStatus() {
   if (!(await catalogueState()).unavailable) return null;
+  const s = await settings();
+  const wa = s.whatsapp || "917902220044";
   return (
-    <aside className="notice" role="status">
-      Trip listings are temporarily unavailable. Please try again later, or{" "}
-      <a href="https://wa.me/917902220044" className="text-link">
-        contact PickTheMap on WhatsApp
-      </a>{" "}
-      to plan your holiday.
+    <aside className="notice status-notice" role="status">
+      <p>Trips are loading slowly right now. Please try again in a moment.</p>
+      <div>
+        <Link href="/plan-my-trip" className="button small">
+          Plan my trip
+        </Link>
+        <a
+          href={`https://wa.me/${wa}`}
+          className="button small secondary"
+          target="_blank"
+          rel="noreferrer"
+        >
+          WhatsApp us
+        </a>
+      </div>
     </aside>
   );
 }

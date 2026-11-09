@@ -13,7 +13,9 @@
     "emulators": "firebase emulators:start --project demo-pickthemap --import=.emulator-data --export-on-exit=.emulator-data",
     "test:flow": "tsx scripts/verify-flow.ts",
     "test:rules": "tsx scripts/verify-rules.ts",
-    "notifications:send": "tsx scripts/notifications.ts"
+    "notifications:send": "tsx scripts/notifications.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:mobile": "playwright test --project=mobile"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.0",

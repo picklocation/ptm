@@ -7,7 +7,11 @@ import type { Content, Enquiry, Settings } from "./types";
 import { defaultSettings } from "./types";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
-import { isDatabaseUnavailable, publicReadDeadline } from "./service-errors";
+import {
+  isDatabaseUnavailable,
+  publicReadDeadline,
+  resilient,
+} from "./service-errors";
 const persistentPublicCache = () =>
   firebaseMode() && !process.env.FIRESTORE_EMULATOR_HOST;
 export const firebaseMode = () => process.env.DATA_BACKEND === "firebase";
@@ -232,24 +236,19 @@ export async function rateLimit(key: string, max = 8, windowMs = 600000) {
     throw e;
   }
 }
-async function readCatalogue() {
-  try {
-    return {
-      items: await publicReadDeadline(list<Content>("publishedContent")),
-      unavailable: false,
-    };
-  } catch (error) {
-    if (!isDatabaseUnavailable(error)) throw error;
-    return { items: [] as Content[], unavailable: true };
-  }
-}
-const cachedCatalogue = unstable_cache(readCatalogue, ["ptm-catalogue-v1"], {
-  revalidate: 900,
-  tags: ["ptm-public"],
-});
-export const catalogueState = cache(() =>
-  persistentPublicCache() ? cachedCatalogue() : readCatalogue(),
+// Failures must throw inside the cached function so an outage is never cached
+// for an hour; `resilient` serves the last good snapshot during an outage.
+const cachedCatalogue = unstable_cache(
+  () => publicReadDeadline(list<Content>("publishedContent")),
+  ["ptm-catalogue-v3"],
+  { revalidate: 3600, tags: ["ptm-public"] },
 );
+const readCatalogue = resilient<Content>(() =>
+  persistentPublicCache()
+    ? cachedCatalogue()
+    : publicReadDeadline(list<Content>("publishedContent")),
+);
+export const catalogueState = cache(readCatalogue);
 export const publicContent = cache(async () => {
   const showDemo = await demoEnabled();
   return (await catalogueState()).items
