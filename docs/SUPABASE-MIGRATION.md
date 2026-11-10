@@ -2,9 +2,13 @@
 
 ## Current stage
 
+**Scope change approved November 10, 2026:** start fresh in Supabase. Firebase backup/import is no longer required for this launch. No old enquiries, staff records, sessions, or owner edits are copied. Firebase remains untouched for reference/rollback. The backup tooling below is retained as an optional utility, not a launch prerequisite.
+
+Fresh setup creates 200 sample catalogue records with their existing demonstration flags, nine shared travel photographs, the exact logo, and a placeholder in Supabase Storage. The owner is provisioned separately from a locally saved password. Review sample prices and content before public launch. Showcase mode retains noindex behavior.
+
 Work is isolated on `codex/migrate-supabase`. The original Firebase production application remains active. Applying the new schema does not switch Vercel or alter Firebase.
 
-The initial PostgreSQL schema has been applied to project `feqmnzutyhzochuyiint`. Migration completion requires verified source backup, import, storage transfer, application integration, permissions testing, preview review, and an approved production cutover.
+The PostgreSQL schema and atomic operation functions have been applied to project `feqmnzutyhzochuyiint`. Fresh catalogue, Storage assets and owner login are provisioned. Local application and permission tests pass. Hosted preview review and approved production cutover remain. Historical backup/import steps below apply only if a later data import is requested.
 
 ## Private configuration
 
@@ -59,7 +63,7 @@ RLS is enabled on all application tables. Anonymous users can read eligible publ
 
 `website-private` is restricted to authorized content staff. `website-public` is reserved for approved published assets. Direct client updates/deletions are denied. Server media deletion must check references. Trusted bundled SVG assets are separate from general JPEG/PNG/WebP uploads.
 
-## Required before cutover
+## Historical import checklist (not required for the approved fresh start)
 
 1. Reconcile source counts, hashes, IDs, references and unknown collections; never replace a failed backup with seed data.
 2. Transfer originals and approved derivatives to Supabase Storage and reconcile hashes/URLs; retain private unpublished assets.

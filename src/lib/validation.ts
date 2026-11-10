@@ -82,7 +82,9 @@ const image = z
       !v ||
       v.startsWith("/images/") ||
       /^\/api\/media\/[a-f0-9-]+$/.test(v) ||
-      /^https:\/\/images\.unsplash\.com\/photo-[\w-]+\?/.test(v),
+      v.startsWith(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL || "https://feqmnzutyhzochuyiint.supabase.co"}/storage/v1/object/public/website-public/`,
+      ),
     "Use an uploaded image or an approved image URL.",
   );
 export const contentSchema = z.object({

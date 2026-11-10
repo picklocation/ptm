@@ -1,3 +1,4 @@
+import { publicAsset } from "@/lib/assets";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, ArrowRight, MapPin, Clock, Check } from "lucide-react";
@@ -7,7 +8,7 @@ export function Logo() {
   return (
     <Link href="/" className="brand" aria-label="PickTheMap home">
       <Image
-        src="/images/pickthemap-icon.png"
+        src={publicAsset("brand/pickthemap-icon.png")}
         alt=""
         width={30}
         height={36}
@@ -82,7 +83,7 @@ export function TripCard({ item }: { item: Content }) {
     <article className="trip-card">
       <Link href={`/${paths[item.kind]}/${item.slug}`} className="card-photo">
         <Image
-          src={item.image || "/images/placeholder.svg"}
+          src={item.image || publicAsset("brand/placeholder.svg")}
           unoptimized={item.image.startsWith("/api/media/")}
           alt={item.imageAlt || item.title}
           fill

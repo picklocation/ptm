@@ -1,3 +1,4 @@
+import { travelPhoto } from "./assets";
 import type { Content } from "./types";
 import { southIndiaLocations } from "./south-india";
 
@@ -9,8 +10,7 @@ type Place = {
   image: string;
   base: number;
 };
-const image = (id: string) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1000&q=85`;
+const image = travelPhoto;
 const beach = image("photo-1571896349842-33c89424de2d");
 const hills = image("photo-1464822759023-fed622ff2c3b");
 const kerala = image("photo-1602216056096-3b40cc0c9944");

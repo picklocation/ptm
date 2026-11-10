@@ -8,11 +8,24 @@ import { defaultSettings } from "./types";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { isDatabaseUnavailable, publicReadDeadline } from "./service-errors";
+import {
+  supabaseMode,
+  publicSupabase,
+  serviceSupabase,
+  supabaseRead,
+  supabaseBatch,
+  databaseError,
+} from "./supabase";
 const persistentPublicCache = () =>
-  firebaseMode() && !process.env.FIRESTORE_EMULATOR_HOST;
+  supabaseMode() || (firebaseMode() && !process.env.FIRESTORE_EMULATOR_HOST);
 export const firebaseMode = () => process.env.DATA_BACKEND === "firebase";
 async function readShowcase() {
   try {
+    if (supabaseMode()) {
+      const { data, error } = await publicSupabase().rpc("ptm_showcase");
+      databaseError(error);
+      return data === true;
+    }
     return (
       (
         await publicReadDeadline(
@@ -81,6 +94,7 @@ export async function get<T>(
   collection: string,
   id: string,
 ): Promise<T | null> {
+  if (supabaseMode()) return (await supabaseRead<T>(collection, id))[0] || null;
   if (firebaseMode()) {
     const d = await cloud().collection(collection).doc(id).get();
     return d.exists ? (d.data() as T) : null;
@@ -91,6 +105,7 @@ export async function get<T>(
   return row ? JSON.parse(row.data) : null;
 }
 export async function list<T>(collection: string): Promise<T[]> {
+  if (supabaseMode()) return supabaseRead<T>(collection);
   if (firebaseMode())
     return (await cloud().collection(collection).get()).docs.map(
       (d) => d.data() as T,
@@ -102,6 +117,7 @@ export async function list<T>(collection: string): Promise<T[]> {
   ).map((r) => JSON.parse(r.data));
 }
 export async function put(collection: string, id: string, data: unknown) {
+  if (supabaseMode()) return supabaseBatch([{ collection, id, data }]);
   if (firebaseMode()) {
     await cloud()
       .collection(collection)
@@ -116,6 +132,7 @@ export async function put(collection: string, id: string, data: unknown) {
     .run(collection, id, JSON.stringify(data));
 }
 export async function remove(collection: string, id: string) {
+  if (supabaseMode()) return supabaseBatch([{ collection, id, data: null }]);
   if (firebaseMode()) {
     await cloud().collection(collection).doc(id).delete();
     return;
@@ -126,6 +143,7 @@ export async function remove(collection: string, id: string) {
 }
 type Write = { collection: string; id: string; data: unknown | null };
 export async function batch(writes: Write[]) {
+  if (supabaseMode()) return supabaseBatch(writes);
   if (firebaseMode()) {
     const b = cloud().batch();
     for (const w of writes) {
@@ -157,6 +175,13 @@ export async function batch(writes: Write[]) {
   }
 }
 export async function createEnquiryOnce(enquiry: Enquiry): Promise<Enquiry> {
+  if (supabaseMode()) {
+    const { data, error } = await serviceSupabase().rpc("ptm_enquiry_once", {
+      payload: enquiry,
+    });
+    databaseError(error);
+    return data as Enquiry;
+  }
   const job = {
     id: enquiry.id,
     status: "pending",
@@ -200,6 +225,15 @@ export async function createEnquiryOnce(enquiry: Enquiry): Promise<Enquiry> {
   }
 }
 export async function rateLimit(key: string, max = 8, windowMs = 600000) {
+  if (supabaseMode()) {
+    const { data, error } = await serviceSupabase().rpc("ptm_rate_limit", {
+      key,
+      maximum: max,
+      window_ms: windowMs,
+    });
+    databaseError(error);
+    return data === true;
+  }
   const now = Date.now();
   if (firebaseMode())
     return cloud().runTransaction(async (tx) => {

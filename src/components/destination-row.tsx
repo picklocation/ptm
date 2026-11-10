@@ -1,4 +1,6 @@
 "use client";
+import { publicAsset } from "@/lib/assets";
+
 import { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -94,7 +96,7 @@ export function DestinationRow({
         {items.map((item) => (
           <Link key={item.name} href={item.href} className="destination-tile">
             <Image
-              src={item.image || "/images/placeholder.svg"}
+              src={item.image || publicAsset("brand/placeholder.svg")}
               alt={item.alt}
               fill
               sizes="(max-width:600px) 65vw, 20vw"

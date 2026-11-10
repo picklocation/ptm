@@ -1,3 +1,4 @@
+import { publicAsset } from "@/lib/assets";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -18,7 +19,12 @@ export async function generateMetadata({
     (x) => x.slug === slug && paths[x.kind] === section,
   );
   return {
-    title: item?.seoTitle || item?.title || ((await catalogueState()).unavailable ? "Trip details temporarily unavailable" : "Not found"),
+    title:
+      item?.seoTitle ||
+      item?.title ||
+      ((await catalogueState()).unavailable
+        ? "Trip details temporarily unavailable"
+        : "Not found"),
     description: item?.seoDescription || item?.summary,
     alternates: { canonical: `/${section}/${slug}` },
     robots: item?.demo ? { index: false, follow: false } : undefined,
@@ -54,7 +60,7 @@ export default async function Detail({
         </div>
         <div className="detail-hero">
           <Image
-            src={item.image || "/images/placeholder.svg"}
+            src={item.image || publicAsset("brand/placeholder.svg")}
             unoptimized={item.image.startsWith("/api/media/")}
             alt={item.imageAlt}
             fill

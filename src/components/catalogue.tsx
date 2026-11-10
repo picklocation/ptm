@@ -1,4 +1,6 @@
 "use client";
+import { publicAsset } from "@/lib/assets";
+
 import { useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X } from "lucide-react";
@@ -208,7 +210,7 @@ export function Catalogue({
                 href={`/destinations/${item.slug}`}
               >
                 <Image
-                  src={item.image || "/images/placeholder.svg"}
+                  src={item.image || publicAsset("brand/placeholder.svg")}
                   unoptimized={item.image.startsWith("/api/media/")}
                   alt={item.imageAlt}
                   fill
