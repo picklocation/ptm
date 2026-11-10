@@ -175,7 +175,7 @@ export default async function Home() {
               items={internationalTiles}
             />
             <DestinationRow
-              title="Visa-friendly destinations"
+              title="Visa-Free-destinations"
               items={visaTiles}
               href="/visa-free-destinations"
             />
@@ -193,7 +193,7 @@ export default async function Home() {
               ["Domestic trips", "domestic-trips"],
               ["Resorts & villas", "resorts-and-villas"],
               ["Europe road trips", "europe-road-trips"],
-              ["Visa-friendly destinations", "visa-free-destinations"],
+              ["Visa-Free-destinations", "visa-free-destinations"],
             ].map(([label, url]) => (
               <Link key={url} href={`/${url}`}>
                 {label}

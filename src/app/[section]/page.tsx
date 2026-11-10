@@ -38,7 +38,7 @@ const catalogues: Record<
   },
   "visa-free-destinations": {
     kind: "holiday",
-    title: "Visa-friendly destinations",
+    title: "Visa-Free-destinations",
     description:
       "Travel inspiration for Indian passport holders, with entry conditions explained.",
   },
