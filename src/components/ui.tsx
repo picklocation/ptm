@@ -16,7 +16,6 @@ export function Logo() {
       />
       <span>
         pick<span className="brand-green">the</span>map
-        <span className="brand-dot">.</span>
       </span>
     </Link>
   );
