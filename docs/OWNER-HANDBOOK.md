@@ -1,174 +1,111 @@
 # PickTheMap owner handbook
 
-Prepared 9 November 2026.
+Updated 10 November 2026.
 
-## Your website at a glance
+## Where things stand
 
-### Current status - 9 November 2026
+Your new backend uses Supabase for packages, enquiries, staff login and image storage. GitHub holds the code, and Vercel hosts the website. The design, page URLs and green-and-white theme are retained. The green dot after the wordmark has been removed.
 
-The site runs on Vercel with Firebase Authentication and Firestore. The owner account pickthemap@gmail.com has been provisioned, and you have reported successful login. There are 200 catalogue records, including 130 newly added holiday examples. Content review and your own custom domain are still pending.
+There are 200 sample catalogue records, including five holidays each across ten international countries and five each for sixteen Indian/regional locations, alongside destination, resort and Europe road-trip entries. Nine shared travel photos, your logo and a placeholder are stored in Supabase. Photos are illustrative, not verified photographs of each named property.
 
-### Useful addresses
+You chose a fresh start: old Firebase enquiries and edited content were not copied. Firebase remains untouched. Local tests pass; hosted preview verification and production promotion remain unconfirmed.
 
-Website: https://ptm-alpha.vercel.app
-Admin login: https://ptm-alpha.vercel.app/admin/login
-Dashboard: https://ptm-alpha.vercel.app/admin
-Repository: https://github.com/picklocation/ptm
+## Admin login
 
-### What visitors can do
+| Item | Details |
+| --- | --- |
+| Owner email | pickthemap@gmail.com |
+| Password | Your privately chosen Supabase password |
+| Local login | http://localhost:3005/admin/login |
+| Local dashboard | http://localhost:3005/admin |
+| Hosted preview login | Latest migration preview URL followed by /admin/login |
+| Production login after cutover | https://ptm-alpha.vercel.app/admin/login |
 
-Explore international and domestic holidays, Europe road trips, resorts and villas, visa guidance and South India destinations. Open a trip to see its itinerary and details, then request a personalised quote. The website does not provide live availability, instant booking or online payment.
+Use the Supabase password, which may differ from your old Firebase password. No password is written here. Changing the local setup file after account creation does not reset an existing password. Sessions last at most one hour; sign in again when required. Password-reset email delivery is not yet verified.
 
-### How the pieces connect
+To start locally:
+```powershell
+npx tsx scripts/supabase-local.ts build
+npx tsx scripts/supabase-local.ts start
+```
 
-GitHub stores the application code. A push to codex/build-pickthemap triggers the connected Vercel deployment. Vercel serves the website and server endpoints. Firestore stores packages, enquiries, settings and staff permissions. Firebase Authentication verifies staff credentials. Content changes saved through admin go directly to the database and do not require a Git push.
+## What visitors do
 
-### The content you see today
+Visitors browse international and domestic holidays, Europe road trips, resorts/villas, South India and destination guidance. They open an itinerary and request a personalised quote. There is no instant booking, live availability or online payment.
 
-The catalogue contains fictional prices and illustrative photos. Removing preview banners does not approve these details for sale. Review package copy, routes, photos, supplier arrangements and prices before promoting the site. Internal demo flags and search-indexing protection remain while showcase mode is enabled.
+Both enquiry buttons save the request in Supabase first. The WhatsApp option then offers a prepared message to **+91 79022 20044**; the visitor must press Send in WhatsApp. The site does not automatically send a WhatsApp message or track delivery.
 
 ## Manage packages and destinations
 
-### 1. Open Content & media
+1. Open **Content & media** at /admin/content and select an item or create one.
+2. Choose holiday, road trip, resort or destination.
+3. Edit the name, URL slug, locations, description, duration and itinerary.
+4. Add accommodation, inclusions/exclusions, vehicle details or room/meal-plan information.
+5. Upload images and provide alt descriptions. Arrange gallery URLs in display order; remove a URL to remove that gallery reference.
+6. Enter pricing only with currency, per-person/per-group basis and conditions. Otherwise use Request a quote.
+7. Save a draft and preview it. Publish when ready.
 
-Sign in and open /admin/content. Select a record to edit, or choose Create content. Choose the appropriate kind: holiday, road trip, resort or destination.
+Saving a draft does not replace the current published version. Publish updates the public snapshot. Unpublish hides it; archive preserves it and its history. **Permanent package/file deletion is not exposed in the current editor.** Removing a gallery reference does not delete the stored file.
 
-### 2. Complete the structured fields
+Featured flags and display order control homepage selections. An independent banner manager has not been added; the existing hero remains configured in code.
 
-Add a clear title and unique URL slug, location, country, region, summary and detailed description. Set days and nights, themes, itinerary days, inclusions, exclusions and accommodation. Road trips also need vehicle and luggage details. Resorts need amenities, room categories and meal plans.
+## Images
 
-### 3. Review images and pricing
+JPEG, PNG and WebP uploads are checked and re-encoded into WebP. Uploaded images stay in a private Supabase bucket; visitors can access them only when used by published content. Approved seed photos and brand assets use a public bucket. The original logo artwork is unchanged.
 
-Use photographs you have rights to use and describe each image with alt text. Confirm that a property photo shows the actual property. Prices need currency, per-person or per-group basis, and conditions. If no approved price exists, leave the price blank so visitors see Request a quote. Cloud uploads need a separately configured storage solution; current sample image URLs do not prove upload readiness.
+The app accepts files below 8 MB, but Vercel may impose a smaller request limit. Use compressed web images; if a large upload fails, reduce its size. Initial shared assets occupy about 7 MB.
 
-### 4. Save draft, preview, then publish
+## Manage enquiries
 
-Save draft stores your edits without replacing an existing published snapshot. Preview shows the draft to authorised staff. Publish replaces the public snapshot. Unpublish removes the public version while retaining the editable record. Archive retains the record but removes it from public browsing.
+Open /admin/enquiries. Search/filter requests, open details, add internal notes, assign follow-up and update status:
 
-### 5. Control homepage selection
+**new → contacted → quote sent → confirmed → closed**
 
-Use Featured and display order to influence existing homepage selections. Some destination rows and layout sections are configured in code; this is not a drag-and-drop page builder. Check the homepage after publishing.
+An enquiry is not a confirmed booking. Set confirmed only after your business has agreed the arrangements. Repeat submission references prevent duplicate records. Notes and history remain associated with the enquiry.
 
-### Approve a sample carefully
+Download CSV or Excel from admin. Exporting does not automatically connect an existing workbook or CRM.
 
-Replace fictional text, pricing and photos first. Only then clear the Demonstration content checkbox and publish. Do not clear every demo flag at once. Before launch, turn off showcase mode using the documented administration command so unapproved samples are hidden.
+For continuous local Excel updates, configure your private .env.local for Supabase and run:
+```powershell
+npm run excel:sync -- --watch
+```
 
-## Handle enquiries and Excel
+Keep the computer and worker running. The default workbook is .local/enquiries.xlsx; EXCEL_PATH can select another dedicated workbook. Vercel cannot write directly to your laptop. Email notifications remain optional and require a configured provider/webhook.
 
-### What happens on submission
+## Staff permissions
 
-The form validates the visitor input and saves the enquiry to Firestore before showing success. It also queues Excel and optional notification jobs. A repeated request reference avoids duplicate records. Both normal submission and the WhatsApp option save first.
+| Role | Access |
+| --- | --- |
+| Owner | Content, enquiries, settings, staff and audit |
+| Editor | Content and media |
+| Enquiries | Enquiries, notes and exports |
 
-### WhatsApp is a handoff
+Create or deactivate staff at /admin/staff. Use unique passwords. You cannot deactivate yourself through that screen. Database permissions independently restrict each role; disabling a staff record blocks its data access even if it still has a token.
 
-After a successful save, the visitor can open a prepared message to +91 79022 20044. The visitor must press Send in WhatsApp. The website does not claim that a message was delivered or automatically send messages on your behalf.
+## Settings and content review
 
-### Your daily enquiry workflow
+At /admin/settings, enter business contact details, social links, WhatsApp number, FAQs, About text and business-approved privacy, terms and cancellation content.
 
-Open /admin/enquiries. Search or filter, open the enquiry, review dates, traveller count, budget and preferences. Add an internal note, set an assignment and follow-up date, and choose a status: new, contacted, quote sent, confirmed or closed. Confirmed is your manual business status, not an automated supplier booking.
+Sample packages retain demo flags and fictional-price conditions. Showcase mode currently allows them to display while search indexing is disabled. Review routes, photographs, operating arrangements, prices and legal content before clearing demo flags. Hiding a demo banner does not verify an offer.
 
-### Download Excel when needed
+## Deployment and domain
 
-Export filtered records as XLSX or CSV. Check that your filters are correct before downloading. Store files securely because they contain customer contact information.
+The Supabase code is on **codex/migrate-supabase**. The latest UI change removes the wordmark dot. Vercel variable names have been assigned to Production and Preview, but hidden values cannot be confirmed from screenshots.
 
-### Automatic workbook updates
+Next:
+1. Open the newest ready migration Preview deployment.
+2. Check homepage, catalogue images, /admin/login and one enquiry.
+3. Approve promotion to Production after those checks pass.
+4. Verify the public domain and admin again.
 
-The local Excel worker can update a dedicated workbook while your computer is running and configured for the cloud database. Vercel cannot directly edit a workbook on your laptop. Tracking status, Tracking notes, Tracking owner and Tracking follow-up columns are preserved by the worker. Excel edits do not automatically update the dashboard. Microsoft 365 or CRM synchronisation is a separate integration.
+The current public domain is https://ptm-alpha.vercel.app; a successful Supabase production switch has not yet been confirmed. No custom domain purchase or DNS connection has been confirmed. Once purchased, add it in Vercel, apply Vercel's displayed DNS records at the registrar, and update production SITE_URL before redeploying.
 
-### Test without confusing real customers
+Do not delete the Firebase setup yet. If rolling back after taking new Supabase enquiries, retain/export those new enquiries first.
 
-Use your own contact information and write TEST - please ignore in preferences. Submit once, verify the record, add a note, change status and export it. Showcase enquiries are internally marked as demonstrations. Email notifications are not configured merely by creating an enquiry.
+## What is tested and what remains
 
-## Staff, settings and routine care
+Passed locally: production build, TypeScript, thirteen tests, owner login, publishing and public detail pages, enquiry saving and retries, Excel export, uploads, private photo access, role restrictions, disabled accounts, unpublishing and logout.
 
-### Owner access
+Remaining: hosted preview verification, approved production promotion, real content/pricing review, legal/contact details, optional email recovery/notifications, custom domain and any later CRM integration. No paid service was enabled by this work.
 
-Your owner email is pickthemap@gmail.com. Use the password you created privately in Firebase. No password is recorded in this handbook. Owner access includes content, enquiries, site settings, staff and audit history.
-
-### Team permissions
-
-Editor: content creation, editing, preview and publishing; no enquiry access. Enquiries: enquiry management and exports; no content publishing. Owner: both areas plus site settings, staff and audit. Add separate accounts through Staff & access; avoid sharing your owner password.
-
-### Revoke access safely
-
-Deactivate a staff account in the portal. The app checks the active staff record on protected requests. Firebase identity alone does not grant dashboard access. Existing application sessions last up to eight hours; password changes or disabling only the Firebase identity do not currently invalidate these app sessions immediately.
-
-### Site settings & FAQs
-
-Complete business email, phone, address, social links, WhatsApp, About text and FAQs. Add business-approved privacy, terms and cancellation wording. Verify all contact links on mobile. The app has no custom password-reset or MFA screen yet; account recovery and stronger authentication need a separate operational setup.
-
-### What to check regularly
-
-Review new enquiries and follow-ups daily. Check export/worker failures and failed sign-ins. Recheck package prices and conditions when supplier information changes. Plan data retention, backups and restoration. Keep service-account keys and environment files private; never commit them to GitHub.
-
-### Costs and limits
-
-No paid plan has been enabled by this work. Firestore usage is subject to free-tier quotas. Firebase Cloud Storage requires a billing-enabled plan under current rules. Vercel Hobby is intended for non-commercial personal use; resolve the appropriate plan before operating the travel business publicly.
-
-## Connect your GoDaddy domain
-
-### Before purchase
-
-You have not bought a domain yet and plan to use GoDaddy. Confirm spelling, first-year price and renewal price before buying. Domain registration is separate from hosting. This Next.js site is already hosted on Vercel, so an additional GoDaddy website-hosting package is not needed for this setup. No purchase has been made by the assistant.
-
-### 1. Add the purchased domain to Vercel
-
-After purchase, send the exact domain name. In Vercel open ptm > Settings > Domains and add it. Add the www version as appropriate and choose one canonical address. Use the DNS record values displayed for this particular project; do not copy arbitrary IP addresses from tutorials.
-
-### 2. Update DNS where it is managed
-
-In the DNS manager for the domain, apply the records requested by Vercel (such as apex A and www CNAME, plus verification if requested). If nameservers point elsewhere, edit DNS at that provider. Preserve email MX and email-related TXT records. Do not replace all records or nameservers without reviewing what already depends on them.
-
-### 3. Wait for validation and HTTPS
-
-Vercel must show the domain as correctly configured and issue its HTTPS certificate. Propagation time varies. Test both the root domain and www and configure a redirect to the chosen address. There is no need to buy an extra certificate simply to complete this Vercel setup.
-
-### 4. Update the application
-
-Set Production SITE_URL in Vercel to the chosen HTTPS origin, then redeploy. The server checks this exact origin for form submissions and admin changes. Add the domain to Firebase Authentication authorised domains. Keep NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN as the Firebase project domain unless deliberately setting up a custom auth domain.
-
-### 5. Verify before switching links
-
-On the new domain, sign in again, publish a test edit and submit a test enquiry. Check redirects, WhatsApp, images and exports. Update business links only after these pass. Connecting a domain does not turn off showcase/noindex mode; that is a separate content-approval step.
-
-## Your acceptance checklist and references
-
-### Public website checks
-
-[ ] Desktop and 360px mobile navigation work.
-[ ] International, domestic, resort and road-trip links open.
-[ ] Filters and empty states make sense.
-[ ] Package itinerary, photos, price basis and conditions are accurate.
-[ ] Contact and WhatsApp links use the right details.
-
-### Admin and enquiry checks
-
-[ ] Signed-out /admin redirects to login.
-[ ] Save draft leaves the published page unchanged.
-[ ] Publish, unpublish and archive behave correctly.
-[ ] A test enquiry appears once with the right details.
-[ ] Notes, status and follow-up changes persist.
-[ ] XLSX export contains the test record.
-[ ] Editor and enquiry-only accounts have the intended restrictions.
-
-### Launch checks
-
-[ ] Domain, HTTPS and canonical redirect verified.
-[ ] SITE_URL updated and redeployed; new-domain enquiry tested.
-[ ] Firebase authorised domain configured.
-[ ] Real package content and policy wording approved.
-[ ] Showcase disabled after approval; remaining samples hidden.
-[ ] Indexing and sitemap checked again.
-[ ] Hosting plan, storage, recovery and retention decisions completed.
-
-### Technical handover files
-
-Repository: docs/SETUP-AND-ADMIN.md covers configuration and owner provisioning. docs/SCHEMA-AND-API.md covers Firestore collections and endpoint contracts. scripts/cloud-admin.ts supports inspect, seed, owner and showcase-off. Do not pass passwords into command lines. Keep the service-account JSON private.
-
-### Official setup references
-
-Vercel domains: https://vercel.com/docs/domains/working-with-domains/add-a-domain
-Environment changes: https://vercel.com/docs/environment-variables
-Firebase authentication: https://firebase.google.com/docs/auth/web/password-auth
-Storage requirements: https://firebase.google.com/docs/storage/faqs-storage-changes-announced-sept-2024
-Vercel plans: https://vercel.com/docs/plans/hobby
+See [technical launch instructions](SUPABASE-LAUNCH.md) and [schema/API reference](SCHEMA-AND-API.md). Any previously generated PDF dated 9 November describes the earlier Firebase setup; this updated Markdown handbook supersedes it.

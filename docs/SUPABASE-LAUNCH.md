@@ -1,5 +1,7 @@
 # PickTheMap: Supabase setup and handover
 
+Status updated 10 November 2026: local Supabase verification passed; owner account provisioned. Vercel screenshots confirm required variable names are assigned to Production and Preview and the migration Preview redeploy was selected. Hidden values, the resulting hosted behaviour and production promotion are not yet verified. The latest visual change removes the trailing green dot from the wordmark (commit f700f36).
+
 ## What changed
 
 The existing website now supports `DATA_BACKEND=supabase`: PostgreSQL for catalogue and enquiries, Supabase Auth for staff, and Supabase Storage for photographs and uploads. URLs and visual design are preserved. Firebase mode remains available only as a transition/rollback option; Supabase mode does not read or write Firebase. The original production branch is unchanged until cutover approval.
