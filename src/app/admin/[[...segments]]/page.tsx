@@ -1,3 +1,4 @@
+import { AdminCatalogue } from "@/components/admin-catalogue";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect, notFound } from "next/navigation";
@@ -154,44 +155,7 @@ export default async function Admin({
               Create content +
             </Link>
           </div>
-          <div className="admin-card table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Homepage</th>
-                  <th>Order</th>
-                  <th>Updated</th>
-                </tr>
-              </thead>
-              <tbody>
-                {contents.map((c) => (
-                  <tr key={c.id}>
-                    <td>
-                      <Link href={`/admin/content/${c.id}`}>{c.title}</Link>
-                      {c.demo && (
-                        <span className="demo-tag" style={{ marginLeft: 8 }}>
-                          Sample
-                        </span>
-                      )}
-                    </td>
-                    <td>{c.kind}</td>
-                    <td>
-                      <span className={`status ${c.status}`}>{c.status}</span>
-                    </td>
-                    <td>{c.featured ? "Featured" : "—"}</td>
-                    <td>{c.order}</td>
-                    <td>{new Date(c.updatedAt).toLocaleDateString("en-GB")}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!contents.length && (
-              <p>No content yet. Create your first journey.</p>
-            )}
-          </div>
+          <AdminCatalogue items={contents} />
         </>
       );
     }

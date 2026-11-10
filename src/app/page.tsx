@@ -20,6 +20,7 @@ import {
 import { visaGuides } from "@/lib/visa-guides";
 import { Footer } from "@/components/footer";
 import { CatalogueStatus } from "@/components/catalogue-status";
+import { inCollection } from "@/lib/classification";
 export const dynamic = "force-dynamic";
 export default async function Home() {
   const [items, s] = await Promise.all([publicContent(), settings()]);
@@ -28,7 +29,7 @@ export default async function Home() {
       .slice(0, 8),
     destinations = items.filter((x) => x.kind === "destination").slice(0, 6),
     resorts = items
-      .filter((x) => x.kind === "resort" && x.featured)
+      .filter((x) => inCollection(x, "resorts-and-villas") && x.featured)
       .slice(0, 4);
   const tile = (
     name: string,
@@ -174,7 +175,7 @@ export default async function Home() {
               items={internationalTiles}
             />
             <DestinationRow
-              title="Visa-free & free-visa destinations"
+              title="Visa-friendly destinations"
               items={visaTiles}
               href="/visa-free-destinations"
             />
@@ -192,7 +193,7 @@ export default async function Home() {
               ["Domestic trips", "domestic-trips"],
               ["Resorts & villas", "resorts-and-villas"],
               ["Europe road trips", "europe-road-trips"],
-              ["Visa-free & free-visa destinations", "visa-free-destinations"],
+              ["Visa-friendly destinations", "visa-free-destinations"],
             ].map(([label, url]) => (
               <Link key={url} href={`/${url}`}>
                 {label}

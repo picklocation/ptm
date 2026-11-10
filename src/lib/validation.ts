@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { collectionOptions, packageTypes } from "./classification";
 const text = z.string().trim().max(2000);
 export const enquirySchema = z
   .object({
@@ -95,6 +96,14 @@ export const contentSchema = z.object({
   location: text,
   region: z.string().max(100),
   country: z.string().max(100).optional(),
+  state: z.string().trim().max(100).optional(),
+  locations: z.array(z.string().trim().min(1).max(100)).max(40).optional(),
+  packageType: z.enum(packageTypes).optional(),
+  collections: z
+    .array(z.enum(collectionOptions.map((x) => x[0])))
+    .max(6)
+    .refine((x) => new Set(x).size === x.length)
+    .optional(),
   summary: z.string().max(400),
   description: z.string().max(10000),
   image,

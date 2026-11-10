@@ -37,6 +37,20 @@ Both enquiry buttons save the request in Supabase first. The WhatsApp option the
 
 ## Manage packages and destinations
 
+### Package classification
+
+The editor separates **page template**, **package format**, **geography**, and **website sections**. Templates preserve existing detail URLs. Formats include resort, villa, camping, glamping, houseboat, cab/self-drive road trip, city/beach holiday, adventure, honeymoon, group tour and custom holiday. Enter country, state/province and any number of local stops (up to 40). Locations are free text, so new places do not require a code change.
+
+Use **Show this package in** to select multiple collections. For example:
+
+- Munnar camping: stay template → Camping → India / Kerala / Munnar → Domestic, Kerala stays, Resorts/villas/camping, South India.
+- Switzerland sightseeing: holiday template → Custom holiday → Switzerland → International.
+- France–Switzerland road trip: road-trip template → Cab road trip → countries and stops → International + Europe road trips.
+
+Older records use inferred suggestions until manually assigned. Use automatic suggestions to reset manual assignments. Empty selections remove collection placement but do not unpublish a package or remove it from its general template listing. Homepage featured/order controls remain separate. Visa-friendly listings are country-based guidance, not a manual visa guarantee.
+
+The content list now supports location/name search, section, format and status filters and displays assignments. Visitors can search local stops and filter package format. Existing sample records have not been mass-edited into new formats; assign and review them as you edit.
+
 1. Open **Content & media** at /admin/content and select an item or create one.
 2. Choose holiday, road trip, resort or destination.
 3. Edit the name, URL slug, locations, description, duration and itinerary.

@@ -7,6 +7,10 @@ export type Content = {
   location: string;
   region: string;
   country?: string;
+  state?: string;
+  locations?: string[];
+  packageType?: (typeof import("./classification").packageTypes)[number];
+  collections?: import("./classification").Collection[];
   summary: string;
   description: string;
   image: string;

@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { TripCard } from "./ui";
 import type { Content } from "@/lib/types";
+import { packageTypes } from "@/lib/classification";
 export function Catalogue({
   items,
   destinations = false,
@@ -24,16 +25,18 @@ export function Catalogue({
     [region, setRegion] = useState(search.get("region") || ""),
     [duration, setDuration] = useState(search.get("duration") || ""),
     [theme, setTheme] = useState(search.get("theme") || ""),
+    [packageType, setPackageType] = useState(search.get("type") || ""),
     [page, setPage] = useState(1);
   const normalTheme = (value: string) =>
     value === "Couple" ? "Couples" : value;
   const filtered = items.filter(
     (x) =>
       (!query ||
-        `${x.title} ${x.location} ${x.region} ${x.country || ""}`
+        `${x.title} ${x.location} ${x.region} ${x.country || ""} ${x.state || ""} ${(x.locations || []).join(" ")} ${x.packageType || ""}`
           .toLowerCase()
           .includes(query.toLowerCase())) &&
       (!region || x.region === region) &&
+      (!packageType || x.packageType === packageType) &&
       (!theme || x.themes.map(normalTheme).includes(normalTheme(theme))) &&
       (!duration ||
         (duration === "short"
@@ -48,12 +51,25 @@ export function Catalogue({
     if (region) p.set("region", region);
     if (duration) p.set("duration", duration);
     if (theme) p.set("theme", theme);
+    if (packageType) p.set("type", packageType);
     router.replace(`?${p}`, { scroll: false });
     setPage(1);
     dialog.current?.close();
   }
   const filters = (
     <>
+      <label>
+        Package format
+        <select
+          value={packageType}
+          onChange={(e) => setPackageType(e.target.value)}
+        >
+          <option value="">All formats</option>
+          {packageTypes.map((t) => (
+            <option key={t}>{t}</option>
+          ))}
+        </select>
+      </label>
       <label>
         Region
         <select value={region} onChange={(e) => setRegion(e.target.value)}>
@@ -101,6 +117,7 @@ export function Catalogue({
           setRegion("");
           setDuration("");
           setTheme("");
+          setPackageType("");
           setPage(1);
           router.replace("?", { scroll: false });
           dialog.current?.close();
