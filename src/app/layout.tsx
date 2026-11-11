@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
     title: {
-      default: "PickTheMap — A place in mind. A journey made yours.",
+      default: "PickTheMap | Custom Holidays & Road Trips",
       template: "%s | PickTheMap",
     },
     description:
