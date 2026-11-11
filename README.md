@@ -26,6 +26,10 @@ Owner: **pickthemap@gmail.com**, using the password chosen privately during Supa
 
 Do not copy private credentials into GitHub or chat. The seed utility never resets an existing owner's password.
 
+## AI assistant handover
+
+For Claude Code, start with [CLAUDE.md](CLAUDE.md). Upload [the portable AI handover](docs/AI-HANDOVER.md) to another assistant to share the design decisions, architecture, owner preferences and deployment safeguards.
+
 ## Documentation
 
 - [Owner handbook](docs/OWNER-HANDBOOK.md): day-to-day content, enquiries, login and launch checklist.
