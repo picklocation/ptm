@@ -57,3 +57,7 @@ The cache update passed TypeScript, all 17 unit tests and the production build. 
 These changes add no schema migrations, API endpoints or new credentials. The prior Supabase flow checks remain documented in the [schema/API reference](SCHEMA-AND-API.md); they were not rerun for these visual changes.
 
 The [owner handbook](OWNER-HANDBOOK.md) is the current operational guide. The older 9 November PDF is historical and has not been regenerated.
+
+## Follow-up: recurring empty catalogue
+
+Live checks after the documentation update found the public domain still serving the older homepage copy without the new icon, and zero package cards. Public Supabase requests returned 200 published records and showcase=true. This confirms the records remain available, but does not expose the production runtime settings or cache contents. A remaining code path cached showcase lookup failures as false; the follow-up fix moves that fallback outside the persistent cache and changes its cache key. Promote the newest deployment and verify the public domain; an earlier Ready deployment does not contain this fix.

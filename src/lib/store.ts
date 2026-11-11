@@ -26,38 +26,42 @@ const publicCacheIdentity = [
 ];
 export const firebaseMode = () => process.env.DATA_BACKEND === "firebase";
 async function readShowcase() {
-  try {
-    if (supabaseMode()) {
-      const { data, error } = await publicSupabase().rpc("ptm_showcase");
-      databaseError(error);
-      return data === true;
-    }
-    return (
-      (
-        await publicReadDeadline(
-          get<{ enabled: boolean }>("runtimeConfig", "demoShowcase"),
-        )
-      )?.enabled === true
-    );
-  } catch (error) {
-    if (!isDatabaseUnavailable(error)) throw error;
-    return false;
-  } // Never enable sample publication when the mode cannot be verified.
+  if (supabaseMode()) {
+    const { data, error } = await publicSupabase().rpc("ptm_showcase");
+    databaseError(error);
+    return data === true;
+  }
+  return (
+    (
+      await publicReadDeadline(
+        get<{ enabled: boolean }>("runtimeConfig", "demoShowcase"),
+      )
+    )?.enabled === true
+  );
 }
 const cachedShowcase = unstable_cache(
   readShowcase,
-  ["ptm-showcase-v2", ...publicCacheIdentity],
+  ["ptm-showcase-v3", ...publicCacheIdentity],
   {
     revalidate: 900,
     tags: ["ptm-public"],
   },
 );
-export const demoEnabled = cache(
-  async () =>
-    (process.env.ENABLE_DEMO_CONTENT === "true" &&
-      process.env.VERCEL_ENV !== "production") ||
-    (await (persistentPublicCache() ? cachedShowcase() : readShowcase())),
-);
+export const demoEnabled = cache(async () => {
+  if (
+    process.env.ENABLE_DEMO_CONTENT === "true" &&
+    process.env.VERCEL_ENV !== "production"
+  )
+    return true;
+  try {
+    return await (persistentPublicCache() ? cachedShowcase() : readShowcase());
+  } catch (error) {
+    if (!isDatabaseUnavailable(error)) throw error;
+    // Fail closed for this request without caching an outage as a deliberate
+    // decision to hide samples. The next request must retry the database.
+    return false;
+  }
+});
 let sqlite: DatabaseSync | undefined;
 function local() {
   if (process.env.VERCEL)
