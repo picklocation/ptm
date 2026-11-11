@@ -18,6 +18,12 @@ import {
 } from "./supabase";
 const persistentPublicCache = () =>
   supabaseMode() || (firebaseMode() && !process.env.FIRESTORE_EMULATOR_HOST);
+// Vercel's data cache can survive deployment promotion. Never reuse Firebase
+// results (including earlier outage fallbacks) for a different backend/project.
+const publicCacheIdentity = [
+  process.env.DATA_BACKEND || "local",
+  process.env.SUPABASE_URL || process.env.FIREBASE_PROJECT_ID || "local",
+];
 export const firebaseMode = () => process.env.DATA_BACKEND === "firebase";
 async function readShowcase() {
   try {
@@ -38,10 +44,14 @@ async function readShowcase() {
     return false;
   } // Never enable sample publication when the mode cannot be verified.
 }
-const cachedShowcase = unstable_cache(readShowcase, ["ptm-showcase-v1"], {
-  revalidate: 900,
-  tags: ["ptm-public"],
-});
+const cachedShowcase = unstable_cache(
+  readShowcase,
+  ["ptm-showcase-v2", ...publicCacheIdentity],
+  {
+    revalidate: 900,
+    tags: ["ptm-public"],
+  },
+);
 export const demoEnabled = cache(
   async () =>
     (process.env.ENABLE_DEMO_CONTENT === "true" &&
@@ -267,23 +277,31 @@ export async function rateLimit(key: string, max = 8, windowMs = 600000) {
   }
 }
 async function readCatalogue() {
+  return {
+    items: await publicReadDeadline(list<Content>("publishedContent")),
+    unavailable: false,
+  };
+}
+const cachedCatalogue = unstable_cache(
+  readCatalogue,
+  ["ptm-catalogue-v3", ...publicCacheIdentity],
+  {
+    revalidate: 900,
+    tags: ["ptm-public"],
+  },
+);
+export const catalogueState = cache(async () => {
   try {
-    return {
-      items: await publicReadDeadline(list<Content>("publishedContent")),
-      unavailable: false,
-    };
+    return await (persistentPublicCache()
+      ? cachedCatalogue()
+      : readCatalogue());
   } catch (error) {
     if (!isDatabaseUnavailable(error)) throw error;
+    // Failure is handled outside unstable_cache so it cannot be cached as a
+    // successful empty catalogue for fifteen minutes.
     return { items: [] as Content[], unavailable: true };
   }
-}
-const cachedCatalogue = unstable_cache(readCatalogue, ["ptm-catalogue-v1"], {
-  revalidate: 900,
-  tags: ["ptm-public"],
 });
-export const catalogueState = cache(() =>
-  persistentPublicCache() ? cachedCatalogue() : readCatalogue(),
-);
 export const publicContent = cache(async () => {
   const showDemo = await demoEnabled();
   return (await catalogueState()).items
@@ -301,10 +319,14 @@ async function readSettings(): Promise<Settings> {
     return defaultSettings;
   }
 }
-const cachedSettings = unstable_cache(readSettings, ["ptm-settings-v1"], {
-  revalidate: 900,
-  tags: ["ptm-public"],
-});
+const cachedSettings = unstable_cache(
+  readSettings,
+  ["ptm-settings-v2", ...publicCacheIdentity],
+  {
+    revalidate: 900,
+    tags: ["ptm-public"],
+  },
+);
 export const settings = cache(() =>
   persistentPublicCache() ? cachedSettings() : readSettings(),
 );
