@@ -68,19 +68,42 @@ export default async function Home() {
   const popularTiles = destinations.map((d) =>
     tile(d.title, d, "/destinations/" + d.slug),
   );
-  const internationalTiles = popularTiles.filter(
-    (_, i) => destinations[i].region !== "India",
+  // Treat Bali and Indonesia as the same destination for row selection.
+  const destinationKey = (name: string) => {
+    const key = name.trim().toLowerCase();
+    return key === "bali" ? "indonesia" : key;
+  };
+  const usedDestinations = new Set(
+    destinations.flatMap((d) =>
+      [d.title, d.country]
+        .filter((name): name is string => !!name)
+        .map(destinationKey),
+    ),
   );
+  const internationalTiles: DestinationTile[] = [];
+  for (const destination of items.filter(
+    (x) =>
+      x.kind === "destination" && x.region !== "India" && x.country !== "India",
+  )) {
+    const keys = [destination.title, destination.country]
+      .filter((name): name is string => !!name)
+      .map(destinationKey);
+    if (keys.some((key) => usedDestinations.has(key))) continue;
+    internationalTiles.push(
+      tile(destination.title, destination, "/destinations/" + destination.slug),
+    );
+    keys.forEach((key) => usedDestinations.add(key));
+  }
   for (const item of items.filter(
-    (x) => x.kind === "holiday" && x.country && x.region !== "India",
+    (x) =>
+      x.kind === "holiday" &&
+      x.country &&
+      x.country !== "India" &&
+      x.region !== "India",
   )) {
     if (
       item.country!.includes("/") ||
-      internationalTiles.some(
-        (d) =>
-          d.name === item.country ||
-          (d.name === "Bali" && item.country === "Indonesia"),
-      )
+      usedDestinations.has(destinationKey(item.country!))
     )
       continue;
     internationalTiles.push(
@@ -90,6 +113,7 @@ export default async function Home() {
         "/international-trips?q=" + encodeURIComponent(item.country!),
       ),
     );
+    usedDestinations.add(destinationKey(item.country!));
   }
   const visaTiles = visaGuides.flatMap((v) => {
     const item = items.find(
