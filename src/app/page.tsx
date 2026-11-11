@@ -21,6 +21,29 @@ import { visaGuides } from "@/lib/visa-guides";
 import { Footer } from "@/components/footer";
 import { CatalogueStatus } from "@/components/catalogue-status";
 import { inCollection } from "@/lib/classification";
+const destinationCaptions: Record<string, string> = {
+  Bali: "Temples, terraces & coast",
+  Switzerland: "Lakes beneath the Alps",
+  Kerala: "Backwaters & tea hills",
+  Thailand: "Islands & golden temples",
+  Italy: "Art, piazzas & coastlines",
+  Singapore: "Gardens above the city",
+  Maldives: "Life by the lagoon",
+  Malaysia: "City lights & island days",
+  "Sri Lanka": "Tea country to the coast",
+  Mauritius: "Beyond the blue lagoon",
+  Japan: "Mountain trails & city lights",
+  Norway: "Along the fjords",
+  Kenya: "Across the savannah",
+  Kashmir: "Lakes & mountain valleys",
+  Rajasthan: "Forts & desert skies",
+  "Delhi, Agra & Jaipur": "Three cities, centuries of stories",
+  Goa: "Slow days by the sea",
+  Andaman: "Islands in the blue",
+  Bhutan: "Monasteries in the mountains",
+  Nepal: "Himalayan trails & valleys",
+  "South India": "Hill stays & coastal escapes",
+};
 export const dynamic = "force-dynamic";
 export default async function Home() {
   const [items, s] = await Promise.all([publicContent(), settings()]);
@@ -35,7 +58,13 @@ export default async function Home() {
     name: string,
     item: (typeof items)[number],
     href: string,
-  ): DestinationTile => ({ name, image: item.image, alt: item.imageAlt, href });
+  ): DestinationTile => ({
+    name,
+    caption: destinationCaptions[name],
+    image: item.image,
+    alt: item.imageAlt,
+    href,
+  });
   const popularTiles = destinations.map((d) =>
     tile(d.title, d, "/destinations/" + d.slug),
   );
@@ -206,7 +235,7 @@ export default async function Home() {
               {
                 icon: Globe2,
                 title: "International trips",
-                text: "Big adventures. Little escapes. All yours.",
+                text: "Multi-city holidays, island breaks and time to explore.",
                 href: "/international-trips",
               },
               {
@@ -218,7 +247,7 @@ export default async function Home() {
               {
                 icon: Palmtree,
                 title: "Resorts & villas",
-                text: "Beautiful stays. Room to unwind.",
+                text: "Find a stay for a weekend, a family trip or a quiet break.",
                 href: "/resorts-and-villas",
               },
             ].map((c) => (
@@ -237,8 +266,8 @@ export default async function Home() {
           <section className="section">
             <SectionTitle
               eyebrow="Good places to start"
-              title="Your next great story starts here"
-              description="A few journeys to spark an idea. We’ll make the details your own."
+              title="Holidays to make your own"
+              description="Start with a route you like. We’ll help with the dates, stays and stops."
               href="/holidays"
               label="Explore holidays"
             />

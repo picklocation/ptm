@@ -2,7 +2,7 @@
 @theme {
   --color-brand: #05a660;
   --color-forest: #063f2e;
-  --font-sans: "Inter", sans-serif;
+  --font-sans: "Outfit", sans-serif;
 }
 :root {
   scroll-padding-bottom: 100px;
@@ -25,14 +25,16 @@ body {
   margin: 0;
   color: var(--ink);
   background: #fff;
-  font-family: "Inter", sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 15px;
   line-height: 1.65;
 }
 h1,
 h2,
 h3,
-h4,
+h4 {
+  font-family: "Outfit", sans-serif;
+}
 .brand {
   font-family: "Plus Jakarta Sans", sans-serif;
 }
@@ -2893,5 +2895,76 @@ body:has(.hero-wrap) .hero-wrap {
   }
   .destination-row-controls {
     gap: 5px;
+  }
+}
+/* Rounded travel typography and destination captions. */
+.hero p {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.25px;
+  width: 290px;
+}
+.hero h1 {
+  font-weight: 600;
+  letter-spacing: -0.045em;
+}
+.destination-name-track .destination-tile > .destination-label {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+  bottom: 22px;
+  text-shadow: 0 1px 8px #0006;
+}
+.destination-label small {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+.destination-label strong {
+  font-size: clamp(23px, 2vw, 30px);
+  line-height: 1.15;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.destination-name-track .destination-tile > div {
+  inset: 30% 0 0;
+  background: linear-gradient(transparent, #061c18ed);
+}
+@media (min-width: 901px) and (max-width: 1200px) {
+  .hero p {
+    width: 225px;
+    font-size: 18px;
+  }
+  .hero h1 {
+    max-width: 60%;
+    font-size: 52px;
+  }
+}
+@media (max-width: 900px) {
+  .hero p {
+    width: auto;
+    max-width: 390px;
+    font-size: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .hero p {
+    max-width: 300px;
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  .hero-actions {
+    margin-top: 80px;
+  }
+  .destination-label strong {
+    font-size: 26px;
+  }
+  .destination-label small {
+    font-size: 10px;
   }
 }

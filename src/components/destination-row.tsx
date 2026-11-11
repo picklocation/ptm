@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export type DestinationTile = {
   name: string;
+  caption?: string;
   image: string;
   alt: string;
   href: string;
@@ -103,7 +104,10 @@ export function DestinationRow({
               unoptimized={item.image.startsWith("/api/media/")}
             />
             <div />
-            <span>{item.name}</span>
+            <span className="destination-label">
+              {item.caption && <small>{item.caption}</small>}
+              <strong>{item.name}</strong>
+            </span>
           </Link>
         ))}
       </div>

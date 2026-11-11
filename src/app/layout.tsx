@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/500.css";
-import "@fontsource/inter/600.css";
+import "@fontsource/outfit/latin-400.css";
+import "@fontsource/outfit/latin-500.css";
+import "@fontsource/outfit/latin-600.css";
+import "@fontsource/outfit/latin-700.css";
 import "@fontsource/plus-jakarta-sans/500.css";
 import "@fontsource/plus-jakarta-sans/600.css";
 import "@fontsource/plus-jakarta-sans/700.css";

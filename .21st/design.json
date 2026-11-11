@@ -1,1 +1,22 @@
-{"project":"PickTheMap","direction":"Reference-led travel discovery","reference":"https://www.mytourcab.com/","decisions":["Use the supplied PNG artwork unchanged","Rounded photographic hero, destination tiles, compact trip cards","White and gray foundation with restrained green","Mobile forms and enquiry actions take priority","No invented prices, reviews or booking guarantees"],"tokens":{"background":"#FFFFFF","surface":"#F6F8F5","text":"#122B25","action":"#063F2E","accent":"#05A660"},"catalogueSearch":"Attempted; 21st CLI requires authentication. No catalogue component code retrieved."}
+{
+  "project": "PickTheMap",
+  "direction": "Reference-led travel discovery",
+  "reference": "https://www.mytourcab.com/",
+  "decisions": [
+    "Use the supplied PNG artwork unchanged",
+    "Rounded photographic hero, destination tiles, compact trip cards",
+    "White and gray foundation with restrained green",
+    "Mobile forms and enquiry actions take priority",
+    "No invented prices, reviews or booking guarantees",
+    "Use self-hosted Outfit for rounded travel copy and headings; preserve the Jakarta wordmark",
+    "Destination cards use centered white names with small place-specific captions"
+  ],
+  "tokens": {
+    "background": "#FFFFFF",
+    "surface": "#F6F8F5",
+    "text": "#122B25",
+    "action": "#063F2E",
+    "accent": "#05A660"
+  },
+  "catalogueSearch": "Attempted; 21st CLI requires authentication. No catalogue component code retrieved."
+}
