@@ -148,7 +148,6 @@ export default async function Home() {
   const southIndiaCover =
     items.find((x) => x.id === "wayanad") ||
     items.find((x) => x.id === "kerala");
-  const southAsiaCover = items.find((x) => x.region === "South Asia");
   domesticTiles.unshift(
     {
       name: "Resorts & Stays",
@@ -163,13 +162,6 @@ export default async function Home() {
       image: southIndiaCover?.image || photos.kerala,
       alt: southIndiaCover?.imageAlt || "South India travel inspiration",
       href: "/south-india",
-    },
-    {
-      name: "South Asia",
-      caption: "Discover nearby journeys",
-      image: southAsiaCover?.image || photos.kerala,
-      alt: southAsiaCover?.imageAlt || "South Asia travel inspiration",
-      href: "/south-asia",
     },
   );
   return (

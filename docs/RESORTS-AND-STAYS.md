@@ -4,7 +4,7 @@ Updated 11 November 2026.
 
 ## Visitor flow
 
-The domestic/neighbouring homepage row starts with Resorts & Stays, South India, then South Asia. Other destination cards remain. Public navigation labels now say Resorts & Stays.
+The domestic/neighbouring homepage row starts with Resorts & Stays, then South India. The South Asia category card is omitted. Other destination cards remain. Public navigation labels now say Resorts & Stays.
 
 `/resorts-and-stays` shows Wayanad, Munnar, Vagamon, Ooty, Kodaikanal, Kulukkumala, Kakkadampoyil, Vattavada, Bangalore, Varkala, Thekkady, Kochi, Calicut, Goa, Alleppey and Coorg. Each links to `/resorts-and-stays/{destination}`. Destination imagery is inspiration until the owner supplies approved location photographs.
 
