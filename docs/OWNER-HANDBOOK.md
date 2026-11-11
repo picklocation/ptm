@@ -1,6 +1,6 @@
 # PickTheMap owner handbook
 
-Updated 10 November 2026.
+Updated 11 November 2026.
 
 ## Where things stand
 
@@ -8,7 +8,7 @@ Your new backend uses Supabase for packages, enquiries, staff login and image st
 
 There are 200 sample catalogue records, including five holidays each across ten international countries and five each for sixteen Indian/regional locations, alongside destination, resort and Europe road-trip entries. Nine shared travel photos, your logo and a placeholder are stored in Supabase. Photos are illustrative, not verified photographs of each named property.
 
-You chose a fresh start: old Firebase enquiries and edited content were not copied. Firebase remains untouched. Local tests pass; hosted preview verification and production promotion remain unconfirmed.
+You chose a fresh start: old Firebase enquiries and edited content were not copied. Firebase remains untouched. The owner reported a production promotion, followed by missing packages. Direct Supabase reads returned 200 published records. A cache fix is pushed; promotion of that fix and the latest design changes still needs verification.
 
 ## Admin login
 
@@ -47,7 +47,7 @@ Use **Show this package in** to select multiple collections. For example:
 - Switzerland sightseeing: holiday template → Custom holiday → Switzerland → International.
 - France–Switzerland road trip: road-trip template → Cab road trip → countries and stops → International + Europe road trips.
 
-Older records use inferred suggestions until manually assigned. Use automatic suggestions to reset manual assignments. Empty selections remove collection placement but do not unpublish a package or remove it from its general template listing. Homepage featured/order controls remain separate. Visa-friendly listings are country-based guidance, not a manual visa guarantee.
+Older records use inferred suggestions until manually assigned. Use automatic suggestions to reset manual assignments. Empty selections remove collection placement but do not unpublish a package or remove it from its general template listing. Homepage featured/order controls remain separate. The “Visa-Free-destinations” listings are country-based guidance, not a manual visa guarantee.
 
 The content list now supports location/name search, section, format and status filters and displays assignments. Visitors can search local stops and filter package format. Existing sample records have not been mass-edited into new formats; assign and review them as you edit.
 
@@ -104,7 +104,7 @@ Sample packages retain demo flags and fictional-price conditions. Showcase mode 
 
 ## Deployment and domain
 
-The Supabase code is on **codex/migrate-supabase**. The latest UI change removes the wordmark dot. Vercel variable names have been assigned to Production and Preview, but hidden values cannot be confirmed from screenshots.
+The Supabase code is on **codex/migrate-supabase**. Recent UI changes introduce Outfit typography, destination captions and browser icons. See [current updates](CURRENT-UPDATES.md) for details and commit references. Vercel variable names have been assigned to Production and Preview, but hidden values cannot be confirmed from screenshots.
 
 Next:
 1. Open the newest ready migration Preview deployment.
@@ -112,14 +112,14 @@ Next:
 3. Approve promotion to Production after those checks pass.
 4. Verify the public domain and admin again.
 
-The current public domain is https://ptm-alpha.vercel.app; a successful Supabase production switch has not yet been confirmed. No custom domain purchase or DNS connection has been confirmed. Once purchased, add it in Vercel, apply Vercel's displayed DNS records at the registrar, and update production SITE_URL before redeploying.
+The current public domain is https://ptm-alpha.vercel.app; the latest cache fix and design updates have not yet been verified on that domain. No custom domain purchase or DNS connection has been confirmed. Once purchased, add it in Vercel, apply Vercel's displayed DNS records at the registrar, and update production SITE_URL before redeploying.
 
 Do not delete the Firebase setup yet. If rolling back after taking new Supabase enquiries, retain/export those new enquiries first.
 
 ## What is tested and what remains
 
-Passed locally: production build, TypeScript, thirteen tests, owner login, publishing and public detail pages, enquiry saving and retries, Excel export, uploads, private photo access, role restrictions, disabled accounts, unpublishing and logout.
+Passed locally: production build, TypeScript, seventeen tests, owner login, publishing and public detail pages, enquiry saving and retries, Excel export, uploads, private photo access, role restrictions, disabled accounts, unpublishing and logout.
 
-Remaining: hosted preview verification, approved production promotion, real content/pricing review, legal/contact details, optional email recovery/notifications, custom domain and any later CRM integration. No paid service was enabled by this work.
+Remaining: verify the newest deployment and its production promotion, real content/pricing review, legal/contact details, optional email recovery/notifications, custom domain and any later CRM integration. No paid service was enabled by this work.
 
 See [technical launch instructions](SUPABASE-LAUNCH.md) and [schema/API reference](SCHEMA-AND-API.md). Any previously generated PDF dated 9 November describes the earlier Firebase setup; this updated Markdown handbook supersedes it.

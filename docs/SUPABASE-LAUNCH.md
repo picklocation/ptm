@@ -1,10 +1,10 @@
 # PickTheMap: Supabase setup and handover
 
-Status updated 10 November 2026: local Supabase verification passed; owner account provisioned. Vercel screenshots confirm required variable names are assigned to Production and Preview and the migration Preview redeploy was selected. Hidden values, the resulting hosted behaviour and production promotion are not yet verified. The latest visual change removes the trailing green dot from the wordmark (commit f700f36).
+Status updated 11 November 2026: Supabase and owner access are provisioned. The owner reported a production promotion; subsequent live checks showed a catalogue outage despite 200 published records being available in Supabase. A cache fix and newer visual updates are pushed to the migration branch. Their production promotion and full hosted flow still need verification. See [current updates](CURRENT-UPDATES.md).
 
 ## What changed
 
-The existing website now supports `DATA_BACKEND=supabase`: PostgreSQL for catalogue and enquiries, Supabase Auth for staff, and Supabase Storage for photographs and uploads. URLs and visual design are preserved. Firebase mode remains available only as a transition/rollback option; Supabase mode does not read or write Firebase. The original production branch is unchanged until cutover approval.
+The existing website now supports `DATA_BACKEND=supabase`: PostgreSQL for catalogue and enquiries, Supabase Auth for staff, and Supabase Storage for photographs and uploads. URLs and visual design are preserved. Firebase mode remains available only as a transition/rollback option; Supabase mode does not read or write Firebase. The original production branch and the migration branch remain separate; manually promoting a deployment does not merge their code.
 
 At the owner's request, this is a **fresh start**, not a historical data import. The 200 original sample entries have been recreated. Old enquiries and owner content edits remain in Firebase only. Initial business details use safe defaults; fill in approved contact, legal, and company information in admin.
 

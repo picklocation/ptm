@@ -1,6 +1,6 @@
 # PickTheMap setup and admin access
 
-Updated 10 November 2026. This replaces the previous Firebase-first setup instructions.
+Updated 11 November 2026. This replaces the previous Firebase-first setup instructions.
 
 Use the [Supabase launch guide](SUPABASE-LAUNCH.md) for current configuration and the [owner handbook](OWNER-HANDBOOK.md) for daily operations.
 
@@ -17,8 +17,8 @@ The new Supabase login is separate from the old Firebase login. Editing `SUPABAS
 
 ## Current deployment state
 
-Code and the wordmark change are pushed to GitHub on `codex/migrate-supabase`. Supabase tables, access rules, 200 sample entries, Storage assets and owner access are prepared. Local verification passed.
+Code, catalogue cache fixes, typography, destination captions and browser icons are pushed to GitHub on `codex/migrate-supabase`. Supabase tables, access rules, 200 sample entries, Storage assets and owner access are prepared. Local verification passed.
 
-The user assigned the six required environment-variable names to Production and Preview in Vercel and selected the migration branch's Preview redeploy. Successful hosted testing and promotion to production are still unconfirmed. Do not describe the old production domain as migrated until verified.
+The six required environment-variable names were assigned to Production and Preview. The owner reported promoting the migration deployment, but live checks then showed an unavailable catalogue. The cache fix and subsequent design changes are pushed; verify and promote the newest ready deployment. A preview push does not automatically update the public domain. See [current updates](CURRENT-UPDATES.md).
 
 Firebase data was not imported, at the owner's request. No Firebase resources were deleted or disabled.

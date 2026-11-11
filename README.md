@@ -2,11 +2,11 @@
 
 Next.js travel discovery, personalised enquiries and a protected admin portal.
 
-## Current status — 10 November 2026
+## Current status — 11 November 2026
 
-The Supabase version is implemented and tested on `codex/migrate-supabase`. It uses PostgreSQL, Supabase Auth and Supabase Storage. Vercel remains the host. The latest visual change removes the dot after the PickTheMap wordmark.
+The Supabase version is implemented and tested on `codex/migrate-supabase`. It uses PostgreSQL, Supabase Auth and Supabase Storage. Vercel remains the host. Recent updates add Outfit typography, destination photo captions, browser/home-screen icons and backend-specific catalogue caching. See [current updates and deployment checklist](docs/CURRENT-UPDATES.md).
 
-This is an owner-approved fresh start: 200 sample catalogue entries were recreated; historical Firebase enquiries and edits were not imported. Firebase remains intact. Production promotion and hosted end-to-end verification have not been confirmed. Vercel screenshots show the six required variable names assigned to Production and Preview; masked values cannot be verified from screenshots.
+This is an owner-approved fresh start: 200 sample catalogue entries were recreated; historical Firebase enquiries and edits were not imported. Firebase remains intact. The owner reported promoting the migration deployment, but subsequent live checks found an unavailable catalogue. The cache fix and newer design changes are pushed; their production promotion and hosted end-to-end verification remain unconfirmed. Vercel screenshots show the six required variable names assigned to Production and Preview; masked values cannot be verified from screenshots.
 
 ## Start the prepared Supabase version
 
@@ -43,7 +43,7 @@ npx tsx scripts/migration/verify-access.ts
 npx tsx scripts/migration/verify-supabase-flow.ts
 ```
 
-Thirteen tests and the production build passed. The Supabase flow verified owner login, publishing, public detail pages, enquiry persistence/idempotency, delivery jobs, enquiry updates, Excel export, uploads, private/public image access, role isolation, account disabling, unpublishing and logout. Flow tests create and clean up disposable records in the configured Supabase project.
+Seventeen tests and the production build passed. The Supabase flow verified owner login, publishing, public detail pages, enquiry persistence/idempotency, delivery jobs, enquiry updates, Excel export, uploads, private/public image access, role isolation, account disabling, unpublishing and logout. Flow tests create and clean up disposable records in the configured Supabase project.
 
 ## Retained adapters
 

@@ -1,6 +1,6 @@
 # Supabase schema and HTTP API
 
-Updated 10 November 2026. Canonical records: `src/lib/types.ts`; validation: `src/lib/validation.ts`. SQL migrations are under `supabase/migrations`.
+Updated 11 November 2026. Canonical records: `src/lib/types.ts`; validation: `src/lib/validation.ts`. SQL migrations are under `supabase/migrations`.
 
 ## Tables and relationships
 
@@ -67,9 +67,9 @@ Errors generally use `{error:string}`; enquiry validation also supplies `fields`
 
 ## Verification and operations
 
-Thirteen tests, TypeScript and the Supabase production build passed. The local end-to-end check verified login, dashboard, publication/discovery, enquiry persistence and idempotency, delivery jobs, enquiry updates, Excel export, valid/invalid uploads, private/public media access, role isolation, disabled accounts, unpublishing and logout. Disposable test records were removed.
+Seventeen tests, TypeScript and the Supabase production build passed. The local end-to-end check verified login, dashboard, publication/discovery, enquiry persistence and idempotency, delivery jobs, enquiry updates, Excel export, valid/invalid uploads, private/public media access, role isolation, disabled accounts, unpublishing and logout. Disposable test records were removed.
 
-Public catalogue/settings/showcase reads cache for 15 minutes; publishing, unpublishing, archiving and settings changes invalidate the public tag. Staff and enquiry reads are not cached. External database edits may take up to 15 minutes to appear. Public reads have a five-second deadline and show an unavailable state on classified database outages.
+Public catalogue/settings/showcase cache keys include the backend and project URL/ID to isolate Firebase from Supabase. Successful catalogue reads cache for 15 minutes; catalogue errors are caught outside the persistent cache, so an outage is not stored as a successful empty result. Settings/showcase retain their existing fallback behaviour. Publishing, unpublishing, archiving and settings changes invalidate the public tag. Other successful public reads cache for 15 minutes. Staff and enquiry reads are not cached. External database edits may take up to 15 minutes to appear. Public reads have a five-second deadline and show an unavailable state on classified database outages.
 
 ```powershell
 npm run typecheck
@@ -79,4 +79,4 @@ npx tsx scripts/migration/verify-access.ts
 npx tsx scripts/migration/verify-supabase-flow.ts
 ```
 
-Hosted preview testing and production promotion are not yet confirmed. See SUPABASE-LAUNCH.md for deployment. The owner approved a fresh catalogue rather than historical Firebase import; optional backup tools remain available but are not a launch dependency.
+The owner reported promoting an earlier migration deployment. The latest cache fix and visual updates still need hosted verification and confirmed promotion. See SUPABASE-LAUNCH.md for deployment. The owner approved a fresh catalogue rather than historical Firebase import; optional backup tools remain available but are not a launch dependency.
