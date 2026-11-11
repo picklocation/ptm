@@ -158,6 +158,10 @@ export function Catalogue({
         >
           <Search size={20} />
           <input
+            type="search"
+            name="q"
+            autoComplete="off"
+            enterKeyHint="search"
             aria-label="Search destinations or trips"
             placeholder="Where would you like to go?"
             value={query}
@@ -177,7 +181,7 @@ export function Catalogue({
         </button>
       </div>
       <div className="filter-bar">{filters}</div>
-      <dialog className="filter-dialog" ref={dialog}>
+      <dialog className="filter-dialog" ref={dialog} aria-label="Filter trips">
         <div className="menu-top">
           <h2>Find your kind of trip</h2>
           <button

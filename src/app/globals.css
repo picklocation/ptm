@@ -2973,3 +2973,87 @@ body:has(.hero-wrap) .hero-wrap {
     font-size: 10px;
   }
 }
+
+/* Mobile form focus: readable controls without blocking user-controlled zoom. */
+.finder label span,
+.catalogue-search form,
+.filter-bar label,
+.field,
+.editor-grid > *,
+.admin-details > * {
+  min-width: 0;
+}
+.finder input:focus-visible,
+.finder select:focus-visible,
+.catalogue-search input:focus-visible {
+  outline: none;
+  box-shadow: inset 0 -2px 0 var(--ink);
+}
+.form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.admin-card,
+.table-wrap {
+  min-width: 0;
+  max-width: 100%;
+}
+.admin-top > div,
+.admin-details dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.mobile-menu,
+.filter-dialog {
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+@media (max-width: 1100px), (pointer: coarse) {
+  /* Specificity deliberately exceeds individual field and finder rules. */
+  body
+    :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not(
+      [type="hidden"]
+    ) {
+    font-size: 16px;
+  }
+}
+@media (max-width: 800px) {
+  .finder input,
+  .finder select,
+  .admin-sidebar nav a,
+  .admin-toolbar select {
+    min-height: 44px;
+  }
+  .admin-sidebar nav a {
+    display: inline-flex;
+    align-items: center;
+  }
+  .filter-bar {
+    flex-wrap: wrap;
+  }
+  .filter-bar label {
+    flex-basis: 40%;
+  }
+  .editor-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .admin-table {
+    min-width: 580px;
+  }
+  .admin-toolbar > input,
+  .admin-toolbar > select {
+    max-width: 100%;
+  }
+  body:has(.mobile-bottom) {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  body:has(.admin-shell),
+  body:has(.login-page) {
+    padding-bottom: 0;
+  }
+}

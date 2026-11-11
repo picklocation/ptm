@@ -63,6 +63,7 @@ export function Header() {
       <dialog
         ref={dialog}
         className="mobile-menu"
+        aria-label="Site navigation"
         onClose={() => setOpen(false)}
         onClick={(e) => {
           if (e.target === dialog.current) dialog.current.close();

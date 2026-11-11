@@ -21,7 +21,10 @@ export function Finder() {
         <span>
           Where to?
           <input
+            type="search"
             name="q"
+            autoComplete="off"
+            enterKeyHint="search"
             placeholder="A place you’ve been dreaming of"
             aria-label="Destination"
           />

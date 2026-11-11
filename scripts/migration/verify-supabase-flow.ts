@@ -37,7 +37,9 @@ const content = {
   state: "Kerala",
   locations: ["Munnar", "Vattavada"],
   packageType: "Camping" as const,
-  collections: ["domestic-trips", "kerala-resorts", "resorts-and-villas"] as ("domestic-trips" | "kerala-resorts" | "resorts-and-villas")[],
+  collections: ["domestic-trips", "kerala-resorts", "resorts-and-villas"] as (
+    "domestic-trips" | "kerala-resorts" | "resorts-and-villas"
+  )[],
 };
 const createdUsers: string[] = [];
 let uploadedId = "";
@@ -54,15 +56,42 @@ async function main() {
   });
   assert.equal(login.status, 200, "Owner login");
   assert.equal((await call("/admin")).status, 200, "Owner dashboard");
+  for (const [route, heading] of [
+    ["/admin/content", "Content &amp; journeys"],
+    ["/admin/content/new", "A new journey"],
+    ["/admin/enquiries", "Enquiries"],
+    ["/admin/settings", "Frequently asked questions"],
+    ["/admin/staff", "Staff &amp; access"],
+    ["/admin/audit", "Audit"],
+  ]) {
+    const response = await call(route);
+    assert.equal(response.status, 200, `Owner module ${route}`);
+    assert.ok(
+      (await response.text()).includes(heading),
+      `Module content ${route}`,
+    );
+  }
   const publish = await call("/api/admin/content", {
     content,
     action: "publish",
   });
   assert.equal(publish.status, 200, "Package publication");
-  const classified=await service.from("content").select("data").eq("id",id).single();
-  assert.equal(classified.data?.data.packageType,"Camping","Classification persisted");
-  assert.deepEqual(classified.data?.data.locations,["Munnar","Vattavada"]);
-  assert.match(await (await call("/kerala-resorts",undefined,false)).text(),new RegExp(id),"Assigned package reaches Kerala section");
+  const classified = await service
+    .from("content")
+    .select("data")
+    .eq("id", id)
+    .single();
+  assert.equal(
+    classified.data?.data.packageType,
+    "Camping",
+    "Classification persisted",
+  );
+  assert.deepEqual(classified.data?.data.locations, ["Munnar", "Vattavada"]);
+  assert.match(
+    await (await call("/kerala-resorts", undefined, false)).text(),
+    new RegExp(id),
+    "Assigned package reaches Kerala section",
+  );
   assert.equal(
     (await call(`/holidays/${id}`, undefined, false)).status,
     200,

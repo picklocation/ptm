@@ -32,6 +32,8 @@ For Claude Code, start with [CLAUDE.md](CLAUDE.md). Upload [the portable AI hand
 
 ## Documentation
 
+- [Admin/mobile review](docs/ADMIN-MOBILE-REVIEW.md): fixes, capability inventory and remaining device checks.
+
 - [Owner handbook](docs/OWNER-HANDBOOK.md): day-to-day content, enquiries, login and launch checklist.
 - [Supabase launch guide](docs/SUPABASE-LAUNCH.md): configuration, hosting and API map.
 - [Schema and API reference](docs/SCHEMA-AND-API.md): tables, relationships, permissions and endpoint contracts.
