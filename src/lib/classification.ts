@@ -17,7 +17,7 @@ export const packageTypes = [
 export const collectionOptions = [
   ["international-trips", "International trips"],
   ["domestic-trips", "Domestic trips"],
-  ["resorts-and-villas", "Resorts, villas & camping"],
+  ["resorts-and-villas", "Resorts & Stays"],
   ["kerala-resorts", "Kerala stays & camping"],
   ["europe-road-trips", "Europe road trips"],
   ["south-india", "South India"],

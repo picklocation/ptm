@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
 import { publicContent, settings } from "@/lib/store";
@@ -12,6 +12,12 @@ const catalogues: Record<
   string,
   { kind: string; title: string; description: string }
 > = {
+  "south-asia": {
+    kind: "holiday",
+    title: "South Asia",
+    description:
+      "Explore holidays across South Asia, with routes and stays tailored to you.",
+  },
   "south-india": {
     kind: "destination",
     title: "South India",
@@ -32,7 +38,7 @@ const catalogues: Record<
   },
   "resorts-and-villas": {
     kind: "resort",
-    title: "Resorts & villas",
+    title: "Resorts & Stays",
     description:
       "Find your kind of downtime. Budget-friendly escapes, family stays and quiet places for two.",
   },
@@ -93,6 +99,7 @@ export default async function Page({
 }) {
   const { section } = await params;
   const c = catalogues[section];
+  if (section === "resorts-and-villas") permanentRedirect("/resorts-and-stays");
   if (c) {
     const items = (await publicContent()).filter((x) =>
       collectionOptions.some(([id]) => id === section)
@@ -101,6 +108,7 @@ export default async function Page({
             x.kind === "destination" &&
             southIndiaLocations.some((place) => place.slug === x.slug))
         : x.kind === c.kind &&
+          (section !== "south-asia" || x.region === "South Asia") &&
           (section !== "south-india" ||
             southIndiaLocations.some((place) => place.slug === x.slug)) &&
           (section !== "domestic-trips" || x.region === "India") &&

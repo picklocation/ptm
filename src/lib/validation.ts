@@ -96,6 +96,17 @@ export const contentSchema = z.object({
   location: text,
   region: z.string().max(100),
   country: z.string().max(100).optional(),
+  stayDestination: z.boolean().optional(),
+  stayDestinationSlug: z
+    .string()
+    .regex(/^(?:[a-z0-9]+(?:-[a-z0-9]+)*)?$/)
+    .max(160)
+    .optional(),
+  propertyVerified: z.boolean().optional(),
+  stayTags: z
+    .array(z.enum(["Couples", "Families", "Budget", "Premium", "Luxury"]))
+    .max(5)
+    .optional(),
   state: z.string().trim().max(100).optional(),
   locations: z.array(z.string().trim().min(1).max(100)).max(40).optional(),
   packageType: z.enum(packageTypes).optional(),
@@ -150,6 +161,18 @@ export const contentSchema = z.object({
 });
 export function publishErrors(c: z.infer<typeof contentSchema>) {
   return [
+    c.kind === "resort" &&
+      !c.demo &&
+      !c.stayDestinationSlug &&
+      "Choose a stay destination before publishing this property.",
+    c.kind === "resort" &&
+      !c.demo &&
+      !c.propertyVerified &&
+      "Verify the property information before publishing it in Resorts & Stays.",
+    c.kind === "resort" &&
+      c.stayDestinationSlug &&
+      c.demo &&
+      "Sample properties cannot be published in the verified stays directory.",
     !c.image && "Add a cover image.",
     !c.imageAlt && "Add image alt text.",
     !c.summary && "Add a summary.",

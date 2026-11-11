@@ -42,7 +42,7 @@ export function Finder() {
               Visa-Free-destinations
             </option>
             <option value="/europe-road-trips">Europe road trip</option>
-            <option value="/resorts-and-villas">Resorts & villas</option>
+            <option value="/resorts-and-stays">Resorts & Stays</option>
           </select>
         </span>
       </label>

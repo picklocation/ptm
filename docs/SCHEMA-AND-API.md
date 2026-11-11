@@ -80,3 +80,7 @@ npx tsx scripts/migration/verify-supabase-flow.ts
 ```
 
 The owner reported promoting an earlier migration deployment. The latest cache fix and visual updates still need hosted verification and confirmed promotion. See SUPABASE-LAUNCH.md for deployment. The owner approved a fresh catalogue rather than historical Firebase import; optional backup tools remain available but are not a launch dependency.
+
+## Resorts & Stays extension
+
+Content JSONB now supports optional stayDestination (boolean), stayDestinationSlug (slug), propertyVerified (boolean) and stayTags (Couples/Families/Budget/Premium/Luxury). No schema migration is required. Real resort publication requires destination assignment and admin verification; directory publication rejects sample properties. All public resort browsing excludes sample/unverified records, even when sample holiday showcase is enabled. The enquiry endpoint derives the selected resort title and destination from published content. See [the stays guide](RESORTS-AND-STAYS.md) for routes and admin instructions.

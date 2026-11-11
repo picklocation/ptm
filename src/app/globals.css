@@ -3057,3 +3057,77 @@ body:has(.hero-wrap) .hero-wrap {
     padding-bottom: 0;
   }
 }
+
+/* Destination-first stays directory, using the existing travel card palette. */
+.stay-destination-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+  margin: 28px 0;
+}
+.stay-destination-card {
+  display: block;
+  min-width: 0;
+  border-radius: 22px;
+  padding: 10px;
+  background: #eff5ed;
+}
+.stay-destination-card .card-photo {
+  height: 190px;
+}
+.stay-destination-card h2,
+.stay-card-title {
+  font-size: 21px;
+  line-height: 1.35;
+  letter-spacing: -0.4px;
+}
+.stay-destination-card .text-link {
+  margin-top: 10px;
+}
+.stay-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 16px;
+  padding: 20px;
+  margin: 24px 0 16px;
+  background: var(--paper);
+  border-radius: 18px;
+}
+.stay-filters .field {
+  flex: 1;
+  min-width: 180px;
+}
+.stay-amenities {
+  margin: 14px 0;
+  padding-left: 18px;
+  font-size: 14px;
+  color: var(--text);
+}
+.stay-details-link {
+  margin-top: 16px;
+}
+@media (max-width: 1099px) {
+  .stay-destination-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .stay-destination-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .stay-destination-card .card-photo {
+    height: 210px;
+  }
+  .stay-filters {
+    padding: 16px;
+  }
+  .stay-filters .field {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+  .stay-filters .button {
+    width: 100%;
+  }
+}

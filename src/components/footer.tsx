@@ -23,7 +23,7 @@ export async function Footer() {
             Visa-Free-destinations
           </Link>
           <Link href="/europe-road-trips">Europe road trips</Link>
-          <Link href="/resorts-and-villas">Resorts & villas</Link>
+          <Link href="/resorts-and-stays">Resorts & Stays</Link>
           <Link href="/destinations">Destinations</Link>
         </div>
         <div>

@@ -148,8 +148,30 @@ export default async function Home() {
   const southIndiaCover =
     items.find((x) => x.id === "wayanad") ||
     items.find((x) => x.id === "kerala");
-  if (southIndiaCover)
-    domesticTiles.unshift(tile("South India", southIndiaCover, "/south-india"));
+  const southAsiaCover = items.find((x) => x.region === "South Asia");
+  domesticTiles.unshift(
+    {
+      name: "Resorts & Stays",
+      caption: "Find your place to unwind",
+      image: photos.resort,
+      alt: "Travel inspiration for a resort stay",
+      href: "/resorts-and-stays",
+    },
+    {
+      name: "South India",
+      caption: "Hill stays & coastal escapes",
+      image: southIndiaCover?.image || photos.kerala,
+      alt: southIndiaCover?.imageAlt || "South India travel inspiration",
+      href: "/south-india",
+    },
+    {
+      name: "South Asia",
+      caption: "Discover nearby journeys",
+      image: southAsiaCover?.image || photos.kerala,
+      alt: southAsiaCover?.imageAlt || "South Asia travel inspiration",
+      href: "/south-asia",
+    },
+  );
   return (
     <>
       <main id="main">
@@ -244,7 +266,7 @@ export default async function Home() {
             {[
               ["International trips", "international-trips"],
               ["Domestic trips", "domestic-trips"],
-              ["Resorts & villas", "resorts-and-villas"],
+              ["Resorts & Stays", "resorts-and-stays"],
               ["Europe road trips", "europe-road-trips"],
               ["Visa-Free-destinations", "visa-free-destinations"],
             ].map(([label, url]) => (
@@ -270,9 +292,9 @@ export default async function Home() {
               },
               {
                 icon: Palmtree,
-                title: "Resorts & villas",
+                title: "Resorts & Stays",
                 text: "Find a stay for a weekend, a family trip or a quiet break.",
-                href: "/resorts-and-villas",
+                href: "/resorts-and-stays",
               },
             ].map((c) => (
               <Link href={c.href} key={c.title} className="service-card">
@@ -367,8 +389,8 @@ export default async function Home() {
                 Wake up by the water. Wander through the green. Find a stay that
                 lets you simply be.
               </p>
-              <Link href="/resorts-and-villas" className="text-link">
-                Explore resorts & villas
+              <Link href="/resorts-and-stays" className="text-link">
+                Explore Resorts & Stays
                 <ArrowUpRight size={18} />
               </Link>
             </div>

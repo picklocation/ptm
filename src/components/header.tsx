@@ -14,7 +14,7 @@ import { Logo } from "./ui";
 const links = [
   ["International", "/international-trips"],
   ["Domestic", "/domestic-trips"],
-  ["Resorts & villas", "/resorts-and-villas"],
+  ["Resorts & Stays", "/resorts-and-stays"],
   ["Europe road trips", "/europe-road-trips"],
   ["Visa-free", "/visa-free-destinations"],
 ];

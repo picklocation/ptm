@@ -5,6 +5,7 @@ import { getApps, initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import type { Content, Enquiry, Settings } from "./types";
 import { defaultSettings } from "./types";
+import { isVerifiedStay } from "./stays";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { isDatabaseUnavailable, publicReadDeadline } from "./service-errors";
@@ -309,7 +310,12 @@ export const catalogueState = cache(async () => {
 export const publicContent = cache(async () => {
   const showDemo = await demoEnabled();
   return (await catalogueState()).items
-    .filter((x) => x.status === "published" && (!x.demo || showDemo))
+    .filter(
+      (x) =>
+        x.status === "published" &&
+        (!x.demo || showDemo) &&
+        (x.kind !== "resort" || isVerifiedStay(x)),
+    )
     .sort((a, b) => a.order - b.order);
 });
 async function readSettings(): Promise<Settings> {

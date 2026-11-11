@@ -17,6 +17,7 @@ import { ContentEditor } from "@/components/content-editor";
 import { EnquiryList, EnquiryDetail } from "@/components/admin-enquiries";
 import { SettingsEditor } from "@/components/settings-editor";
 import { StaffEditor } from "@/components/staff-editor";
+import { stayDestinations } from "@/lib/stays";
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Admin",
@@ -142,7 +143,12 @@ export default async function Admin({
     if (id) {
       const c = id === "new" ? blank() : await get<Content>("content", id);
       if (!c) notFound();
-      body = <ContentEditor initial={c} />;
+      body = (
+        <ContentEditor
+          initial={c}
+          stayDestinations={stayDestinations(await list<Content>("content"))}
+        />
+      );
     } else {
       const contents = (await list<Content>("content")).sort(
         (a, b) => a.order - b.order,

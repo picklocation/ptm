@@ -171,3 +171,7 @@ Further references: `docs/OWNER-HANDBOOK.md`, `docs/SETUP-AND-ADMIN.md`, `docs/S
 ## Suggested opening prompt for Claude
 
 > Read CLAUDE.md, AGENTS.md and docs/AI-HANDOVER.md, then inspect the relevant source and current Git state. Continue PickTheMap using the documented design decisions and existing architecture. Preserve working behaviour outside my request. Do not expose secrets, recreate data to mask an error, enable paid services or assume a Preview is live Production. Keep changes focused, verify appropriately, and explain the result briefly. My next task is: [describe the change].
+
+## Resorts & Stays update
+
+See [the Resorts & Stays guide](RESORTS-AND-STAYS.md) for the destination-first directory, admin verification and property assignment. Public resorts now require published, non-sample, admin-verified records; old mock resorts remain in admin but are hidden from public pages. The homepage category order is Resorts & Stays, South India, South Asia. Legacy property URLs and collection identifiers remain compatible.

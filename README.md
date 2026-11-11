@@ -56,3 +56,7 @@ Seventeen tests and the production build passed. The Supabase flow verified owne
 `DATA_BACKEND=supabase` is the new hosted setup. Legacy Firebase code/tools remain for transition and rollback, and `DATA_BACKEND=local` retains SQLite/offline development. Neither is used by the Supabase preview. Do not deploy local mode to Vercel.
 
 No live inventory, checkout, online payment, customer accounts or CRM integration has been added. Excel/CSV export works; automatic local workbook sync requires the owner to run its worker. Sample photos/prices require business review before launch.
+
+## Resorts & Stays update
+
+See [the Resorts & Stays guide](docs/RESORTS-AND-STAYS.md) for the destination-first directory, admin verification and property assignment. Public resorts now require published, non-sample, admin-verified records; old mock resorts remain in admin but are hidden from public pages. The homepage category order is Resorts & Stays, South India, South Asia. Legacy property URLs and collection identifiers remain compatible.

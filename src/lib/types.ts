@@ -7,6 +7,10 @@ export type Content = {
   location: string;
   region: string;
   country?: string;
+  stayDestination?: boolean;
+  stayDestinationSlug?: string;
+  propertyVerified?: boolean;
+  stayTags?: (typeof import("./stays").stayTags)[number][];
   state?: string;
   locations?: string[];
   packageType?: (typeof import("./classification").packageTypes)[number];

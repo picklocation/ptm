@@ -123,3 +123,7 @@ Passed locally: production build, TypeScript, seventeen tests, owner login, publ
 Remaining: verify the newest deployment and its production promotion, real content/pricing review, legal/contact details, optional email recovery/notifications, custom domain and any later CRM integration. No paid service was enabled by this work.
 
 See [technical launch instructions](SUPABASE-LAUNCH.md) and [schema/API reference](SCHEMA-AND-API.md). Any previously generated PDF dated 9 November describes the earlier Firebase setup; this updated Markdown handbook supersedes it.
+
+## Resorts & Stays update
+
+See [the Resorts & Stays guide](RESORTS-AND-STAYS.md) for the destination-first directory, admin verification and property assignment. Public resorts now require published, non-sample, admin-verified records; old mock resorts remain in admin but are hidden from public pages. The homepage category order is Resorts & Stays, South India, South Asia. Legacy property URLs and collection identifiers remain compatible.

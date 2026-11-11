@@ -15,7 +15,14 @@ export function AdminCatalogue({ items }: { items: Content[] }) {
   const filtered = items.filter(
     (c) =>
       (!query ||
-        [c.title, c.country, c.state, c.location, ...(c.locations || [])]
+        [
+          c.title,
+          c.country,
+          c.state,
+          c.location,
+          c.stayDestinationSlug,
+          ...(c.locations || []),
+        ]
           .join(" ")
           .toLowerCase()
           .includes(query.toLowerCase())) &&
@@ -90,6 +97,18 @@ export function AdminCatalogue({ items }: { items: Content[] }) {
                   {[c.country, c.state].filter(Boolean).join(" · ")}
                   <br />
                   {c.locations?.join(" · ") || c.location}
+                  {c.kind === "resort" && (
+                    <>
+                      <br />
+                      <small>
+                        Stay destination:{" "}
+                        {c.stayDestinationSlug || "Not assigned"} ·{" "}
+                        {c.propertyVerified && !c.demo
+                          ? "Verified by admin"
+                          : "Needs verification"}
+                      </small>
+                    </>
+                  )}
                 </td>
                 <td>
                   {c.packageType || "Not assigned"}

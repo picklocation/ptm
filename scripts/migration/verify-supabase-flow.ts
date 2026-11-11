@@ -71,6 +71,25 @@ async function main() {
       `Module content ${route}`,
     );
   }
+  for (const [route, heading] of [
+    ["/resorts-and-stays", "Kakkadampoyil"],
+    ["/resorts-and-stays/munnar", "Stays in"],
+    ["/south-asia", "South Asia"],
+  ]) {
+    const response = await call(route, undefined, false);
+    assert.equal(response.status, 200, `Public stays route ${route}`);
+    assert.ok((await response.text()).includes(heading));
+  }
+  assert.equal(
+    (await call("/resorts-and-villas", undefined, false)).status,
+    308,
+    "Legacy stays index redirect",
+  );
+  assert.equal(
+    (await call("/resorts-and-stays/unknown-place", undefined, false)).status,
+    404,
+    "Unknown stay destination",
+  );
   const publish = await call("/api/admin/content", {
     content,
     action: "publish",
@@ -288,6 +307,46 @@ async function main() {
     (await call(`/holidays/${id}`, undefined, false)).status,
     404,
     "Unpublished detail hidden",
+  );
+  const unverifiedStay = {
+    ...content,
+    kind: "resort",
+    demo: false,
+    propertyVerified: false,
+    stayDestinationSlug: "munnar",
+    stayTags: ["Families", "Budget"],
+  };
+  assert.equal(
+    (
+      await call("/api/admin/content", {
+        content: unverifiedStay,
+        action: "save",
+      })
+    ).status,
+    200,
+    "Save stay assignment as draft",
+  );
+  const savedStay = await service
+    .from("content")
+    .select("data")
+    .eq("id", id)
+    .single();
+  assert.equal(savedStay.data?.data.stayDestinationSlug, "munnar");
+  assert.deepEqual(savedStay.data?.data.stayTags, ["Families", "Budget"]);
+  assert.equal(
+    (
+      await call("/api/admin/content", {
+        content: unverifiedStay,
+        action: "publish",
+      })
+    ).status,
+    400,
+    "Unverified property publication blocked",
+  );
+  assert.equal(
+    (await call(`/resorts-and-villas/${id}`, undefined, false)).status,
+    404,
+    "Unverified property not public",
   );
   assert.equal((await call("/api/admin/logout", {})).status, 200);
   assert.equal(

@@ -4,12 +4,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, ArrowUp, ArrowDown, Upload } from "lucide-react";
 import type { Content } from "@/lib/types";
+import { stayTags, type StayDestination } from "@/lib/stays";
 import {
   packageTypes,
   collectionOptions,
   assignedCollections,
 } from "@/lib/classification";
-export function ContentEditor({ initial }: { initial: Content }) {
+export function ContentEditor({
+  initial,
+  stayDestinations = [],
+}: {
+  initial: Content;
+  stayDestinations?: StayDestination[];
+}) {
   const [c, setC] = useState(initial),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState(""),
@@ -226,6 +233,83 @@ export function ContentEditor({ initial }: { initial: Content }) {
                 promise. Homepage featuring and order remain separate controls.
               </p>
             </fieldset>
+            {c.kind === "destination" && (
+              <label className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={!!c.stayDestination}
+                  onChange={(e) => update("stayDestination", e.target.checked)}
+                />
+                Include this destination in Resorts & Stays (publish to make it
+                available)
+              </label>
+            )}
+            {c.kind === "resort" && (
+              <fieldset className="admin-card">
+                <legend>Resorts & Stays directory</legend>
+                <label className="field">
+                  Stay destination
+                  <select
+                    value={c.stayDestinationSlug || ""}
+                    onChange={(e) =>
+                      update("stayDestinationSlug", e.target.value)
+                    }
+                  >
+                    <option value="">
+                      Not assigned to the stays directory
+                    </option>
+                    {stayDestinations.map((d) => (
+                      <option key={d.slug} value={d.slug}>
+                        {d.name}
+                      </option>
+                    ))}
+                    {c.stayDestinationSlug &&
+                      !stayDestinations.some(
+                        (d) => d.slug === c.stayDestinationSlug,
+                      ) && (
+                        <option value={c.stayDestinationSlug}>
+                          {c.stayDestinationSlug} (check destination)
+                        </option>
+                      )}
+                  </select>
+                </label>
+                <div className="form-grid">
+                  {stayTags.map((tag) => (
+                    <label className="checkbox" key={tag}>
+                      <input
+                        type="checkbox"
+                        checked={c.stayTags?.includes(tag) || false}
+                        onChange={(e) =>
+                          update(
+                            "stayTags",
+                            e.target.checked
+                              ? [...(c.stayTags || []), tag]
+                              : (c.stayTags || []).filter((x) => x !== tag),
+                          )
+                        }
+                      />
+                      {tag}
+                    </label>
+                  ))}
+                </div>
+                <label className="checkbox">
+                  <input
+                    type="checkbox"
+                    checked={!!c.propertyVerified}
+                    onChange={(e) =>
+                      update("propertyVerified", e.target.checked)
+                    }
+                  />
+                  I have checked this property's name, photos, rooms, amenities
+                  and any prices with an authoritative source or the property.
+                </label>
+                <p className="small-note">
+                  Only verified, published, non-sample properties appear in the
+                  directory. Do not mark mock listings as verified. Leave
+                  pricing blank when a quote is required.
+                </p>
+              </fieldset>
+            )}
             {area("summary", "Short introduction", 2)}
             {area("description", "Full description", 6)}
             <label className="field">
