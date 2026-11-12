@@ -162,7 +162,7 @@ For a data/permission fix, verify failure and success paths. For a visual change
 
 ## 9. Recent decisions and next checks
 
-Recent code through `44fbfcd` includes: catalogue cache fix, showcase retry fix, Outfit/captions, browser icons, desktop hero paragraph removal, and no duplicate places between Popular/International rows. Check Git for later commits. The latest public-domain promotion and full hosted flow have not been independently verified.
+Recent code through `7655569` includes: catalogue cache fix, showcase retry fix, Outfit/captions, browser icons, desktop hero paragraph removal, no duplicate places between Popular/International rows, mobile focus and admin responsive fixes, the Resorts & Stays directory, and removal of the South Asia homepage card. Check Git for later commits. Verified status and remaining work: `docs/IMPLEMENTATION_STATUS.md` and `docs/ROADMAP.md`. The latest public-domain promotion and full hosted flow have not been independently verified.
 
 Priorities: verify the correct production deployment, package browsing, admin login and a test enquiry; review real photos/prices/legal copy; configure optional recovery email/notifications; connect a purchased domain when provided. Do not treat these as completed.
 
@@ -174,4 +174,4 @@ Further references: `docs/OWNER-HANDBOOK.md`, `docs/SETUP-AND-ADMIN.md`, `docs/S
 
 ## Resorts & Stays update
 
-See [the Resorts & Stays guide](RESORTS-AND-STAYS.md) for the destination-first directory, admin verification and property assignment. Public resorts now require published, non-sample, admin-verified records; old mock resorts remain in admin but are hidden from public pages. The homepage category order is Resorts & Stays, South India, South Asia. Legacy property URLs and collection identifiers remain compatible.
+See [the Resorts & Stays guide](RESORTS-AND-STAYS.md) for the destination-first directory, admin verification and property assignment. Public resorts now require published, non-sample, admin-verified records; old mock resorts remain in admin but are hidden from public pages. The homepage domestic row starts with Resorts & Stays, then South India; the South Asia card was removed. Legacy property URLs and collection identifiers remain compatible.

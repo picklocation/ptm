@@ -59,4 +59,4 @@ No live inventory, checkout, online payment, customer accounts or CRM integratio
 
 ## Resorts & Stays update
 
-See [the Resorts & Stays guide](docs/RESORTS-AND-STAYS.md) for the destination-first directory, admin verification and property assignment. Public resorts now require published, non-sample, admin-verified records; old mock resorts remain in admin but are hidden from public pages. The homepage category order is Resorts & Stays, South India, South Asia. Legacy property URLs and collection identifiers remain compatible.
+See [the Resorts & Stays guide](docs/RESORTS-AND-STAYS.md) for the destination-first directory, admin verification and property assignment. Public resorts now require published, non-sample, admin-verified records; old mock resorts remain in admin but are hidden from public pages. The homepage domestic row starts with Resorts & Stays, then South India; the South Asia card was removed. Legacy property URLs and collection identifiers remain compatible.
