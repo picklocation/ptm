@@ -828,6 +828,17 @@ export function ContentEditor({
               Leave price empty to display “Request a quote”.
             </p>
             {field("price", "From price (optional)", "number")}
+            {field(
+              "originalPrice",
+              "Original price before discount (optional)",
+              "number",
+            )}
+            <p className="small-note">
+              To show an offer, enter the price customers pay above and the
+              higher original price here. The website strikes through the
+              original price and shows the saving. Leave empty for no discount.
+              Only use an original price you have genuinely charged.
+            </p>
             <label className="field">
               Currency
               <select

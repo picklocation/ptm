@@ -61,3 +61,10 @@ The [owner handbook](OWNER-HANDBOOK.md) is the current operational guide. The ol
 ## Follow-up: recurring empty catalogue
 
 Live checks after the documentation update found the public domain still serving the older homepage copy without the new icon, and zero package cards. Public Supabase requests returned 200 published records and showcase=true. This confirms the records remain available, but does not expose the production runtime settings or cache contents. A remaining code path cached showcase lookup failures as false; the follow-up fix moves that fallback outside the persistent cache and changes its cache key. Promote the newest deployment and verify the public domain; an earlier Ready deployment does not contain this fix.
+
+## 12 November 2026: package cards, offers and enquiry form
+
+- **Package cards:** green stop line (uses the record's stops, else its location), day count chip, large price and a green round button with a white arrow beside the price. The earlier white-circle arrow on the photo is replaced at the owner's request.
+- **Offers:** content has an optional `originalPrice` (admin: "Original price before discount"). When it is higher than the price, the site strikes it through, shows the offer price and a "% off" tag on cards, listings and detail pages. Publishing rejects an original price that is not higher than the price. No schema migration is needed.
+- **Enquiry form, first step:** destination suggestions from published content, tap-to-fill popular choices, trip type as pills, plus/minus traveller counts and departure-city suggestions. Fields, validation and saving are unchanged.
+- Cards do not show confirmation amounts or cancellation promises; nothing of that kind is stored, and none should be invented.

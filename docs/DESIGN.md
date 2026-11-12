@@ -10,7 +10,7 @@ White/gray travel discovery with rounded photographic cards and restrained green
 
 Self-hosted **Outfit**, weights 400–700, for body and headings; **Plus Jakarta Sans** for the wordmark. Do not restore the former Inter body/Jakarta heading pairing. Keep headings restrained and copy conversational and place-specific.
 
-Canonical CSS is src/app/globals.css. Primary actions use #09B468 with white text/icons; hover is #08A660. Package-card circular actions use white backgrounds with green arrows. Main text is #122B25, secondary text #53635C, paper #F6F8F5, mint #E6F4EC, border #E1E7E2. No dominant yellow or decorative gradient washes. Photo overlays may shade text for readability. Check contrast for the actual font size/weight.
+Canonical CSS is src/app/globals.css. Primary actions use #09B468 with white text/icons; hover is #08A660. Package-card circular actions use the green button fill with white arrows, placed beside the price (owner request, 12 November 2026; this replaces the earlier white-circle treatment). Main text is #122B25, secondary text #53635C, paper #F6F8F5, mint #E6F4EC, border #E1E7E2. No dominant yellow or decorative gradient washes. Photo overlays may shade text for readability. Check contrast for the actual font size/weight.
 
 ## Current layout decisions
 

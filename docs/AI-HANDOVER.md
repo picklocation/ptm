@@ -50,7 +50,7 @@ Current CSS tokens in `src/app/globals.css`:
 | Pale mint | `#E6F4EC` |
 | Subtle border | `#E1E7E2` |
 
-The dark forest `#063F2E` remains a text/support colour, not the owner's requested main button fill. Primary buttons are bright green with white text/arrows. Package-card circular arrows are the explicit exception: white circle, green arrow. Preserve those separate treatments. Audit contrast when changing typography or colours; do not assume every existing colour/size combination meets WCAG.
+The dark forest `#063F2E` remains a text/support colour, not the owner's requested main button fill. Primary buttons are bright green with white text/arrows. Package-card circular arrows now match: green circle, white arrow, beside the price (owner request, 12 November 2026; the earlier white-circle exception no longer applies). Audit contrast when changing typography or colours; do not assume every existing colour/size combination meets WCAG.
 
 ### Layout and destination rows
 
@@ -59,7 +59,7 @@ The dark forest `#063F2E` remains a text/support colour, not the owner's request
 - Popular and International destinations must not repeat places across those two rows. Treat Bali/Indonesia as the same place for selection. Choose from published content, not dead links or fabricated entries.
 - Destination tiles use centred white place names with small place-specific captions above them. Examples: Kerala → “Backwaters & tea hills”; Switzerland → “Lakes beneath the Alps”. Use restrained photo shading for readability.
 - Captions are currently a code dictionary in `src/app/page.tsx`, not an admin field. Unmapped places still show a name. If adding admin-managed captions, implement validation/storage/editor support instead of claiming it already exists.
-- Package cards retain their pale green surface, rounded photos, readable details and white circle/green-arrow treatment. Desktop package grids should show at least four cards where the existing layout supports it; never squeeze four cards onto mobile.
+- Package cards retain their pale green surface, rounded photos, readable details, green stop line, large price and green circle/white-arrow button. Desktop package grids should show at least four cards where the existing layout supports it; never squeeze four cards onto mobile.
 - The hero supporting paragraph (“From the winding roads of Europe…”) is hidden at widths **901px and above**. It remains on mobile/tablet. Do not restore the desktop paragraph during later typography work.
 - Preserve the requested label **Visa-Free-destinations**. This is a display label, not proof of visa eligibility. Verify actual entry rules for the passport/travel dates before updating guidance; do not treat visa-on-arrival/eVisa as universally visa-free.
 

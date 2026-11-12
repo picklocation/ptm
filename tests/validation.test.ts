@@ -1,6 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { enquirySchema, publishErrors } from "../src/lib/validation";
+import {
+  enquirySchema,
+  publishErrors,
+  contentSchema,
+} from "../src/lib/validation";
 import { seedContent } from "../src/lib/seed-data";
 import { safeCell } from "../src/lib/excel";
 const valid = {
@@ -65,4 +69,17 @@ test("neutralises spreadsheet formulas in exported visitor input", () => {
   );
   assert.equal(safeCell("+4912345"), "'+4912345");
   assert.equal(safeCell("Normal text"), "Normal text");
+});
+test("a discount needs an original price above the offer price", () => {
+  const base = {
+    ...seedContent[0],
+    priceBasis: "per person",
+    priceConditions: "Twin sharing",
+  };
+  const errors = (price: number | undefined, originalPrice: number) =>
+    publishErrors(contentSchema.parse({ ...base, price, originalPrice }));
+  const message = "The original price must be higher than the offer price.";
+  assert.ok(!errors(20000, 25000).includes(message));
+  assert.ok(errors(20000, 20000).includes(message));
+  assert.ok(errors(undefined, 25000).includes(message));
 });

@@ -152,6 +152,7 @@ export const contentSchema = z.object({
     )
     .max(20),
   price: z.number().positive().optional(),
+  originalPrice: z.number().positive().optional(),
   currency: z.enum(["INR", "EUR", "USD", "GBP", "AED"]),
   priceBasis: z.string().max(100),
   priceConditions: text,
@@ -182,5 +183,8 @@ export function publishErrors(c: z.infer<typeof contentSchema>) {
     c.price &&
       (!c.priceBasis || !c.priceConditions) &&
       "A price needs a basis and conditions.",
+    c.originalPrice &&
+      (!c.price || c.originalPrice <= c.price) &&
+      "The original price must be higher than the offer price.",
   ].filter(Boolean) as string[];
 }

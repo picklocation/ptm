@@ -52,7 +52,7 @@ CI (`.github/workflows/checks.yml`) runs typecheck, tests and build on Node 24. 
 
 ## Rules that are easy to break
 
-- Design: white-dominant, pale mint and restrained green; primary buttons `#09B468` with white text; package-card arrows are white circles with green arrows. No redesigns, new palettes, gradients, autoplay or new UI libraries for a small request. Full rules: `docs/DESIGN.md` and handover section 3.
+- Design: white-dominant, pale mint and restrained green; primary buttons `#09B468` with white text; package-card arrows are green circles with white arrows (owner request, 12 November 2026). No redesigns, new palettes, gradients, autoplay or new UI libraries for a small request. Full rules: `docs/DESIGN.md` and handover section 3.
 - Keep the label **Visa-Free-destinations** exactly. Keep the hero paragraph hidden at 901px and wider. Keep destination rows single-row, manually scrolled, with no repeated places between Popular and International.
 - The owner prefers to open pages and send screenshots. Do not open or automate a browser unless they ask. Say when visual verification has not happened.
 - Public resorts appear only when published, non-sample and admin-verified. Never invent properties, prices, reviews or guarantees to fill an empty page.
