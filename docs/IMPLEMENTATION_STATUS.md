@@ -50,7 +50,7 @@ None of these was confirmed as required. They are listed so nobody assumes they 
 
 ### Deployment (highest priority)
 
-1. **Production state is unknown.** The documentation records that after the owner promoted a migration deployment, the public domain showed older homepage code and zero packages while Supabase held 200 published records. Two cache fixes followed. Whether the newest deployment was promoted and works has never been confirmed.
+1. **Owner update, 12 November 2026:** the owner reported that package cards and the Resorts & Stays page now appear on the public domain. This was the owner's own check; the deployed commit, admin login and a test enquiry have not yet been confirmed. Earlier history follows. **Production state was unknown.** The documentation records that after the owner promoted a migration deployment, the public domain showed older homepage code and zero packages while Supabase held 200 published records. Two cache fixes followed. Whether the newest deployment was promoted and works has never been confirmed.
 2. **Preview-only branch.** Pushes to `codex/migrate-supabase` create Preview deployments. Production changes only by manual promotion. The Vercel production branch is presumably still the Firebase branch (**Assumption**).
 3. **Branches have diverged.** `codex/build-pickthemap` (Firebase) lacks all Supabase work. There is no `main`.
 

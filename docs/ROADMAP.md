@@ -6,7 +6,7 @@ Prepared 12 November 2026. This is a recommended order, not a commitment. Items 
 
 Everything else depends on knowing what visitors actually see.
 
-1. **Check the public domain.** Owner opens https://ptm-alpha.vercel.app/ and reports (or screenshots) whether package cards, the Outfit font, the new browser icon and `/resorts-and-stays` appear.
+1. **Done by the owner on 12 November 2026** (package cards and Resorts & Stays reported visible). **Check the public domain.** Owner opens https://ptm-alpha.vercel.app/ and reports (or screenshots) whether package cards, the Outfit font, the new browser icon and `/resorts-and-stays` appear.
 2. **Identify the deployed commit** in Vercel. The newest Supabase build is `7655569` or later on `codex/migrate-supabase`.
 3. **Promote the newest Ready deployment** if the domain is behind. Redeploying an older one will not include the cache fixes.
 4. **Run the hosted smoke test:** a package detail page, admin login, one clearly labelled test enquiry, and confirm it appears in admin.
