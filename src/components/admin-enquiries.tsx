@@ -87,7 +87,7 @@ export function EnquiryList({ initial }: { initial: Enquiry[] }) {
             {rows.map((e) => (
               <tr key={e.id}>
                 <td>
-                  <Link href={`/admin/enquiries/${e.id}`}>{e.name}</Link>
+                  <Link href={`/adminportal/enquiries/${e.id}`}>{e.name}</Link>
                   <br />
                   <span className="muted">{e.phone}</span>
                 </td>
@@ -140,7 +140,7 @@ export function EnquiryDetail({ initial }: { initial: Enquiry }) {
           <p className="eyebrow">Enquiry · {e.id}</p>
           <h1>{e.name}</h1>
         </div>
-        <Link href="/admin/enquiries" className="button secondary small">
+        <Link href="/adminportal/enquiries" className="button secondary small">
           All enquiries
         </Link>
       </div>

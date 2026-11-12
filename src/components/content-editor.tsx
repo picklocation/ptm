@@ -113,7 +113,7 @@ export function ContentEditor({
         <div className="editor-actions">
           <Link
             className="button secondary"
-            href={`/admin/preview/${c.id}`}
+            href={`/adminportal/preview/${c.id}`}
             target="_blank"
           >
             Preview ↗

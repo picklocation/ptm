@@ -135,7 +135,7 @@ Successful public reads normally revalidate after 15 minutes; content mutations 
 - Repository: https://github.com/picklocation/ptm
 - Current working branch at handover: `codex/migrate-supabase` (verify with Git before working).
 - Public URL: https://ptm-alpha.vercel.app/
-- Admin: https://ptm-alpha.vercel.app/admin/login
+- Admin: https://ptm-alpha.vercel.app/adminportal/login
 - Vercel deployments: https://vercel.com/pickthemap/ptm/deployments
 - Supabase project URL: https://feqmnzutyhzochuyiint.supabase.co
 

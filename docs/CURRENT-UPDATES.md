@@ -5,7 +5,7 @@ Updated 11 November 2026. This records implemented changes separately from what 
 ## Website and admin
 
 - Website: https://ptm-alpha.vercel.app/
-- Admin login: https://ptm-alpha.vercel.app/admin/login
+- Admin login: https://ptm-alpha.vercel.app/adminportal/login
 - Owner email: **pickthemap@gmail.com**. Use the privately chosen Supabase password; no password belongs in this document.
 - GitHub: https://github.com/picklocation/ptm — branch `codex/migrate-supabase`.
 - Vercel: https://vercel.com/pickthemap/ptm/deployments

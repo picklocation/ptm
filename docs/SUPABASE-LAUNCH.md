@@ -17,7 +17,7 @@ npx tsx scripts/supabase-local.ts build
 npx tsx scripts/supabase-local.ts start
 ```
 
-Open `http://localhost:3005`. Login is `http://localhost:3005/admin/login`, with owner email `pickthemap@gmail.com` and the private password saved during provisioning. Passwords are not stored in repository files or this guide. `fresh-supabase.ts` never resets an existing owner's password.
+Open `http://localhost:3005`. Login is `http://localhost:3005/adminportal/login`, with owner email `pickthemap@gmail.com` and the private password saved during provisioning. Passwords are not stored in repository files or this guide. `fresh-supabase.ts` never resets an existing owner's password.
 
 Sessions use a short-lived Supabase access token in a Secure (production), HttpOnly, SameSite=Strict cookie. Sign in again after at most one hour. Every admin action checks current identity and active staff permissions; database RLS independently enforces roles. Disabling a staff record blocks its data access immediately. Logout clears this app's session cookie. No customer accounts are introduced.
 
@@ -42,14 +42,14 @@ Git branch: `codex/migrate-supabase`. Do not change the current production branc
 
 ## Managing content and enquiries
 
-- `/admin`: dashboard and counts.
-- `/admin/content`: create/edit/preview/publish/unpublish/archive packages, destinations, road trips and resorts. Publishing atomically writes the public snapshot and audit/revision records.
+- `/adminportal`: dashboard and counts.
+- `/adminportal/content`: create/edit/preview/publish/unpublish/archive packages, destinations, road trips and resorts. Publishing atomically writes the public snapshot and audit/revision records.
 - Galleries: upload JPEG/PNG/WebP, edit alt text and order URLs. Removing a URL from the gallery removes that reference; physical file deletion is not exposed in the existing editor. Archiving preserves history and enquiry references.
 - Uploads are validated, decoded and resized into WebP. They live in the private bucket and are served to visitors only when referenced by published content. Public seed assets use the public bucket with long-lived caching.
-- `/admin/enquiries`: new → contacted → quote sent → confirmed → closed, notes, assignment and follow-up. Submissions save before showing a WhatsApp link. The visitor still presses Send in WhatsApp.
+- `/adminportal/enquiries`: new → contacted → quote sent → confirmed → closed, notes, assignment and follow-up. Submissions save before showing a WhatsApp link. The visitor still presses Send in WhatsApp.
 - Excel/CSV export remains available in admin. Continuous workbook sync runs on the owner's computer, never on Vercel. Configure `.env.local` with the Supabase server variables, then run `npm run excel:sync -- --watch`. Local workers explicitly use trusted server access; keep the server key private.
-- `/admin/settings`: contact details, WhatsApp, social links, FAQs and approved policy copy.
-- `/admin/staff`: owner-only staff creation and activation. Roles: owner, editor, enquiries.
+- `/adminportal/settings`: contact details, WhatsApp, social links, FAQs and approved policy copy.
+- `/adminportal/staff`: owner-only staff creation and activation. Roles: owner, editor, enquiries.
 
 ## API map
 

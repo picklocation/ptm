@@ -90,7 +90,7 @@ export function AdminCatalogue({ items }: { items: Content[] }) {
             {filtered.map((c) => (
               <tr key={c.id}>
                 <td>
-                  <Link href={`/admin/content/${c.id}`}>{c.title}</Link>
+                  <Link href={`/adminportal/content/${c.id}`}>{c.title}</Link>
                   {c.demo && <span className="demo-tag">Sample</span>}
                 </td>
                 <td>

@@ -8,7 +8,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       ...(process.env.VERCEL_ENV === "production" &&
       !(await demoEnabled()) &&
       !(await catalogueState()).unavailable
-        ? { allow: "/", disallow: ["/admin", "/api", "/preview"] }
+        ? { allow: "/", disallow: ["/admin", "/adminportal", "/api", "/preview"] }
         : { disallow: "/" }),
     },
     sitemap: `${process.env.SITE_URL || "http://localhost:3000"}/sitemap.xml`,
