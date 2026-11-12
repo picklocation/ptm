@@ -84,3 +84,11 @@ The owner reported promoting an earlier migration deployment. The latest cache f
 ## Resorts & Stays extension
 
 Content JSONB now supports optional stayDestination (boolean), stayDestinationSlug (slug), propertyVerified (boolean) and stayTags (Couples/Families/Budget/Premium/Luxury). No schema migration is required. Real resort publication requires destination assignment and admin verification; directory publication rejects sample properties. All public resort browsing excludes sample/unverified records, even when sample holiday showcase is enabled. The enquiry endpoint derives the selected resort title and destination from published content. See [the stays guide](RESORTS-AND-STAYS.md) for routes and admin instructions.
+
+## Image uploads (updated 12 November 2026)
+
+Admin uploads now go to the public bucket in two fixed WebP sizes: `website-public/content/{contentId}/{imageId}-1600.webp` (quality 80) and `-640.webp` (quality 76), cached for one year. `POST /api/admin/upload` takes `file` and `contentId` and returns the direct Storage link to the 1600 file, which is what content records store. Listing cards and thumbnails swap to the 640 file (`imageVariant` in `src/lib/assets.ts`); neither size goes through the Next.js image optimiser. The admin page shrinks photos to 1600px in the browser before sending; the server still validates and re-encodes.
+
+A photo is reachable by its link from the moment it is uploaded, including before publication. The owner accepted this on 12 November 2026.
+
+Galleries hold at most 8 photos. When a save removes a photo, its files and `media_assets` row are deleted if no draft or published record still uses it. Photos uploaded but never saved are not cleaned up. Earlier `/api/media/{id}` links and the private bucket continue to work unchanged.

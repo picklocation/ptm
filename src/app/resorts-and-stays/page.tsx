@@ -1,3 +1,4 @@
+import { imageVariant, skipOptimizer } from "@/lib/assets";
 import Link from "next/link";
 import Image from "next/image";
 import { publicContent } from "@/lib/store";
@@ -31,11 +32,11 @@ export default async function StaysHome() {
             >
               <div className="card-photo">
                 <Image
-                  src={place.image}
+                  src={imageVariant(place.image, "card")}
                   alt={place.alt}
                   fill
                   sizes="(max-width:600px) 90vw, (max-width:1100px) 45vw, 23vw"
-                  unoptimized={place.image.startsWith("/api/media/")}
+                  unoptimized={skipOptimizer(place.image)}
                 />
               </div>
               <div className="card-body">

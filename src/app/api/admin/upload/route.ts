@@ -5,6 +5,7 @@ import sharp from "sharp";
 import { getStorage } from "firebase-admin/storage";
 import { requireStaff, checkOrigin, errorResponse } from "@/lib/auth";
 import { put, firebaseMode, firebaseApp } from "@/lib/store";
+import { publicAsset } from "@/lib/assets";
 import { supabaseMode, serviceSupabase, databaseError } from "@/lib/supabase";
 export async function POST(req: Request) {
   try {
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
       );
     const bytes = Buffer.from(await file.arrayBuffer());
     let output: Buffer;
+    let card: Buffer;
     try {
       const image = sharp(bytes, { limitInputPixels: 40000000 });
       const meta = await image.metadata();
@@ -37,16 +39,20 @@ export async function POST(req: Request) {
         !meta.height
       )
         throw new Error();
-      output = await image
-        .rotate()
-        .resize({
-          width: 2000,
-          height: 2000,
-          fit: "inside",
-          withoutEnlargement: true,
-        })
-        .webp({ quality: 85 })
-        .toBuffer();
+      // Two fixed sizes, made once: large for detail pages, card for listings.
+      const sized = (edge: number, quality: number) =>
+        image
+          .clone()
+          .rotate()
+          .resize({
+            width: edge,
+            height: edge,
+            fit: "inside",
+            withoutEnlargement: true,
+          })
+          .webp({ quality, effort: 5 })
+          .toBuffer();
+      [output, card] = await Promise.all([sized(1600, 80), sized(640, 76)]);
     } catch {
       return Response.json(
         { error: "This file could not be validated as a safe image." },
@@ -55,36 +61,51 @@ export async function POST(req: Request) {
     }
     const id = randomUUID();
     if (supabaseMode()) {
+      const contentId = String(form.get("contentId") || "");
+      if (!/^[a-zA-Z0-9-]{1,80}$/.test(contentId))
+        return Response.json(
+          { error: "Save this record once before uploading images." },
+          { status: 400 },
+        );
       const client = serviceSupabase();
-      const objectPath = `media/${id}.webp`;
-      const { error } = await client.storage
-        .from("website-private")
-        .upload(objectPath, output, {
+      const bucket = client.storage.from("website-public");
+      const base = `content/${contentId}/${id}`;
+      const paths = [`${base}-1600.webp`, `${base}-640.webp`];
+      const upload = (objectPath: string, body: Buffer) =>
+        bucket.upload(objectPath, body, {
           contentType: "image/webp",
+          cacheControl: "31536000",
           upsert: false,
         });
-      if (error) throw new Error("Image upload failed");
-      const { error: recordError } = await client
-        .from("media_assets")
-        .insert({
+      const results = await Promise.all([
+        upload(paths[0], output),
+        upload(paths[1], card),
+      ]);
+      if (results.some((r) => r.error)) {
+        await bucket.remove(paths);
+        throw new Error("Image upload failed");
+      }
+      const { error: recordError } = await client.from("media_assets").insert({
+        id,
+        bucket: "website-public",
+        object_path: paths[0],
+        mime_type: "image/webp",
+        byte_size: output.length + card.length,
+        approved_public: true,
+        data: {
           id,
-          bucket: "website-private",
-          object_path: objectPath,
-          mime_type: "image/webp",
-          byte_size: output.length,
-          approved_public: false,
-          data: {
-            id,
-            name: file.name.slice(0, 160),
-            alt: "",
-            createdAt: new Date().toISOString(),
-          },
-        });
+          contentId,
+          name: file.name.slice(0, 160),
+          alt: "",
+          variants: paths,
+          createdAt: new Date().toISOString(),
+        },
+      });
       if (recordError) {
-        await client.storage.from("website-private").remove([objectPath]);
+        await bucket.remove(paths);
         databaseError(recordError);
       }
-      return Response.json({ url: `/api/media/${id}`, id });
+      return Response.json({ url: publicAsset(paths[0]), id });
     } else if (firebaseMode()) {
       await getStorage(firebaseApp())
         .bucket()

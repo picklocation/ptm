@@ -1,5 +1,5 @@
 "use client";
-import { publicAsset } from "@/lib/assets";
+import { publicAsset, imageVariant, skipOptimizer } from "@/lib/assets";
 
 import { useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -231,8 +231,8 @@ export function Catalogue({
                 href={`/destinations/${item.slug}`}
               >
                 <Image
-                  src={item.image || publicAsset("brand/placeholder.svg")}
-                  unoptimized={item.image.startsWith("/api/media/")}
+                  src={imageVariant(item.image, "card") || publicAsset("brand/placeholder.svg")}
+                  unoptimized={skipOptimizer(item.image)}
                   alt={item.imageAlt}
                   fill
                   sizes="(max-width:640px) 45vw, 30vw"

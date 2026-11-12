@@ -1,3 +1,4 @@
+import { skipOptimizer } from "@/lib/assets";
 import { AdminCatalogue } from "@/components/admin-catalogue";
 import Link from "next/link";
 import Image from "next/image";
@@ -187,7 +188,7 @@ export default async function Admin({
               alt={c.imageAlt}
               fill
               sizes="100vw"
-              unoptimized={c.image.startsWith("/api/media/")}
+              unoptimized={skipOptimizer(c.image)}
             />
           </div>
         )}

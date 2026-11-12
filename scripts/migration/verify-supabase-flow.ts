@@ -223,6 +223,7 @@ async function main() {
     new Blob([new Uint8Array(bytes)], { type: "image/png" }),
     "qa.png",
   );
+  validUpload.set("contentId", id);
   const uploaded = await fetch(base + "/api/admin/upload", {
     method: "POST",
     headers: { Origin: base, Cookie: cookie },
@@ -231,12 +232,14 @@ async function main() {
   assert.equal(uploaded.status, 200, "Valid Supabase upload");
   const media = await uploaded.json();
   uploadedId = media.id;
-  assert.equal(
-    (await call(media.url, undefined, false)).status,
-    404,
-    "Unpublished upload private",
+  // Uploads are stored in two fixed sizes and served directly from Storage.
+  assert.match(
+    media.url,
+    new RegExp(`/website-public/content/${id}/${media.id}-1600\\.webp$`),
+    "Upload returns a direct Storage link",
   );
-  assert.equal((await call(media.url)).status, 200, "Editor preview upload");
+  for (const link of [media.url, media.url.replace("-1600.", "-640.")])
+    assert.equal((await fetch(link)).status, 200, "Uploaded size is served");
   content.image = media.url;
   assert.equal(
     (await call("/api/admin/content", { content, action: "publish" })).status,
@@ -371,8 +374,11 @@ async function cleanup() {
   await service.from("content").delete().eq("id", id);
   if (uploadedId) {
     await service.storage
-      .from("website-private")
-      .remove([`media/${uploadedId}.webp`]);
+      .from("website-public")
+      .remove([
+        `content/${id}/${uploadedId}-1600.webp`,
+        `content/${id}/${uploadedId}-640.webp`,
+      ]);
     await service.from("media_assets").delete().eq("id", uploadedId);
   }
   await service.from("audit_events").delete().eq("data->>item", content.title);

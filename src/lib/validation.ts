@@ -118,7 +118,7 @@ export const contentSchema = z.object({
   summary: z.string().max(400),
   description: z.string().max(10000),
   image,
-  gallery: z.array(image).max(30),
+  gallery: z.array(image).max(8, "Add at most 8 gallery photos."),
   galleryAlt: z.record(z.string().max(1000), z.string().max(300)).optional(),
   accommodation: z.string().max(5000).optional(),
   imageAlt: z.string().max(300),

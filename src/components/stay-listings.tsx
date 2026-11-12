@@ -1,4 +1,5 @@
 "use client";
+import { imageVariant, skipOptimizer } from "@/lib/assets";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -61,11 +62,11 @@ export function StayListings({
                 className="card-photo"
               >
                 <Image
-                  src={item.image}
+                  src={imageVariant(item.image, "card")}
                   alt={item.imageAlt}
                   fill
                   sizes="(max-width:600px) 90vw, (max-width:1100px) 45vw, 23vw"
-                  unoptimized={item.image.startsWith("/api/media/")}
+                  unoptimized={skipOptimizer(item.image)}
                 />
               </Link>
               <div className="card-body">
