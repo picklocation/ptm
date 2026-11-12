@@ -15,7 +15,41 @@ type Props = {
   kind: string;
   whatsappEnabled: boolean;
   preferWhatsApp?: boolean;
+  // Place names from the published catalogue, offered as suggestions.
+  places?: string[];
+  popular?: string[];
 };
+const departureCities = [
+  "Kochi",
+  "Kozhikode",
+  "Thiruvananthapuram",
+  "Kannur",
+  "Bengaluru",
+  "Chennai",
+  "Hyderabad",
+  "Mumbai",
+  "Pune",
+  "Delhi",
+  "Kolkata",
+  "Ahmedabad",
+  "Coimbatore",
+  "Mangaluru",
+  "Goa",
+  "Dubai",
+  "Abu Dhabi",
+  "Doha",
+  "Muscat",
+  "Riyadh",
+  "Kuwait City",
+  "London",
+  "Frankfurt",
+  "Singapore",
+];
+const tripKinds = [
+  ["holiday", "Holiday"],
+  ["road-trip", "Europe road trip"],
+  ["resort", "Resort or stay"],
+] as const;
 export function EnquiryForm(p: Props) {
   const [step, setStep] = useState(0),
     [busy, setBusy] = useState(false),
@@ -105,6 +139,34 @@ export function EnquiryForm(p: Props) {
           </span>
         )}
       </label>
+    );
+  }
+  function stepper(key: "adults" | "children" | "rooms", label: string) {
+    const min = key === "children" ? 0 : 1;
+    const value = Number(d[key]) || min;
+    return (
+      <div className="field" role="group" aria-label={label} key={key}>
+        {label}
+        <div className="stepper">
+          <button
+            type="button"
+            aria-label={`Fewer ${label.toLowerCase()}`}
+            disabled={value <= min}
+            onClick={() => change(key, Math.max(min, value - 1))}
+          >
+            −
+          </button>
+          <output aria-live="polite">{value}</output>
+          <button
+            type="button"
+            aria-label={`More ${label.toLowerCase()}`}
+            disabled={value >= 30}
+            onClick={() => change(key, Math.min(30, value + 1))}
+          >
+            +
+          </button>
+        </div>
+      </div>
     );
   }
   function advance() {
@@ -299,18 +361,61 @@ export function EnquiryForm(p: Props) {
       <div className="form-grid">
         {step === 0 && (
           <>
-            {field("destination", "Where would you like to go?", "text", true)}
             <label className="field full">
-              Your kind of trip
-              <select
-                value={d.kind}
-                onChange={(e) => change("kind", e.target.value)}
-              >
-                <option value="holiday">Customised holiday</option>
-                <option value="road-trip">Europe road trip</option>
-                <option value="resort">Kerala resort stay</option>
-              </select>
+              Where would you like to go?
+              <input
+                name="destination"
+                list="destination-suggestions"
+                value={d.destination}
+                onChange={(e) => change("destination", e.target.value)}
+                placeholder="Start typing a place, e.g. Munnar or Switzerland"
+                autoComplete="off"
+                aria-invalid={!!errors.destination}
+                aria-describedby={
+                  errors.destination ? "destination-error" : undefined
+                }
+              />
+              <datalist id="destination-suggestions">
+                {(p.places || []).map((place) => (
+                  <option key={place} value={place} />
+                ))}
+              </datalist>
+              {errors.destination && (
+                <span className="field-error" id="destination-error">
+                  {errors.destination}
+                </span>
+              )}
             </label>
+            <div className="field full">
+              <span className="field-hint">Or tap a popular choice</span>
+              <div className="quick-picks">
+                {[...(p.popular || []), "Help me choose"].map((place) => (
+                  <button
+                    type="button"
+                    key={place}
+                    aria-pressed={d.destination === place}
+                    onClick={() => change("destination", place)}
+                  >
+                    {place}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="field full" role="group" aria-label="Kind of trip">
+              Your kind of trip
+              <div className="pill-group">
+                {tripKinds.map(([value, label]) => (
+                  <button
+                    type="button"
+                    key={value}
+                    aria-pressed={d.kind === value}
+                    onClick={() => change("kind", value)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
             {field("startDate", "Preferred start date", "date")}
             {field("endDate", "End date (optional)", "date")}
             <label className="checkbox field full">
@@ -321,11 +426,26 @@ export function EnquiryForm(p: Props) {
               />
               My dates are flexible / not decided yet
             </label>
-            {field("adults", "Adults", "number")}
-            {field("children", "Children", "number")}
+            {stepper("adults", "Adults")}
+            {stepper("children", "Children")}
             {d.children > 0 &&
               field("childAges", "Children’s ages (optional)", "text", true)}
-            {field("departure", "Departure city (optional)", "text", true)}
+            <label className="field full">
+              Departure city (optional)
+              <input
+                name="departure"
+                list="departure-suggestions"
+                value={d.departure}
+                onChange={(e) => change("departure", e.target.value)}
+                placeholder="Where will you start from?"
+                autoComplete="off"
+              />
+              <datalist id="departure-suggestions">
+                {departureCities.map((city) => (
+                  <option key={city} value={city} />
+                ))}
+              </datalist>
+            </label>
           </>
         )}
         {step === 1 && (
@@ -361,7 +481,7 @@ export function EnquiryForm(p: Props) {
               )}
             {d.kind === "resort" && (
               <>
-                {field("rooms", "Rooms", "number")}
+                {stepper("rooms", "Rooms")}
                 {field("mealPlan", "Meal plan preference (optional)")}
               </>
             )}

@@ -56,16 +56,43 @@ export function SectionTitle({
     </div>
   );
 }
+const money = (amount: number, currency: string) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+// A discount shows only when the original price is genuinely higher.
+export function discountOf(item: Content) {
+  return item.price && item.originalPrice && item.originalPrice > item.price
+    ? Math.round((1 - item.price / item.originalPrice) * 100)
+    : 0;
+}
+export function PriceFigure({ item }: { item: Content }) {
+  if (!item.price) return null;
+  const off = discountOf(item);
+  return (
+    <span className="price-figure">
+      {off > 0 && (
+        <>
+          <span className="visually-hidden">Original price </span>
+          <s className="price-was">
+            {money(item.originalPrice!, item.currency)}
+          </s>
+          <span className="visually-hidden"> Offer price </span>
+        </>
+      )}
+      <strong className="price-now">{money(item.price, item.currency)}</strong>
+      {off > 0 && <span className="price-off">{off}% off</span>}
+    </span>
+  );
+}
 export function Price({ item }: { item: Content }) {
   return item.price ? (
     <>
       <span className="price">
-        From{" "}
-        {new Intl.NumberFormat("en", {
-          style: "currency",
-          currency: item.currency,
-          maximumFractionDigits: 0,
-        }).format(item.price)}
+        <span className="price-from">From</span>
+        <PriceFigure item={item} />
       </span>
       <span className="price-basis">
         {item.priceBasis} · {item.priceConditions}
@@ -78,37 +105,62 @@ export function Price({ item }: { item: Content }) {
   );
 }
 export function TripCard({ item }: { item: Content }) {
+  const href = `/${paths[item.kind]}/${item.slug}`;
+  const stops = item.locations?.filter(Boolean) || [];
   return (
     <article className="trip-card">
-      <Link href={`/${paths[item.kind]}/${item.slug}`} className="card-photo">
+      <Link href={href} className="card-photo" tabIndex={-1} aria-hidden="true">
         <Image
-          src={imageVariant(item.image, "card") || publicAsset("brand/placeholder.svg")}
+          src={
+            imageVariant(item.image, "card") ||
+            publicAsset("brand/placeholder.svg")
+          }
           unoptimized={skipOptimizer(item.image)}
-          alt={item.imageAlt || item.title}
+          alt=""
           fill
           sizes="(max-width: 640px) 92vw, (max-width: 1099px) 45vw, 24vw"
         />
         {item.days > 0 && (
           <span className="duration">
             <Clock size={13} />
-            {item.days} days · {item.nights} nights
+            {item.days} {item.days === 1 ? "day" : "days"}
           </span>
         )}
-        <span className="photo-arrow">
-          <Arrow diagonal />
-        </span>
+        {discountOf(item) > 0 && (
+          <span className="offer-tag">{discountOf(item)}% off</span>
+        )}
       </Link>
       <div className="card-body">
         <p className="card-location">
-          <MapPin size={13} />
-          {item.location}
+          <MapPin size={14} />
+          <span>{stops.length ? stops.join(" · ") : item.location}</span>
         </p>
-        <Link href={`/${paths[item.kind]}/${item.slug}`}>
+        <Link href={href}>
           <h3>{item.title}</h3>
         </Link>
         <p className="card-summary">{item.summary}</p>
         <div className="card-bottom">
-          <Price item={item} />
+          <div className="card-price">
+            {item.price ? (
+              <>
+                <span className="price-from">
+                  From{item.priceBasis ? ` · ${item.priceBasis}` : ""}
+                </span>
+                <PriceFigure item={item} />
+              </>
+            ) : (
+              <span className="quote-label">
+                Made for you. <strong>Request a quote</strong>
+              </span>
+            )}
+          </div>
+          <Link
+            href={href}
+            className="card-arrow"
+            aria-label={`View ${item.title}`}
+          >
+            <Arrow diagonal />
+          </Link>
         </div>
       </div>
     </article>

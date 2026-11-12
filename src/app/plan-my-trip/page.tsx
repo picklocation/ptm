@@ -19,6 +19,31 @@ export default async function Plan({
   const items = await publicContent();
   const item = items.find((x) => x.id === q.item);
   const s = await settings();
+  // Suggestions come only from published content, never invented places.
+  const stayNames = stayDestinations(items).map((x) => x.name);
+  const places = [
+    ...new Set(
+      [
+        ...items.filter((x) => x.kind === "destination").map((x) => x.title),
+        ...items.map((x) => x.country || ""),
+        ...stayNames,
+        ...items.flatMap((x) => x.locations || []),
+      ]
+        .map((x) => x.trim())
+        .filter((x) => x && !x.includes("/")),
+    ),
+  ]
+    .sort((a, b) => a.localeCompare(b))
+    .slice(0, 300);
+  const popular = [
+    ...new Set([
+      ...items
+        .filter((x) => x.kind === "destination")
+        .slice(0, 5)
+        .map((x) => x.title),
+      ...stayNames.slice(0, 3),
+    ]),
+  ].slice(0, 7);
   return (
     <>
       <main id="main" className="container page-main enquiry-page">
@@ -69,6 +94,8 @@ export default async function Plan({
                   ? q.kind!
                   : "holiday"
             }
+            places={places}
+            popular={popular}
             whatsappEnabled={!!s.whatsapp}
             preferWhatsApp={q.contact === "whatsapp"}
           />

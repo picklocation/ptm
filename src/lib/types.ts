@@ -37,6 +37,8 @@ export type Content = {
   mealPlans: string[];
   vehicles: { name: string; passengers: number; luggage: string }[];
   price?: number;
+  // Price before a discount. Shown struck through beside `price`.
+  originalPrice?: number;
   currency: string;
   priceBasis: string;
   priceConditions: string;
