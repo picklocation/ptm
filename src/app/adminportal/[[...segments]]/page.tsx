@@ -5,7 +5,7 @@ import Image from "next/image";
 import { redirect, notFound } from "next/navigation";
 import { randomUUID } from "node:crypto";
 import { currentStaff } from "@/lib/auth";
-import { list, get } from "@/lib/store";
+import { list, get, listContent, listContentSummary } from "@/lib/store";
 import {
   defaultSettings,
   type Settings,
@@ -70,14 +70,13 @@ export default async function Admin({
   const [section, id] = segments;
   let body: React.ReactNode;
   if (!section) {
-    const contents =
-      staff.role !== "enquiries" ? await list<Content>("content") : [];
-    const enquiries =
-      staff.role !== "editor"
-        ? (await list<Enquiry>("enquiries")).sort((a, b) =>
-            b.createdAt.localeCompare(a.createdAt),
-          )
-        : [];
+    const [contents, allEnquiries] = await Promise.all([
+      staff.role !== "enquiries" ? listContentSummary<Content>() : [],
+      staff.role !== "editor" ? list<Enquiry>("enquiries") : [],
+    ]);
+    const enquiries = allEnquiries.sort((a, b) =>
+      b.createdAt.localeCompare(a.createdAt),
+    );
     body = (
       <>
         <div className="admin-top">
@@ -142,17 +141,20 @@ export default async function Admin({
   } else if (section === "content") {
     if (staff.role === "enquiries") redirect("/adminportal");
     if (id) {
-      const c = id === "new" ? blank() : await get<Content>("content", id);
+      const [c, places] = await Promise.all([
+        id === "new" ? blank() : get<Content>("content", id),
+        listContent<Content>("content", "destination"),
+      ]);
       if (!c) notFound();
       body = (
         <ContentEditor
           initial={c}
           canDelete={staff.role === "owner" && id !== "new"}
-          stayDestinations={stayDestinations(await list<Content>("content"))}
+          stayDestinations={stayDestinations(places)}
         />
       );
     } else {
-      const contents = (await list<Content>("content")).sort(
+      const contents = (await listContentSummary<Content>()).sort(
         (a, b) => a.order - b.order,
       );
       body = (
@@ -178,7 +180,10 @@ export default async function Admin({
         </div>
         <div className="admin-top">
           <h1>{c.title}</h1>
-          <Link className="button secondary" href={`/adminportal/content/${c.id}`}>
+          <Link
+            className="button secondary"
+            href={`/adminportal/content/${c.id}`}
+          >
             Back to editor
           </Link>
         </div>

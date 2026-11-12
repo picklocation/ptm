@@ -69,9 +69,32 @@ async function clientFor(collection: string) {
     return serviceSupabase();
   return requestSupabase();
 }
+// Fields the admin list and dashboard need. Fetching these instead of whole
+// records keeps list pages small as the catalogue grows.
+const contentSummary = [
+  "title",
+  "kind",
+  "slug",
+  "status",
+  "demo",
+  "featured",
+  "order",
+  "region",
+  "country",
+  "state",
+  "location",
+  "locations",
+  "packageType",
+  "collections",
+  "stayDestinationSlug",
+  "propertyVerified",
+]
+  .map((key) => `${key}:data->${key}`)
+  .join(",");
 export async function supabaseRead<T>(
   collection: string,
   id?: string,
+  options: { where?: Record<string, string>; summary?: boolean } = {},
 ): Promise<T[]> {
   const table = tables[collection];
   if (!table) throw new Error("Unsupported collection");
@@ -81,9 +104,11 @@ export async function supabaseRead<T>(
   for (let offset = 0; ; offset += 500) {
     let query = client
       .from(table)
-      .select("*")
+      .select(options.summary ? `id,${contentSummary}` : "*")
       .order(table === "delivery_jobs" ? "enquiry_id" : "id")
       .range(offset, offset + 499);
+    for (const [column, value] of Object.entries(options.where || {}))
+      query = query.eq(column, value);
     if (id)
       query = query.eq(table === "delivery_jobs" ? "enquiry_id" : "id", id);
     if (table === "delivery_jobs")
@@ -93,11 +118,12 @@ export async function supabaseRead<T>(
       );
     const { data, error } = await query;
     databaseError(error);
-    const rows = data || [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rows = (data || []) as any[];
     output.push(
       ...rows.map(
         (row) =>
-          (collection === "staff"
+          (collection === "staff" || options.summary
             ? row
             : collection === "media"
               ? {
