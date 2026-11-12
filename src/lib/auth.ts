@@ -4,6 +4,7 @@ import {
   timingSafeEqual,
   createHash,
 } from "node:crypto";
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { getAuth } from "firebase-admin/auth";
 import { get, put, remove, firebaseMode, firebaseApp } from "./store";
@@ -23,22 +24,41 @@ export function verifyPassword(password: string, hash: string) {
 }
 export const digest = (s: string) =>
   createHash("sha256").update(s).digest("hex");
-export async function currentStaff(): Promise<Staff | null> {
+// Cached per request so a page and its helpers share one lookup.
+export const currentStaff = cache(async (): Promise<Staff | null> => {
   if (supabaseMode()) {
     const token = (await cookies()).get("ptm_supabase_access")?.value;
     if (!token) return null;
+    // The token's subject only picks which staff row to request. Supabase Auth
+    // still verifies the token, and the database verifies it again for the
+    // staff query, so both checks run together instead of one after another.
+    let subject = "";
+    try {
+      subject = String(
+        JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString())
+          .sub || "",
+      );
+    } catch {
+      return null;
+    }
+    if (!/^[0-9a-f-]{36}$/.test(subject)) return null;
     const client = await requestSupabase();
-    const {
-      data: { user },
-      error,
-    } = await client.auth.getUser(token);
-    if (error || !user) return null;
-    const { data: staff } = await client
-      .from("staff")
-      .select("id,email,role,active")
-      .eq("id", user.id)
-      .eq("active", true)
-      .maybeSingle();
+    const [
+      {
+        data: { user },
+        error,
+      },
+      { data: staff },
+    ] = await Promise.all([
+      client.auth.getUser(token),
+      client
+        .from("staff")
+        .select("id,email,role,active")
+        .eq("id", subject)
+        .eq("active", true)
+        .maybeSingle(),
+    ]);
+    if (error || !user || user.id !== subject) return null;
     return staff as Staff | null;
   }
   const token = (await cookies()).get("ptm_session")?.value;
@@ -50,7 +70,7 @@ export async function currentStaff(): Promise<Staff | null> {
   if (!session || session.expires < Date.now()) return null;
   const staff = await get<Staff>("staff", session.staffId);
   return staff?.active ? staff : null;
-}
+});
 export async function requireStaff(
   permission: "content" | "enquiries" | "owner" = "content",
 ) {

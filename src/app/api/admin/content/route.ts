@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { revalidateTag } from "next/cache";
 import { requireStaff, checkOrigin, errorResponse } from "@/lib/auth";
 import { contentSchema, publishErrors } from "@/lib/validation";
-import { batch, list, get, demoEnabled } from "@/lib/store";
+import { batch, list, get, listContent, demoEnabled } from "@/lib/store";
 import type { Content } from "@/lib/types";
 import { stayDestinations, stayDestinationKey } from "@/lib/stays";
 import { managedObjectPaths } from "@/lib/assets";
@@ -75,9 +75,9 @@ export async function POST(req: Request) {
       if (
         c.kind === "resort" &&
         c.stayDestinationSlug &&
-        !stayDestinations(await list<Content>("publishedContent")).some(
-          (d) => d.slug === stayDestinationKey(c.stayDestinationSlug!),
-        )
+        !stayDestinations(
+          await listContent<Content>("publishedContent", "destination"),
+        ).some((d) => d.slug === stayDestinationKey(c.stayDestinationSlug!))
       )
         errors.push(
           "Publish the stay destination first, then assign this property to it.",
@@ -94,16 +94,16 @@ export async function POST(req: Request) {
           { status: 400 },
         );
     }
-    const duplicate = (await list<Content>("content")).find(
-      (x) => x.id !== c.id && x.slug === c.slug && x.kind === c.kind,
-    );
-    if (duplicate)
+    const [sameSlug, existing] = await Promise.all([
+      listContent<Content>("content", c.kind, c.slug),
+      get<Content>("content", c.id),
+    ]);
+    if (sameSlug.some((x) => x.id !== c.id))
       return Response.json(
         { error: "That URL slug is already used. Choose another." },
         { status: 409 },
       );
     const now = new Date().toISOString();
-    const existing = await get<Content>("content", c.id);
     const updated = {
       ...c,
       updatedAt: now,

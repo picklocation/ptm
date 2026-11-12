@@ -131,6 +131,27 @@ export async function list<T>(collection: string): Promise<T[]> {
       .all(collection) as { data: string }[]
   ).map((r) => JSON.parse(r.data));
 }
+// Content records of one kind (and optionally one slug). Uses indexed
+// columns in Supabase; other backends filter in memory.
+export async function listContent<T extends { kind: string; slug: string }>(
+  collection: "content" | "publishedContent",
+  kind: string,
+  slug?: string,
+): Promise<T[]> {
+  if (supabaseMode())
+    return supabaseRead<T>(collection, undefined, {
+      where: { kind, ...(slug ? { slug } : {}) },
+    });
+  return (await list<T>(collection)).filter(
+    (x) => x.kind === kind && (!slug || x.slug === slug),
+  );
+}
+// Light list for admin tables and counts: no itineraries, galleries or copy.
+export async function listContentSummary<T>(): Promise<T[]> {
+  if (supabaseMode())
+    return supabaseRead<T>("content", undefined, { summary: true });
+  return list<T>("content");
+}
 export async function put(collection: string, id: string, data: unknown) {
   if (supabaseMode()) return supabaseBatch([{ collection, id, data }]);
   if (firebaseMode()) {
