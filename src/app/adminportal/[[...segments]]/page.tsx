@@ -64,7 +64,7 @@ export default async function Admin({
   params: Promise<{ segments?: string[] }>;
 }) {
   const staff = await currentStaff();
-  if (!staff) redirect("/admin/login");
+  if (!staff) redirect("/adminportal/login");
   const { segments = [] } = await params;
   const [section, id] = segments;
   let body: React.ReactNode;
@@ -128,7 +128,7 @@ export default async function Admin({
               before publishing.
             </p>
             <Link
-              href="/admin/content/new"
+              href="/adminportal/content/new"
               className="button"
               style={{ marginTop: 20 }}
             >
@@ -139,7 +139,7 @@ export default async function Admin({
       </>
     );
   } else if (section === "content") {
-    if (staff.role === "enquiries") redirect("/admin");
+    if (staff.role === "enquiries") redirect("/adminportal");
     if (id) {
       const c = id === "new" ? blank() : await get<Content>("content", id);
       if (!c) notFound();
@@ -157,7 +157,7 @@ export default async function Admin({
         <>
           <div className="admin-top">
             <h1>Content & journeys</h1>
-            <Link href="/admin/content/new" className="button">
+            <Link href="/adminportal/content/new" className="button">
               Create content +
             </Link>
           </div>
@@ -166,7 +166,7 @@ export default async function Admin({
       );
     }
   } else if (section === "preview") {
-    if (staff.role === "enquiries") redirect("/admin");
+    if (staff.role === "enquiries") redirect("/adminportal");
     const c = await get<Content>("content", id);
     if (!c) notFound();
     body = (
@@ -176,7 +176,7 @@ export default async function Admin({
         </div>
         <div className="admin-top">
           <h1>{c.title}</h1>
-          <Link className="button secondary" href={`/admin/content/${c.id}`}>
+          <Link className="button secondary" href={`/adminportal/content/${c.id}`}>
             Back to editor
           </Link>
         </div>
@@ -209,7 +209,7 @@ export default async function Admin({
       </>
     );
   } else if (section === "enquiries") {
-    if (staff.role === "editor") redirect("/admin");
+    if (staff.role === "editor") redirect("/adminportal");
     if (id) {
       const e = await get<Enquiry>("enquiries", id);
       if (!e) notFound();
@@ -228,7 +228,7 @@ export default async function Admin({
         </>
       );
   } else if (section === "settings") {
-    if (staff.role !== "owner") redirect("/admin");
+    if (staff.role !== "owner") redirect("/adminportal");
     body = (
       <SettingsEditor
         initial={{
@@ -238,7 +238,7 @@ export default async function Admin({
       />
     );
   } else if (section === "staff") {
-    if (staff.role !== "owner") redirect("/admin");
+    if (staff.role !== "owner") redirect("/adminportal");
     body = (
       <StaffEditor
         initial={(await list<Staff>("staff")).map(({ passwordHash, ...s }) => {
@@ -249,7 +249,7 @@ export default async function Admin({
       />
     );
   } else if (section === "audit") {
-    if (staff.role !== "owner") redirect("/admin");
+    if (staff.role !== "owner") redirect("/adminportal");
     const logs = (
       await list<{ at: string; actor: string; action: string; item: string }>(
         "auditEvents",

@@ -55,7 +55,7 @@ export function AdminLogin({ firebase }: { firebase: boolean }) {
           });
           const j = await r.json();
           if (!r.ok) throw new Error(j.error);
-          router.push("/admin");
+          router.push("/adminportal");
           router.refresh();
         } catch (e) {
           setError(e instanceof Error ? e.message : "Unable to sign in.");

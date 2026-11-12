@@ -13,24 +13,24 @@ export function AdminShell({
       <aside className="admin-sidebar">
         <Logo />
         <nav aria-label="Admin navigation">
-          <Link href="/admin">Overview</Link>
+          <Link href="/adminportal">Overview</Link>
           {staff.role !== "enquiries" && (
-            <Link href="/admin/content">Content & media</Link>
+            <Link href="/adminportal/content">Content & media</Link>
           )}
           {staff.role !== "editor" && (
-            <Link href="/admin/enquiries">Enquiries</Link>
+            <Link href="/adminportal/enquiries">Enquiries</Link>
           )}
           {staff.role === "owner" && (
             <>
-              <Link href="/admin/settings">Site settings & FAQs</Link>
-              <Link href="/admin/staff">Staff & access</Link>
-              <Link href="/admin/audit">Audit history</Link>
+              <Link href="/adminportal/settings">Site settings & FAQs</Link>
+              <Link href="/adminportal/staff">Staff & access</Link>
+              <Link href="/adminportal/audit">Audit history</Link>
             </>
           )}
           <Link href="/" target="_blank">
             View website ↗
           </Link>
-          <Link href="/admin/logout">Sign out</Link>
+          <Link href="/adminportal/logout">Sign out</Link>
         </nav>
         <span className="muted">
           {staff.email}

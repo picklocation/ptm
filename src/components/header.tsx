@@ -26,7 +26,7 @@ export function Header() {
     dialog.current?.close();
     setOpen(false);
   }, [path]);
-  if (path.startsWith("/admin")) return null;
+  if (path.startsWith("/adminportal")) return null;
   return (
     <>
       <header className="header">

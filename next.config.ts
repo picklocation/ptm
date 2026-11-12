@@ -13,6 +13,17 @@ const config: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    // The staff portal moved to /adminportal. Keep old bookmarks working.
+    return [
+      { source: "/admin", destination: "/adminportal", permanent: false },
+      {
+        source: "/admin/:path*",
+        destination: "/adminportal/:path*",
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {

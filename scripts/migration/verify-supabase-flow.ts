@@ -55,14 +55,14 @@ async function main() {
     password: c.required("SUPABASE_OWNER_PASSWORD"),
   });
   assert.equal(login.status, 200, "Owner login");
-  assert.equal((await call("/admin")).status, 200, "Owner dashboard");
+  assert.equal((await call("/adminportal")).status, 200, "Owner dashboard");
   for (const [route, heading] of [
-    ["/admin/content", "Content &amp; journeys"],
-    ["/admin/content/new", "A new journey"],
-    ["/admin/enquiries", "Enquiries"],
-    ["/admin/settings", "Frequently asked questions"],
-    ["/admin/staff", "Staff &amp; access"],
-    ["/admin/audit", "Audit"],
+    ["/adminportal/content", "Content &amp; journeys"],
+    ["/adminportal/content/new", "A new journey"],
+    ["/adminportal/enquiries", "Enquiries"],
+    ["/adminportal/settings", "Frequently asked questions"],
+    ["/adminportal/staff", "Staff &amp; access"],
+    ["/adminportal/audit", "Audit"],
   ]) {
     const response = await call(route);
     assert.equal(response.status, 200, `Owner module ${route}`);
@@ -166,7 +166,7 @@ async function main() {
     .eq("enquiry_id", enquiryId);
   assert.equal(jobs.data?.length, 2, "Atomic delivery jobs");
   assert.equal(
-    (await call(`/admin/enquiries/${enquiryId}`)).status,
+    (await call(`/adminportal/enquiries/${enquiryId}`)).status,
     200,
     "Admin enquiry view",
   );

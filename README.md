@@ -20,7 +20,7 @@ npx tsx scripts/supabase-local.ts start
 
 Website: http://localhost:3005
 
-Admin: http://localhost:3005/admin/login
+Admin: http://localhost:3005/adminportal/login
 
 Owner: **pickthemap@gmail.com**, using the password chosen privately during Supabase provisioning.
 

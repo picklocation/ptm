@@ -16,10 +16,10 @@ You chose a fresh start: old Firebase enquiries and edited content were not copi
 | --- | --- |
 | Owner email | pickthemap@gmail.com |
 | Password | Your privately chosen Supabase password |
-| Local login | http://localhost:3005/admin/login |
-| Local dashboard | http://localhost:3005/admin |
+| Local login | http://localhost:3005/adminportal/login |
+| Local dashboard | http://localhost:3005/adminportal |
 | Hosted preview login | Latest migration preview URL followed by /admin/login |
-| Production login after cutover | https://ptm-alpha.vercel.app/admin/login |
+| Production login after cutover | https://ptm-alpha.vercel.app/adminportal/login |
 
 Use the Supabase password, which may differ from your old Firebase password. No password is written here. Changing the local setup file after account creation does not reset an existing password. Sessions last at most one hour; sign in again when required. Password-reset email delivery is not yet verified.
 
