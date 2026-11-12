@@ -92,3 +92,7 @@ Admin uploads now go to the public bucket in two fixed WebP sizes: `website-publ
 A photo is reachable by its link from the moment it is uploaded, including before publication. The owner accepted this on 12 November 2026.
 
 Galleries hold at most 8 photos. When a save removes a photo, its files and `media_assets` row are deleted if no draft or published record still uses it. Photos uploaded but never saved are not cleaned up. Earlier `/api/media/{id}` links and the private bucket continue to work unchanged.
+
+## Permanent deletion (added 12 November 2026)
+
+`POST /api/admin/content/delete` with `{id, confirm}` is owner only. The record must already be archived and `confirm` must equal its title. It unlinks enquiries that pointed at the record (they keep `itemTitle`), then deletes its `content_media`, `content_revisions`, `published_content` and `content` rows using the staff token so RLS applies, writes an audit event, and finally removes the record's uploaded photos from Storage when no other record uses them. Photo removal is best effort and reported as `photosRemoved`. The steps are ordered so a failure part-way leaves an archived record that can be deleted again; they are not one transaction.

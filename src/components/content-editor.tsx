@@ -42,14 +42,17 @@ async function shrinkImage(file: File): Promise<File> {
 export function ContentEditor({
   initial,
   stayDestinations = [],
+  canDelete = false,
 }: {
   initial: Content;
   stayDestinations?: StayDestination[];
+  canDelete?: boolean;
 }) {
   const [c, setC] = useState(initial),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState(""),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [confirmDelete, setConfirmDelete] = useState("");
   const router = useRouter();
   function update(key: string, value: unknown) {
     setC((old) => ({ ...old, [key]: value }));
@@ -98,6 +101,24 @@ export function ContentEditor({
         />
       </label>
     );
+  }
+  async function remove() {
+    setBusy(true);
+    setError("");
+    try {
+      const r = await fetch("/api/admin/content/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: initial.id, confirm: confirmDelete }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || "Unable to delete.");
+      router.push("/adminportal/content");
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to delete.");
+      setBusy(false);
+    }
   }
   const maxGallery = 8;
   const gallery = c.gallery.filter(Boolean);
@@ -767,6 +788,39 @@ export function ContentEditor({
                 Archive
               </button>
             </div>
+            {canDelete && c.status === "archived" && (
+              <div className="delete-zone">
+                <strong>Delete permanently</strong>
+                <p className="small-note">
+                  Removes this record, its edit history and its uploaded photos
+                  from the database and storage. This cannot be undone. Past
+                  enquiries are kept.
+                </p>
+                <label className="field">
+                  Type the title to confirm
+                  <input
+                    value={confirmDelete}
+                    onChange={(e) => setConfirmDelete(e.target.value)}
+                    autoComplete="off"
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="button small delete-button"
+                  disabled={
+                    busy || confirmDelete.trim() !== initial.title.trim()
+                  }
+                  onClick={remove}
+                >
+                  Delete permanently
+                </button>
+              </div>
+            )}
+            {canDelete && c.status !== "archived" && (
+              <p className="small-note">
+                To delete this record permanently, archive it first.
+              </p>
+            )}
           </section>
           <section className="admin-card">
             <h2>Pricing</h2>

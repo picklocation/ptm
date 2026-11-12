@@ -1562,6 +1562,22 @@ img {
   max-width: 100%;
   font-size: 12px;
 }
+.delete-zone {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #e7b4b4;
+  border-radius: 12px;
+  background: #fff6f6;
+}
+.delete-button,
+.delete-button:hover:not(:disabled) {
+  justify-self: start;
+  background: #b42318;
+  border-color: #b42318;
+  color: #fff;
+}
 .photo-manager {
   display: grid;
   gap: 12px;

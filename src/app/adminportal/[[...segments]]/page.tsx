@@ -147,6 +147,7 @@ export default async function Admin({
       body = (
         <ContentEditor
           initial={c}
+          canDelete={staff.role === "owner" && id !== "new"}
           stayDestinations={stayDestinations(await list<Content>("content"))}
         />
       );
