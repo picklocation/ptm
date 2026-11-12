@@ -1562,6 +1562,77 @@ img {
   max-width: 100%;
   font-size: 12px;
 }
+.photo-manager {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+.photo-item {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 16px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.photo-thumb {
+  aspect-ratio: 4 / 3;
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  text-align: center;
+}
+.photo-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-fields {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-width: 0;
+}
+.photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.photo-pick {
+  position: relative;
+  justify-self: start;
+  cursor: pointer;
+}
+.photo-pick input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.photo-pick:focus-within {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+.photo-advanced {
+  margin-top: 12px;
+  font-size: 13px;
+}
+.photo-advanced summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+@media (max-width: 560px) {
+  .photo-item {
+    grid-template-columns: 1fr;
+  }
+  .photo-thumb {
+    max-width: 220px;
+  }
+}
 .repeat-row {
   padding: 16px;
   background: var(--paper);

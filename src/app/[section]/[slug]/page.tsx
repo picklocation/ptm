@@ -1,4 +1,4 @@
-import { publicAsset } from "@/lib/assets";
+import { publicAsset, imageVariant, skipOptimizer } from "@/lib/assets";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -94,7 +94,7 @@ export default async function Detail({
         <div className="detail-hero">
           <Image
             src={item.image || publicAsset("brand/placeholder.svg")}
-            unoptimized={item.image.startsWith("/api/media/")}
+            unoptimized={skipOptimizer(item.image)}
             alt={item.imageAlt}
             fill
             priority
@@ -141,8 +141,8 @@ export default async function Detail({
                       aria-label={`Open photo ${i + 1} of ${item.title}`}
                     >
                       <Image
-                        src={url}
-                        unoptimized={url.startsWith("/api/media/")}
+                        src={imageVariant(url, "card")}
+                        unoptimized={skipOptimizer(url)}
                         alt={
                           item.galleryAlt?.[url] ||
                           `${item.imageAlt} — view ${i + 1}`

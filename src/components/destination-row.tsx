@@ -1,5 +1,5 @@
 "use client";
-import { publicAsset } from "@/lib/assets";
+import { publicAsset, imageVariant, skipOptimizer } from "@/lib/assets";
 
 import { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
@@ -97,11 +97,11 @@ export function DestinationRow({
         {items.map((item) => (
           <Link key={item.name} href={item.href} className="destination-tile">
             <Image
-              src={item.image || publicAsset("brand/placeholder.svg")}
+              src={imageVariant(item.image, "card") || publicAsset("brand/placeholder.svg")}
               alt={item.alt}
               fill
               sizes="(max-width:600px) 65vw, 20vw"
-              unoptimized={item.image.startsWith("/api/media/")}
+              unoptimized={skipOptimizer(item.image)}
             />
             <div />
             <span className="destination-label">

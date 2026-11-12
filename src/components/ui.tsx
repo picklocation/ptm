@@ -1,4 +1,4 @@
-import { publicAsset } from "@/lib/assets";
+import { publicAsset, imageVariant, skipOptimizer } from "@/lib/assets";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, ArrowRight, MapPin, Clock, Check } from "lucide-react";
@@ -82,8 +82,8 @@ export function TripCard({ item }: { item: Content }) {
     <article className="trip-card">
       <Link href={`/${paths[item.kind]}/${item.slug}`} className="card-photo">
         <Image
-          src={item.image || publicAsset("brand/placeholder.svg")}
-          unoptimized={item.image.startsWith("/api/media/")}
+          src={imageVariant(item.image, "card") || publicAsset("brand/placeholder.svg")}
+          unoptimized={skipOptimizer(item.image)}
           alt={item.imageAlt || item.title}
           fill
           sizes="(max-width: 640px) 92vw, (max-width: 1099px) 45vw, 24vw"

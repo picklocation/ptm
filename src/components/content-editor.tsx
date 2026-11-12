@@ -4,12 +4,41 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, ArrowUp, ArrowDown, Upload } from "lucide-react";
 import type { Content } from "@/lib/types";
+import { imageVariant } from "@/lib/assets";
 import { stayTags, type StayDestination } from "@/lib/stays";
 import {
   packageTypes,
   collectionOptions,
   assignedCollections,
 } from "@/lib/classification";
+// Shrink large camera photos in the browser so uploads are quick and stay
+// under the host's request size limit. The server validates and re-encodes.
+async function shrinkImage(file: File): Promise<File> {
+  try {
+    const bitmap = await createImageBitmap(file, {
+      imageOrientation: "from-image",
+    });
+    const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+    if (scale === 1 && file.size < 1_500_000) return file;
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas
+      .getContext("2d")!
+      .drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", 0.92),
+    );
+    return blob && blob.size < file.size
+      ? new File([blob], file.name.replace(/\.\w+$/, "") + ".jpg", {
+          type: "image/jpeg",
+        })
+      : file;
+  } catch {
+    return file;
+  }
+}
 export function ContentEditor({
   initial,
   stayDestinations = [],
@@ -69,6 +98,66 @@ export function ContentEditor({
         />
       </label>
     );
+  }
+  const maxGallery = 8;
+  const gallery = c.gallery.filter(Boolean);
+  function moveGallery(index: number, step: number) {
+    const next = [...gallery];
+    const [moved] = next.splice(index, 1);
+    next.splice(index + step, 0, moved);
+    update("gallery", next);
+  }
+  // Swap a gallery photo with the cover, keeping each photo's description.
+  function makeCover(url: string) {
+    setC((old) => {
+      const alts = { ...old.galleryAlt };
+      const nextAlt = alts[url] || "";
+      delete alts[url];
+      const rest = old.gallery.filter((x) => x && x !== url);
+      if (old.image) {
+        rest.unshift(old.image);
+        alts[old.image] = old.imageAlt;
+      }
+      return {
+        ...old,
+        image: url,
+        imageAlt: nextAlt,
+        gallery: rest,
+        galleryAlt: alts,
+      };
+    });
+  }
+  async function uploadPhotos(list: FileList | null, limit: number) {
+    const files = Array.from(list || []);
+    const added: string[] = [];
+    if (!files.length) return added;
+    setBusy(true);
+    setError("");
+    try {
+      if (files.length > limit)
+        throw new Error(
+          `You can add ${limit} more photo${limit === 1 ? "" : "s"} here. A gallery holds up to ${maxGallery}.`,
+        );
+      for (const [i, file] of files.entries()) {
+        setMessage(`Uploading photo ${i + 1} of ${files.length}…`);
+        const body = new FormData();
+        body.set("file", await shrinkImage(file));
+        body.set("contentId", c.id);
+        const r = await fetch("/api/admin/upload", { method: "POST", body });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(j.error || "Upload failed.");
+        added.push(j.url);
+      }
+      setMessage(
+        `${added.length === 1 ? "Photo" : added.length + " photos"} uploaded. Add descriptions and save your changes.`,
+      );
+    } catch (e) {
+      setMessage("");
+      setError(e instanceof Error ? e.message : "Upload failed.");
+    } finally {
+      setBusy(false);
+    }
+    return added;
   }
   async function save(action: string) {
     setBusy(true);
@@ -328,103 +417,133 @@ export function ContentEditor({
           </section>
           <section className="admin-card">
             <h2>Images & gallery</h2>
-            {field("image", "Cover image URL")}
-            {field("imageAlt", "Cover image description (alt text)")}
+            <div className="photo-manager">
+              <div className="photo-item">
+                <div className="photo-thumb">
+                  {c.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={imageVariant(c.image, "card")} alt="" />
+                  ) : (
+                    <span className="muted">No cover yet</span>
+                  )}
+                </div>
+                <div className="photo-fields">
+                  <strong>Cover photo</strong>
+                  {field("imageAlt", "Cover description (alt text)")}
+                  <label className="button secondary small photo-pick">
+                    <Upload size={16} />
+                    {c.image ? "Replace cover" : "Upload cover"}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      disabled={busy}
+                      onChange={async (e) => {
+                        const [url] = await uploadPhotos(e.target.files, 1);
+                        e.target.value = "";
+                        if (url) update("image", url);
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+              {gallery.map((url, i) => (
+                <div className="photo-item" key={url}>
+                  <div className="photo-thumb">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={imageVariant(url, "card")} alt="" />
+                  </div>
+                  <div className="photo-fields">
+                    <strong>Gallery photo {i + 1}</strong>
+                    <label className="field">
+                      Description (alt text)
+                      <input
+                        value={c.galleryAlt?.[url] || ""}
+                        onChange={(e) =>
+                          update("galleryAlt", {
+                            ...c.galleryAlt,
+                            [url]: e.target.value,
+                          })
+                        }
+                      />
+                    </label>
+                    <div className="photo-actions">
+                      <button
+                        type="button"
+                        className="icon-button"
+                        aria-label={`Move photo ${i + 1} earlier`}
+                        disabled={i === 0}
+                        onClick={() => moveGallery(i, -1)}
+                      >
+                        <ArrowUp size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-button"
+                        aria-label={`Move photo ${i + 1} later`}
+                        disabled={i === gallery.length - 1}
+                        onClick={() => moveGallery(i, 1)}
+                      >
+                        <ArrowDown size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        className="button secondary small"
+                        onClick={() => makeCover(url)}
+                      >
+                        Use as cover
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-button"
+                        aria-label={`Remove photo ${i + 1}`}
+                        onClick={() =>
+                          update(
+                            "gallery",
+                            gallery.filter((x) => x !== url),
+                          )
+                        }
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
             <div className="upload-zone">
               <label className="field">
                 <Upload size={18} />
-                Upload a cover image
+                Add gallery photos ({gallery.length} of {maxGallery})
                 <input
                   type="file"
+                  multiple
                   accept="image/jpeg,image/png,image/webp"
+                  disabled={busy || gallery.length >= maxGallery}
                   onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-                    setBusy(true);
-                    try {
-                      const form = new FormData();
-                      form.set("file", file);
-                      const r = await fetch("/api/admin/upload", {
-                        method: "POST",
-                        body: form,
-                      });
-                      const j = await r.json();
-                      if (!r.ok) throw new Error(j.error);
-                      update("image", j.url);
-                      setMessage(
-                        "Image uploaded. Add alt text and save your changes.",
-                      );
-                    } catch (e) {
-                      setError(
-                        e instanceof Error ? e.message : "Upload failed.",
-                      );
-                    } finally {
-                      setBusy(false);
-                    }
+                    const added = await uploadPhotos(
+                      e.target.files,
+                      maxGallery - gallery.length,
+                    );
+                    e.target.value = "";
+                    if (added.length)
+                      setC((old) => ({
+                        ...old,
+                        gallery: [...old.gallery.filter(Boolean), ...added],
+                      }));
                   }}
                 />
               </label>
               <p className="small-note">
-                JPEG, PNG or WebP, up to 8 MB. Uploaded images stay private
-                until the content is published.
+                Choose several photos at once. They are resized and compressed
+                automatically. Add a description to each, then save. Removed
+                photos are deleted from storage when you save.
               </p>
             </div>
-            {lines("gallery", "Additional image URLs in display order")}
-            {c.gallery.filter(Boolean).map((url, i) => (
-              <label className="field" key={url}>
-                Photo {i + 1} alt description
-                <input
-                  value={c.galleryAlt?.[url] || ""}
-                  onChange={(e) =>
-                    update("galleryAlt", {
-                      ...c.galleryAlt,
-                      [url]: e.target.value,
-                    })
-                  }
-                />
-              </label>
-            ))}
-            <label className="field">
-              Add gallery photos
-              <input
-                type="file"
-                multiple
-                accept="image/jpeg,image/png,image/webp"
-                disabled={busy}
-                onChange={async (e) => {
-                  const files = Array.from(e.target.files || []);
-                  setBusy(true);
-                  setError("");
-                  const added: string[] = [];
-                  try {
-                    for (const file of files) {
-                      const body = new FormData();
-                      body.set("file", file);
-                      const r = await fetch("/api/admin/upload", {
-                        method: "POST",
-                        body,
-                      });
-                      const j = await r.json();
-                      if (!r.ok) throw new Error(j.error);
-                      added.push(j.url);
-                    }
-                    setMessage(
-                      "Gallery uploaded. Add photo descriptions, then save.",
-                    );
-                  } catch (error) {
-                    setError(
-                      error instanceof Error ? error.message : "Upload failed.",
-                    );
-                  } finally {
-                    setC((old) => ({
-                      ...old,
-                      gallery: [...old.gallery.filter(Boolean), ...added],
-                    }));
-                    setBusy(false);
-                  }
-                }}
-              />
-            </label>
+            <details className="photo-advanced">
+              <summary>Advanced: edit image links by hand</summary>
+              {field("image", "Cover image URL")}
+              {lines("gallery", "Gallery image URLs in display order")}
+            </details>
           </section>
           {c.kind !== "resort" && c.kind !== "destination" && (
             <section className="admin-card">
