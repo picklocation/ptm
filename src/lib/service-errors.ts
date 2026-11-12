@@ -9,8 +9,12 @@ export function isDatabaseUnavailable(error: unknown): boolean {
       "RESOURCE_EXHAUSTED",
       "DEADLINE_EXCEEDED",
       "UNAVAILABLE",
+      "PGRST000",
+      "PGRST001",
+      "PGRST002",
+      "57014",
     ].includes(e.code ?? "") ||
-      /quota exceeded|resource.exhausted|database timeout/i.test(
+      /quota exceeded|resource.exhausted|database timeout|fetch failed|connection.*timeout|aborted due to timeout/i.test(
         e.message || "",
       ))
   );

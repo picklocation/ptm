@@ -5,36 +5,64 @@ import { getApps, initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import type { Content, Enquiry, Settings } from "./types";
 import { defaultSettings } from "./types";
+import { isVerifiedStay } from "./stays";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { isDatabaseUnavailable, publicReadDeadline } from "./service-errors";
+import {
+  supabaseMode,
+  publicSupabase,
+  serviceSupabase,
+  supabaseRead,
+  supabaseBatch,
+  databaseError,
+} from "./supabase";
 const persistentPublicCache = () =>
-  firebaseMode() && !process.env.FIRESTORE_EMULATOR_HOST;
+  supabaseMode() || (firebaseMode() && !process.env.FIRESTORE_EMULATOR_HOST);
+// Vercel's data cache can survive deployment promotion. Never reuse Firebase
+// results (including earlier outage fallbacks) for a different backend/project.
+const publicCacheIdentity = [
+  process.env.DATA_BACKEND || "local",
+  process.env.SUPABASE_URL || process.env.FIREBASE_PROJECT_ID || "local",
+];
 export const firebaseMode = () => process.env.DATA_BACKEND === "firebase";
 async function readShowcase() {
+  if (supabaseMode()) {
+    const { data, error } = await publicSupabase().rpc("ptm_showcase");
+    databaseError(error);
+    return data === true;
+  }
+  return (
+    (
+      await publicReadDeadline(
+        get<{ enabled: boolean }>("runtimeConfig", "demoShowcase"),
+      )
+    )?.enabled === true
+  );
+}
+const cachedShowcase = unstable_cache(
+  readShowcase,
+  ["ptm-showcase-v3", ...publicCacheIdentity],
+  {
+    revalidate: 900,
+    tags: ["ptm-public"],
+  },
+);
+export const demoEnabled = cache(async () => {
+  if (
+    process.env.ENABLE_DEMO_CONTENT === "true" &&
+    process.env.VERCEL_ENV !== "production"
+  )
+    return true;
   try {
-    return (
-      (
-        await publicReadDeadline(
-          get<{ enabled: boolean }>("runtimeConfig", "demoShowcase"),
-        )
-      )?.enabled === true
-    );
+    return await (persistentPublicCache() ? cachedShowcase() : readShowcase());
   } catch (error) {
     if (!isDatabaseUnavailable(error)) throw error;
+    // Fail closed for this request without caching an outage as a deliberate
+    // decision to hide samples. The next request must retry the database.
     return false;
-  } // Never enable sample publication when the mode cannot be verified.
-}
-const cachedShowcase = unstable_cache(readShowcase, ["ptm-showcase-v1"], {
-  revalidate: 900,
-  tags: ["ptm-public"],
+  }
 });
-export const demoEnabled = cache(
-  async () =>
-    (process.env.ENABLE_DEMO_CONTENT === "true" &&
-      process.env.VERCEL_ENV !== "production") ||
-    (await (persistentPublicCache() ? cachedShowcase() : readShowcase())),
-);
 let sqlite: DatabaseSync | undefined;
 function local() {
   if (process.env.VERCEL)
@@ -81,6 +109,7 @@ export async function get<T>(
   collection: string,
   id: string,
 ): Promise<T | null> {
+  if (supabaseMode()) return (await supabaseRead<T>(collection, id))[0] || null;
   if (firebaseMode()) {
     const d = await cloud().collection(collection).doc(id).get();
     return d.exists ? (d.data() as T) : null;
@@ -91,6 +120,7 @@ export async function get<T>(
   return row ? JSON.parse(row.data) : null;
 }
 export async function list<T>(collection: string): Promise<T[]> {
+  if (supabaseMode()) return supabaseRead<T>(collection);
   if (firebaseMode())
     return (await cloud().collection(collection).get()).docs.map(
       (d) => d.data() as T,
@@ -102,6 +132,7 @@ export async function list<T>(collection: string): Promise<T[]> {
   ).map((r) => JSON.parse(r.data));
 }
 export async function put(collection: string, id: string, data: unknown) {
+  if (supabaseMode()) return supabaseBatch([{ collection, id, data }]);
   if (firebaseMode()) {
     await cloud()
       .collection(collection)
@@ -116,6 +147,7 @@ export async function put(collection: string, id: string, data: unknown) {
     .run(collection, id, JSON.stringify(data));
 }
 export async function remove(collection: string, id: string) {
+  if (supabaseMode()) return supabaseBatch([{ collection, id, data: null }]);
   if (firebaseMode()) {
     await cloud().collection(collection).doc(id).delete();
     return;
@@ -126,6 +158,7 @@ export async function remove(collection: string, id: string) {
 }
 type Write = { collection: string; id: string; data: unknown | null };
 export async function batch(writes: Write[]) {
+  if (supabaseMode()) return supabaseBatch(writes);
   if (firebaseMode()) {
     const b = cloud().batch();
     for (const w of writes) {
@@ -157,6 +190,13 @@ export async function batch(writes: Write[]) {
   }
 }
 export async function createEnquiryOnce(enquiry: Enquiry): Promise<Enquiry> {
+  if (supabaseMode()) {
+    const { data, error } = await serviceSupabase().rpc("ptm_enquiry_once", {
+      payload: enquiry,
+    });
+    databaseError(error);
+    return data as Enquiry;
+  }
   const job = {
     id: enquiry.id,
     status: "pending",
@@ -200,6 +240,15 @@ export async function createEnquiryOnce(enquiry: Enquiry): Promise<Enquiry> {
   }
 }
 export async function rateLimit(key: string, max = 8, windowMs = 600000) {
+  if (supabaseMode()) {
+    const { data, error } = await serviceSupabase().rpc("ptm_rate_limit", {
+      key,
+      maximum: max,
+      window_ms: windowMs,
+    });
+    databaseError(error);
+    return data === true;
+  }
   const now = Date.now();
   if (firebaseMode())
     return cloud().runTransaction(async (tx) => {
@@ -233,27 +282,40 @@ export async function rateLimit(key: string, max = 8, windowMs = 600000) {
   }
 }
 async function readCatalogue() {
+  return {
+    items: await publicReadDeadline(list<Content>("publishedContent")),
+    unavailable: false,
+  };
+}
+const cachedCatalogue = unstable_cache(
+  readCatalogue,
+  ["ptm-catalogue-v3", ...publicCacheIdentity],
+  {
+    revalidate: 900,
+    tags: ["ptm-public"],
+  },
+);
+export const catalogueState = cache(async () => {
   try {
-    return {
-      items: await publicReadDeadline(list<Content>("publishedContent")),
-      unavailable: false,
-    };
+    return await (persistentPublicCache()
+      ? cachedCatalogue()
+      : readCatalogue());
   } catch (error) {
     if (!isDatabaseUnavailable(error)) throw error;
+    // Failure is handled outside unstable_cache so it cannot be cached as a
+    // successful empty catalogue for fifteen minutes.
     return { items: [] as Content[], unavailable: true };
   }
-}
-const cachedCatalogue = unstable_cache(readCatalogue, ["ptm-catalogue-v1"], {
-  revalidate: 900,
-  tags: ["ptm-public"],
 });
-export const catalogueState = cache(() =>
-  persistentPublicCache() ? cachedCatalogue() : readCatalogue(),
-);
 export const publicContent = cache(async () => {
   const showDemo = await demoEnabled();
   return (await catalogueState()).items
-    .filter((x) => x.status === "published" && (!x.demo || showDemo))
+    .filter(
+      (x) =>
+        x.status === "published" &&
+        (!x.demo || showDemo) &&
+        (x.kind !== "resort" || isVerifiedStay(x)),
+    )
     .sort((a, b) => a.order - b.order);
 });
 async function readSettings(): Promise<Settings> {
@@ -267,10 +329,14 @@ async function readSettings(): Promise<Settings> {
     return defaultSettings;
   }
 }
-const cachedSettings = unstable_cache(readSettings, ["ptm-settings-v1"], {
-  revalidate: 900,
-  tags: ["ptm-public"],
-});
+const cachedSettings = unstable_cache(
+  readSettings,
+  ["ptm-settings-v2", ...publicCacheIdentity],
+  {
+    revalidate: 900,
+    tags: ["ptm-public"],
+  },
+);
 export const settings = cache(() =>
   persistentPublicCache() ? cachedSettings() : readSettings(),
 );

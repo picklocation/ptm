@@ -21,7 +21,10 @@ export function Finder() {
         <span>
           Where to?
           <input
+            type="search"
             name="q"
+            autoComplete="off"
+            enterKeyHint="search"
             placeholder="A place you’ve been dreaming of"
             aria-label="Destination"
           />
@@ -36,10 +39,10 @@ export function Finder() {
             <option value="/international-trips">International trips</option>
             <option value="/domestic-trips">Domestic trips</option>
             <option value="/visa-free-destinations">
-              Visa-free & free-visa destinations
+              Visa-Free-destinations
             </option>
             <option value="/europe-road-trips">Europe road trip</option>
-            <option value="/resorts-and-villas">Resorts & villas</option>
+            <option value="/resorts-and-stays">Resorts & Stays</option>
           </select>
         </span>
       </label>

@@ -1,5 +1,7 @@
 import nextEnv from "@next/env";
 nextEnv.loadEnvConfig(process.cwd());
+if (process.env.DATA_BACKEND === "supabase")
+  process.env.PTM_TRUSTED_WORKER = "true";
 let running = false;
 async function run() {
   if (running) return;

@@ -20,10 +20,10 @@ export async function Footer() {
           <Link href="/domestic-trips">Domestic trips</Link>
           <Link href="/south-india">South India</Link>
           <Link href="/visa-free-destinations">
-            Visa-free & free-visa destinations
+            Visa-Free-destinations
           </Link>
           <Link href="/europe-road-trips">Europe road trips</Link>
-          <Link href="/resorts-and-villas">Resorts & villas</Link>
+          <Link href="/resorts-and-stays">Resorts & Stays</Link>
           <Link href="/destinations">Destinations</Link>
         </div>
         <div>

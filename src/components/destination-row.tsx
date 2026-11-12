@@ -1,4 +1,6 @@
 "use client";
+import { publicAsset } from "@/lib/assets";
+
 import { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,6 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export type DestinationTile = {
   name: string;
+  caption?: string;
   image: string;
   alt: string;
   href: string;
@@ -94,14 +97,17 @@ export function DestinationRow({
         {items.map((item) => (
           <Link key={item.name} href={item.href} className="destination-tile">
             <Image
-              src={item.image || "/images/placeholder.svg"}
+              src={item.image || publicAsset("brand/placeholder.svg")}
               alt={item.alt}
               fill
               sizes="(max-width:600px) 65vw, 20vw"
               unoptimized={item.image.startsWith("/api/media/")}
             />
             <div />
-            <span>{item.name}</span>
+            <span className="destination-label">
+              {item.caption && <small>{item.caption}</small>}
+              <strong>{item.name}</strong>
+            </span>
           </Link>
         ))}
       </div>

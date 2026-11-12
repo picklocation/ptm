@@ -2,7 +2,7 @@
 @theme {
   --color-brand: #05a660;
   --color-forest: #063f2e;
-  --font-sans: "Inter", sans-serif;
+  --font-sans: "Outfit", sans-serif;
 }
 :root {
   scroll-padding-bottom: 100px;
@@ -25,14 +25,16 @@ body {
   margin: 0;
   color: var(--ink);
   background: #fff;
-  font-family: "Inter", sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 15px;
   line-height: 1.65;
 }
 h1,
 h2,
 h3,
-h4,
+h4 {
+  font-family: "Outfit", sans-serif;
+}
 .brand {
   font-family: "Plus Jakarta Sans", sans-serif;
 }
@@ -2893,5 +2895,239 @@ body:has(.hero-wrap) .hero-wrap {
   }
   .destination-row-controls {
     gap: 5px;
+  }
+}
+/* Rounded travel typography and destination captions. */
+.hero p {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.25px;
+  width: 290px;
+}
+.hero h1 {
+  font-weight: 600;
+  letter-spacing: -0.045em;
+}
+.destination-name-track .destination-tile > .destination-label {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+  bottom: 22px;
+  text-shadow: 0 1px 8px #0006;
+}
+.destination-label small {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+.destination-label strong {
+  font-size: clamp(23px, 2vw, 30px);
+  line-height: 1.15;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.destination-name-track .destination-tile > div {
+  inset: 30% 0 0;
+  background: linear-gradient(transparent, #061c18ed);
+}
+@media (min-width: 901px) {
+  .hero-content > p {
+    display: none;
+  }
+}
+@media (min-width: 901px) and (max-width: 1200px) {
+  .hero p {
+    width: 225px;
+    font-size: 18px;
+  }
+  .hero h1 {
+    max-width: 60%;
+    font-size: 52px;
+  }
+}
+@media (max-width: 900px) {
+  .hero p {
+    width: auto;
+    max-width: 390px;
+    font-size: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .hero p {
+    max-width: 300px;
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  .hero-actions {
+    margin-top: 80px;
+  }
+  .destination-label strong {
+    font-size: 26px;
+  }
+  .destination-label small {
+    font-size: 10px;
+  }
+}
+
+/* Mobile form focus: readable controls without blocking user-controlled zoom. */
+.finder label span,
+.catalogue-search form,
+.filter-bar label,
+.field,
+.editor-grid > *,
+.admin-details > * {
+  min-width: 0;
+}
+.finder input:focus-visible,
+.finder select:focus-visible,
+.catalogue-search input:focus-visible {
+  outline: none;
+  box-shadow: inset 0 -2px 0 var(--ink);
+}
+.form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.admin-card,
+.table-wrap {
+  min-width: 0;
+  max-width: 100%;
+}
+.admin-top > div,
+.admin-details dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.mobile-menu,
+.filter-dialog {
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+@media (max-width: 1100px), (pointer: coarse) {
+  /* Specificity deliberately exceeds individual field and finder rules. */
+  body
+    :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not(
+      [type="hidden"]
+    ) {
+    font-size: 16px;
+  }
+}
+@media (max-width: 800px) {
+  .finder input,
+  .finder select,
+  .admin-sidebar nav a,
+  .admin-toolbar select {
+    min-height: 44px;
+  }
+  .admin-sidebar nav a {
+    display: inline-flex;
+    align-items: center;
+  }
+  .filter-bar {
+    flex-wrap: wrap;
+  }
+  .filter-bar label {
+    flex-basis: 40%;
+  }
+  .editor-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .admin-table {
+    min-width: 580px;
+  }
+  .admin-toolbar > input,
+  .admin-toolbar > select {
+    max-width: 100%;
+  }
+  body:has(.mobile-bottom) {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  body:has(.admin-shell),
+  body:has(.login-page) {
+    padding-bottom: 0;
+  }
+}
+
+/* Destination-first stays directory, using the existing travel card palette. */
+.stay-destination-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+  margin: 28px 0;
+}
+.stay-destination-card {
+  display: block;
+  min-width: 0;
+  border-radius: 22px;
+  padding: 10px;
+  background: #eff5ed;
+}
+.stay-destination-card .card-photo {
+  height: 190px;
+}
+.stay-destination-card h2,
+.stay-card-title {
+  font-size: 21px;
+  line-height: 1.35;
+  letter-spacing: -0.4px;
+}
+.stay-destination-card .text-link {
+  margin-top: 10px;
+}
+.stay-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 16px;
+  padding: 20px;
+  margin: 24px 0 16px;
+  background: var(--paper);
+  border-radius: 18px;
+}
+.stay-filters .field {
+  flex: 1;
+  min-width: 180px;
+}
+.stay-amenities {
+  margin: 14px 0;
+  padding-left: 18px;
+  font-size: 14px;
+  color: var(--text);
+}
+.stay-details-link {
+  margin-top: 16px;
+}
+@media (max-width: 1099px) {
+  .stay-destination-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .stay-destination-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .stay-destination-card .card-photo {
+    height: 210px;
+  }
+  .stay-filters {
+    padding: 16px;
+  }
+  .stay-filters .field {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+  .stay-filters .button {
+    width: 100%;
   }
 }

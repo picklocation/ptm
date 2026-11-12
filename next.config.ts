@@ -2,7 +2,16 @@ import type { NextConfig } from "next";
 const config: NextConfig = {
   devIndicators: false,
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: new URL(
+          process.env.NEXT_PUBLIC_SUPABASE_URL ||
+            "https://feqmnzutyhzochuyiint.supabase.co",
+        ).hostname,
+        pathname: "/storage/v1/object/public/website-public/**",
+      },
+    ],
   },
   async headers() {
     return [

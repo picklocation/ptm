@@ -1,5 +1,7 @@
 import nextEnv from "@next/env";
 nextEnv.loadEnvConfig(process.cwd());
+if (process.env.DATA_BACKEND === "supabase")
+  process.env.PTM_TRUSTED_WORKER = "true";
 const { list, get, put } = await import("../src/lib/store");
 const url = process.env.NOTIFICATION_WEBHOOK_URL;
 if (!url) {

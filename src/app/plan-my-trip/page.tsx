@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer";
 import { publicContent, settings } from "@/lib/store";
 import { photos } from "@/lib/seed-data";
 import { CatalogueStatus } from "@/components/catalogue-status";
+import { stayDestinations, stayDestinationKey } from "@/lib/stays";
 export const metadata = {
   title: "Plan your personalised trip",
   alternates: { canonical: "/plan-my-trip" },
@@ -51,7 +52,16 @@ export default async function Plan({
           <EnquiryForm
             itemId={item?.id || ""}
             itemTitle={item?.title || ""}
-            destination={item?.location || q.destination || ""}
+            destination={
+              stayDestinations(items).find(
+                (d) =>
+                  d.slug ===
+                  stayDestinationKey(item?.stayDestinationSlug || ""),
+              )?.name ||
+              item?.location ||
+              q.destination ||
+              ""
+            }
             kind={
               item && item.kind !== "destination"
                 ? item.kind
@@ -60,6 +70,7 @@ export default async function Plan({
                   : "holiday"
             }
             whatsappEnabled={!!s.whatsapp}
+            preferWhatsApp={q.contact === "whatsapp"}
           />
         </div>
       </main>

@@ -1,35 +1,56 @@
-# Database schema and HTTP API
+# Supabase schema and HTTP API
 
-Canonical TypeScript records: `src/lib/types.ts`. Validation: `src/lib/validation.ts` and route-specific Zod schemas. Dates are ISO strings unless noted. Firestore uses document IDs rather than SQL foreign keys; application code enforces relationships. Local SQLite stores the same documents in `documents(collection, id, data)`.
+Updated 11 November 2026. Canonical records: `src/lib/types.ts`; validation: `src/lib/validation.ts`. SQL migrations are under `supabase/migrations`.
 
-## Collections
+## Tables and relationships
 
-| Collection / ID | Data and relationships |
-|---|---|
-| `content/{id}` | Editable Content. `kind`: holiday/road-trip/resort/destination; title, slug (unique within kind), location, country, region, summary, description; image/alt, gallery and URL→alt map; days/nights/themes; featured/order; status draft/published/archived; demo; itinerary title/description array; accommodation; inclusions/exclusions; resort amenities/rooms/mealPlans; road-trip vehicles name/passengers/luggage; optional price, currency, priceBasis, priceConditions; SEO fields; updatedAt. |
-| `publishedContent/{id}` | Published snapshot of content with the same ID. Draft editing does not change it. Unpublish/archive removes the snapshot. Public reads filter demo unless showcase is active. |
-| `revisions/{random ID}` | Previous full content snapshot, including its original content ID. |
-| `staff/{Auth UID}` | id, email, role owner/editor/enquiries, active. Local-only staff IDs hash email and additionally store salted scrypt passwordHash. Cloud staff never store passwords. |
-| `sessions/{SHA256(token)}` | staffId → staff; expires in epoch milliseconds. Raw random token exists only in browser cookie. |
-| `enquiries/{request UUID}` | name/email/phone; destination/kind, itemId → content (optional), itemTitle snapshot; dates/flexible; adults/children/childAges/rooms; departure; budget/currency/budgetBasis; preferences/vehicle/mealPlan/contactMethod; method submit/whatsapp; status; assignedTo, followUp; notes and history arrays with author/time; createdAt/updatedAt; excelStatus; demo. No passport/payment details. |
-| `excelJobs/{enquiry ID}` | Pending workbook job: status, attempts, updatedAt, plus error information on failure. Same ID as enquiry for retry/deduplication. |
-| `notificationJobs/{enquiry ID}` | Pending optional provider/CRM notification; same ID as enquiry. Delivery is separate from saving. |
-| `settings/site` | whatsapp, email, phone, address, social links, about, privacy, terms, cancellation, question/answer FAQs. |
-| `runtimeConfig/demoShowcase` | enabled boolean, updatedAt. Trusted administration script controls the temporary demo showroom; no public write endpoint. |
-| `media/{UUID}` | Original filename metadata, alt, createdAt. Encoded WebP stored separately as `media/{UUID}.webp`. Access depends on published content references or staff permission. |
-| `auditEvents/{UUID}` | at, actor, action, item for admin mutations/exports. |
-| `rateLimits/{hashed key}` | count and until (epoch milliseconds). Persistent transaction-based limiter. |
+| Table | Contents and relationships |
+| --- | --- |
+| content | Editable record in JSONB; generated kind, slug, status, region, country, duration, display order and demo fields. Unique kind/slug. |
+| published_content | Separate published JSONB snapshot; ID references content. Indexed catalogue filters and search vector. |
+| content_revisions | Previous content snapshot; content_id references content. |
+| staff | UUID references auth.users; email, owner/editor/enquiries role, active flag, optional legacy Firebase UID. No password column. |
+| enquiries | UUID request ID; contact/trip preferences, notes/history arrays, status, assignment, follow-up and timestamps. Optional content_id FK. |
+| delivery_jobs | Composite enquiry_id/kind key; kind excel or notification; FK to enquiries; JSONB delivery status/attempts. |
+| site_settings | Single site row with public business/contact/social/FAQ/legal content. No secrets. |
+| runtime_config | Internal configuration, including demoShowcase enabled flag. |
+| media_assets | Bucket, object path, source metadata, MIME type, size, optional SHA-256 and public approval. |
+| content_media | Schema supports ordered versioned asset relationships. Current editor still stores image URLs/alt maps in content JSONB; this relation is not populated by the current upload flow. |
+| audit_events | Actor, timestamp, action and target in JSONB. |
+| rate_limits | Hashed key, count and expiry; atomic database updates. |
 
-Enquiry creation and its two outbox jobs are atomic. Repeat request UUIDs do not create duplicate jobs; conflicting repeated submissions return 409. Publication, revision and audit changes share a batch. The cloud seed writes draft and published pairs transactionally and skips existing records. Client rules deny all private collections and writes; published non-demo documents are readable. Server Admin SDK is privileged and must never be exposed in browser code.
+Content JSONB preserves itinerary arrays, image/gallery alt text, accommodation, inclusions/exclusions, amenities, rooms, meals, vehicles, pricing basis/conditions and SEO fields. Enquiry JSONB preserves the existing API shape. Generated columns and foreign keys support validation and queries without dropping structured fields.
+
+Supabase Auth owns passwords and identities. There is no Supabase application-sessions table. The app uses the HttpOnly `ptm_supabase_access` cookie, with a maximum one-hour lifetime and no persisted browser refresh token. A fresh sign-in is required after expiry. Logout clears the cookie; an independently copied access token remains subject to its expiry and active-staff checks.
+
+## Database operations and permissions
+
+- RLS is enabled on all application tables.
+- Public reads use the publishable key for eligible published content and public settings only.
+- Admin reads/edits use the staff access token, so RLS applies in addition to server role checks.
+- The server secret is used narrowly for validated enquiry creation, rate limits, owner-authorized staff provisioning, media operations and explicit trusted local workers.
+- `ptm_batch` is an invoker-rights atomic content/enquiry/settings/audit operation with a fixed collection allowlist. Enquiry staff may update existing enquiries, not directly insert arbitrary ones.
+- `ptm_enquiry_once` atomically saves a request and two outbox jobs; service-role only. Repeated UUIDs do not create duplicate jobs.
+- `ptm_rate_limit` atomically accepts/rejects a request; service-role only.
+- `ptm_showcase` exposes only the boolean needed for public sample visibility.
+- Staff cannot promote themselves. Disabled staff fail database permission checks.
+- Queries fetch explicit 500-row pages to avoid silent API truncation; current catalogue/admin views still assemble their lists in memory.
+- Seed utility is rerunnable and skips existing IDs. Seed draft/public writes happen in separate batches; a failed seed must be rerun/verified before launch.
+
+## Storage
+
+`website-public` contains approved seed photographs and brand assets. `website-private` contains validated admin uploads. The media endpoint checks published references or content-staff authorization before returning private bytes. Uploaded images are decoded and converted to WebP; general SVG uploads are rejected. The trusted bundled placeholder is the only SVG seed asset.
+
+The current editor supports gallery URL ordering/removal, but no physical asset-delete control. Archiving is supported; permanent package deletion is not exposed. No automatic cleanup or backup schedule is configured.
 
 ## Endpoints
 
-All mutation requests require `Origin` equal to `SITE_URL`. JSON unless specified. Protected routes use the `ptm_session` cookie. The site uses server-rendered reads; there is no public catalogue REST endpoint.
+Preview origins use the Vercel deployment URL. Production mutation requests require `Origin` equal to `SITE_URL`. JSON unless specified. Protected routes use the `ptm_supabase_access` cookie. The site uses server-rendered reads; there is no public catalogue REST endpoint.
 
 | Method / path | Permission | Request and response |
 |---|---|---|
-| POST `/api/admin/login` | Public, rate limited | `{email,password,idToken}`. Firebase requires a verified ID token from browser Email/Password login. Local mode verifies password. Returns `{ok:true}` and session cookie. |
-| POST `/api/admin/logout` | Cookie session | Clears database session and cookie. |
+| POST `/api/admin/login` | Public, rate limited | `{email,password}`. Supabase verifies credentials, then active staff access is required. Returns `{ok:true}` and session cookie. |
+| POST `/api/admin/logout` | Cookie session | Clears the app session cookie. |
 | POST `/api/admin/content` | Owner/editor | `{content: Content, action: save\|publish\|unpublish\|archive}` → `{content,message}`. Publish validates required fields, gallery alt and price conditions; duplicate slug returns 409. Demo production publication requires showcase. |
 | POST `/api/enquiries` | Public, rate limited | Enquiry input described below → 201 `{id,whatsappUrl}`. Database save always precedes WhatsApp handoff. |
 | POST `/api/admin/enquiries` | Owner/enquiries | `{id,status,note,assignedTo,followUp}` → `{enquiry}`. Status is new/contacted/quote sent/confirmed/closed. Empty note adds nothing. followUp is empty or YYYY-MM-DD. |
@@ -42,20 +63,24 @@ All mutation requests require `Origin` equal to `SITE_URL`. JSON unless specifie
 
 Enquiry input fields: `requestId` UUID, `name`, `email` (can be empty unless email contact), `phone`, `destination`, `kind`, `startDate`, `endDate`, `flexible`, `adults`, `children`, `childAges`, `rooms`, `departure`, `budget` numeric string or empty, `currency` INR/EUR/USD/GBP/AED, `budgetBasis` total/per person, `preferences`, `vehicle`, `mealPlan`, `contactMethod` phone/email/whatsapp, `itemId` or empty, `method` submit/whatsapp, `consent:true`, `website:""` honeypot, `startedAt` epoch milliseconds. Follow `enquirySchema` for bounds. Date-required rules depend on flexibility. Submission must take at least 1.5 seconds.
 
-Errors generally use `{error:string}`; enquiry validation also supplies `fields`. 400 invalid request, 401 no valid session, 403 insufficient role/origin, 404 missing record, 409 conflict/unavailable local operation, 413 too large, 429 rate limit, 500 generic server failure. Some malformed JSON and invalid Firebase token errors currently fall through to the generic 500 handler; clients must handle non-2xx responses. Do not expose server logs or credential details to visitors.
+Errors generally use `{error:string}`; enquiry validation also supplies `fields`. 400 invalid request, 401 no valid session, 403 insufficient role/origin, 404 missing record, 409 conflict/unavailable local operation, 413 too large, 429 rate limit, 500 generic server failure. Some malformed JSON and unexpected authentication errors currently fall through to the generic 500 handler; clients must handle non-2xx responses. Do not expose server logs or credential details to visitors.
 
 ## Verification and operations
 
-Public catalogue, site settings and showcase reads use a shared Next.js cache for 15 minutes in cloud mode, plus request-level deduplication. Publishing, unpublishing, archiving and settings saves expire the public cache immediately. Private staff, sessions, enquiries and writes are never cached. Local/emulator reads stay immediate. External edits (including the showcase administration script) can take up to 15 minutes to appear.
+Seventeen tests, TypeScript and the Supabase production build passed. The local end-to-end check verified login, dashboard, publication/discovery, enquiry persistence and idempotency, delivery jobs, enquiry updates, Excel export, valid/invalid uploads, private/public media access, role isolation, disabled accounts, unpublishing and logout. Disposable test records were removed.
 
-During a database quota/network outage, public reads have a five-second response deadline and show unavailable listings rather than fabricated or resurrected content. Site contact defaults remain accessible. Sample publication is not enabled when its setting cannot be verified; search indexing is disabled while the catalogue is unavailable. Failed mutations return an explicit service-unavailable response when Firebase reports quota/unavailability; they never report successful enquiry storage. Free quota recovery is controlled by Firebase, not a deployment. Failed public results may take up to 15 minutes to refresh after recovery.
-
-Run `npm run typecheck`, `npm test`, `npm run build`. Catalogue tests check all record schemas, publication rules, unique IDs/routes, five variants per market, complete day counts and mock pricing. `npm run test:flow` is an isolated local/emulator integration flow; do not run it against real customer data. `npm run test:rules` verifies Firestore rules with the emulator.
-
-Cloud status without sensitive record contents:
+Public catalogue/settings/showcase cache keys include the backend and project URL/ID to isolate Firebase from Supabase. Successful catalogue reads cache for 15 minutes; catalogue errors are caught outside the persistent cache, so an outage is not stored as a successful empty result. Showcase lookup errors also fall back outside the persistent cache: samples remain hidden for the failed request, but the next request retries. Settings retain their existing fallback behaviour. Publishing, unpublishing, archiving and settings changes invalidate the public tag. Other successful public reads cache for 15 minutes. Staff and enquiry reads are not cached. External database edits may take up to 15 minutes to appear. Public reads have a five-second deadline and show an unavailable state on classified database outages.
 
 ```powershell
-npx tsx scripts/cloud-admin.ts inspect --key "C:\private\service-account.json" --project pickthemap-fe68b
+npm run typecheck
+npm test
+npx tsx scripts/supabase-local.ts build
+npx tsx scripts/migration/verify-access.ts
+npx tsx scripts/migration/verify-supabase-flow.ts
 ```
 
-For larger catalogues, replace full-collection reads with indexed pagination and search. Review TTL/cleanup for expired sessions/rate limits, outbox retry monitoring, retention for enquiries/revisions/audit records, and recovery backups before scaling. No automatic deletion policy or backup schedule is configured by these commands.
+The owner reported promoting an earlier migration deployment. The latest cache fix and visual updates still need hosted verification and confirmed promotion. See SUPABASE-LAUNCH.md for deployment. The owner approved a fresh catalogue rather than historical Firebase import; optional backup tools remain available but are not a launch dependency.
+
+## Resorts & Stays extension
+
+Content JSONB now supports optional stayDestination (boolean), stayDestinationSlug (slug), propertyVerified (boolean) and stayTags (Couples/Families/Budget/Premium/Luxury). No schema migration is required. Real resort publication requires destination assignment and admin verification; directory publication rejects sample properties. All public resort browsing excludes sample/unverified records, even when sample holiday showcase is enabled. The enquiry endpoint derives the selected resort title and destination from published content. See [the stays guide](RESORTS-AND-STAYS.md) for routes and admin instructions.

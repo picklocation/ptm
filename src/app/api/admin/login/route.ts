@@ -16,6 +16,7 @@ export async function POST(req: Request) {
       ? req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown"
       : "local";
     if (
+      !(await rateLimit(digest("login-ip:" + ip), 30)) ||
       !(await rateLimit(digest("login:" + ip + ":" + d.email.toLowerCase()), 8))
     )
       return Response.json(

@@ -1,1 +1,26 @@
-{"project":"PickTheMap","direction":"Reference-led travel discovery","reference":"https://www.mytourcab.com/","decisions":["Use the supplied PNG artwork unchanged","Rounded photographic hero, destination tiles, compact trip cards","White and gray foundation with restrained green","Mobile forms and enquiry actions take priority","No invented prices, reviews or booking guarantees"],"tokens":{"background":"#FFFFFF","surface":"#F6F8F5","text":"#122B25","action":"#063F2E","accent":"#05A660"},"catalogueSearch":"Attempted; 21st CLI requires authentication. No catalogue component code retrieved."}
+{
+  "project": "PickTheMap",
+  "direction": "Reference-led travel discovery",
+  "reference": "https://www.mytourcab.com/",
+  "decisions": [
+    "Use the supplied PNG artwork unchanged",
+    "Rounded photographic hero, destination tiles, compact trip cards",
+    "White and gray foundation with restrained green",
+    "Mobile forms and enquiry actions take priority",
+    "No invented prices, reviews or booking guarantees",
+    "Use self-hosted Outfit for rounded travel copy and headings; preserve the Jakarta wordmark",
+    "Destination cards use centered white names with small place-specific captions",
+    "Package-card arrow circles are white with green arrows; primary buttons are bright green with white text",
+    "Hide hero supporting paragraph at 901px and above; preserve it on mobile/tablet",
+    "Popular and International destination rows must not repeat places, including Bali/Indonesia aliases"
+  ],
+  "tokens": {
+    "background": "#FFFFFF",
+    "surface": "#F6F8F5",
+    "text": "#122B25",
+    "action": "#09B468",
+    "accent": "#05A660",
+    "actionText": "#FFFFFF"
+  },
+  "catalogueSearch": "Attempted; 21st CLI requires authentication. No catalogue component code retrieved."
+}

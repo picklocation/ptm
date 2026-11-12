@@ -14,7 +14,7 @@ import { Logo } from "./ui";
 const links = [
   ["International", "/international-trips"],
   ["Domestic", "/domestic-trips"],
-  ["Resorts & villas", "/resorts-and-villas"],
+  ["Resorts & Stays", "/resorts-and-stays"],
   ["Europe road trips", "/europe-road-trips"],
   ["Visa-free", "/visa-free-destinations"],
 ];
@@ -63,6 +63,7 @@ export function Header() {
       <dialog
         ref={dialog}
         className="mobile-menu"
+        aria-label="Site navigation"
         onClose={() => setOpen(false)}
         onClick={(e) => {
           if (e.target === dialog.current) dialog.current.close();

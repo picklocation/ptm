@@ -4,7 +4,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, ArrowUp, ArrowDown, Upload } from "lucide-react";
 import type { Content } from "@/lib/types";
-export function ContentEditor({ initial }: { initial: Content }) {
+import { stayTags, type StayDestination } from "@/lib/stays";
+import {
+  packageTypes,
+  collectionOptions,
+  assignedCollections,
+} from "@/lib/classification";
+export function ContentEditor({
+  initial,
+  stayDestinations = [],
+}: {
+  initial: Content;
+  stayDestinations?: StayDestination[];
+}) {
   const [c, setC] = useState(initial),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState(""),
@@ -69,6 +81,7 @@ export function ContentEditor({ initial }: { initial: Content }) {
         body: JSON.stringify({
           content: {
             ...c,
+            locations: c.locations?.map((x) => x.trim()).filter(Boolean),
             gallery: c.gallery.filter(Boolean),
             inclusions: c.inclusions.filter(Boolean),
             exclusions: c.exclusions.filter(Boolean),
@@ -139,23 +152,164 @@ export function ContentEditor({ initial }: { initial: Content }) {
               {field("title", "Title")}
               {field("slug", "URL slug")}
               <label className="field">
-                Content type
+                Page template
                 <select
                   value={c.kind}
                   onChange={(e) => update("kind", e.target.value)}
                 >
                   <option value="holiday">Holiday</option>
-                  <option value="road-trip">Europe road trip</option>
-                  <option value="resort">Kerala resort</option>
+                  <option value="road-trip">Road-trip itinerary</option>
+                  <option value="resort">
+                    Stay (resort, villa or camping)
+                  </option>
                   <option value="destination">Destination</option>
                 </select>
               </label>
               {field("location", "Destinations / location")}
               {field("region", "Region (use India for domestic trips)")}
               {field("country", "Country (e.g. Malaysia, Nepal or Bhutan)")}
+              {field("state", "State / province (e.g. Kerala)")}
+              <label className="field">
+                Package format
+                <select
+                  value={c.packageType || ""}
+                  onChange={(e) =>
+                    update("packageType", e.target.value || undefined)
+                  }
+                >
+                  <option value="">Choose a format</option>
+                  {packageTypes.map((type) => (
+                    <option key={type}>{type}</option>
+                  ))}
+                </select>
+              </label>
               {field("days", "Days", "number")}
               {field("nights", "Nights", "number")}
             </div>
+            <label className="field">
+              Local places / stops (comma separated)
+              <input
+                value={(c.locations || []).join(",")}
+                onChange={(e) => update("locations", e.target.value.split(","))}
+                placeholder="Munnar, Vattavada, Kolukkumalai"
+              />
+            </label>
+            <fieldset className="admin-card">
+              <legend>Show this package in</legend>
+              <p className="small-note">
+                Select every relevant section. The page template controls the
+                detail fields; these choices control where visitors find the
+                package. Existing packages use suggested sections until you
+                change them.
+              </p>
+              <div className="form-grid">
+                {collectionOptions.map(([value, label]) => (
+                  <label key={value}>
+                    <input
+                      type="checkbox"
+                      checked={assignedCollections(c).includes(value)}
+                      onChange={(e) =>
+                        update(
+                          "collections",
+                          e.target.checked
+                            ? [...assignedCollections(c), value]
+                            : assignedCollections(c).filter((x) => x !== value),
+                        )
+                      }
+                    />{" "}
+                    {label}
+                  </label>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="text-link"
+                onClick={() => update("collections", undefined)}
+              >
+                Use automatic suggestions
+              </button>
+              <p className="small-note">
+                Visa guidance is matched to the country, not a manual visa-free
+                promise. Homepage featuring and order remain separate controls.
+              </p>
+            </fieldset>
+            {c.kind === "destination" && (
+              <label className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={!!c.stayDestination}
+                  onChange={(e) => update("stayDestination", e.target.checked)}
+                />
+                Include this destination in Resorts & Stays (publish to make it
+                available)
+              </label>
+            )}
+            {c.kind === "resort" && (
+              <fieldset className="admin-card">
+                <legend>Resorts & Stays directory</legend>
+                <label className="field">
+                  Stay destination
+                  <select
+                    value={c.stayDestinationSlug || ""}
+                    onChange={(e) =>
+                      update("stayDestinationSlug", e.target.value)
+                    }
+                  >
+                    <option value="">
+                      Not assigned to the stays directory
+                    </option>
+                    {stayDestinations.map((d) => (
+                      <option key={d.slug} value={d.slug}>
+                        {d.name}
+                      </option>
+                    ))}
+                    {c.stayDestinationSlug &&
+                      !stayDestinations.some(
+                        (d) => d.slug === c.stayDestinationSlug,
+                      ) && (
+                        <option value={c.stayDestinationSlug}>
+                          {c.stayDestinationSlug} (check destination)
+                        </option>
+                      )}
+                  </select>
+                </label>
+                <div className="form-grid">
+                  {stayTags.map((tag) => (
+                    <label className="checkbox" key={tag}>
+                      <input
+                        type="checkbox"
+                        checked={c.stayTags?.includes(tag) || false}
+                        onChange={(e) =>
+                          update(
+                            "stayTags",
+                            e.target.checked
+                              ? [...(c.stayTags || []), tag]
+                              : (c.stayTags || []).filter((x) => x !== tag),
+                          )
+                        }
+                      />
+                      {tag}
+                    </label>
+                  ))}
+                </div>
+                <label className="checkbox">
+                  <input
+                    type="checkbox"
+                    checked={!!c.propertyVerified}
+                    onChange={(e) =>
+                      update("propertyVerified", e.target.checked)
+                    }
+                  />
+                  I have checked this property's name, photos, rooms, amenities
+                  and any prices with an authoritative source or the property.
+                </label>
+                <p className="small-note">
+                  Only verified, published, non-sample properties appear in the
+                  directory. Do not mark mock listings as verified. Leave
+                  pricing blank when a quote is required.
+                </p>
+              </fieldset>
+            )}
             {area("summary", "Short introduction", 2)}
             {area("description", "Full description", 6)}
             <label className="field">

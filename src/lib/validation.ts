@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { collectionOptions, packageTypes } from "./classification";
 const text = z.string().trim().max(2000);
 export const enquirySchema = z
   .object({
@@ -82,7 +83,9 @@ const image = z
       !v ||
       v.startsWith("/images/") ||
       /^\/api\/media\/[a-f0-9-]+$/.test(v) ||
-      /^https:\/\/images\.unsplash\.com\/photo-[\w-]+\?/.test(v),
+      v.startsWith(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL || "https://feqmnzutyhzochuyiint.supabase.co"}/storage/v1/object/public/website-public/`,
+      ),
     "Use an uploaded image or an approved image URL.",
   );
 export const contentSchema = z.object({
@@ -93,6 +96,25 @@ export const contentSchema = z.object({
   location: text,
   region: z.string().max(100),
   country: z.string().max(100).optional(),
+  stayDestination: z.boolean().optional(),
+  stayDestinationSlug: z
+    .string()
+    .regex(/^(?:[a-z0-9]+(?:-[a-z0-9]+)*)?$/)
+    .max(160)
+    .optional(),
+  propertyVerified: z.boolean().optional(),
+  stayTags: z
+    .array(z.enum(["Couples", "Families", "Budget", "Premium", "Luxury"]))
+    .max(5)
+    .optional(),
+  state: z.string().trim().max(100).optional(),
+  locations: z.array(z.string().trim().min(1).max(100)).max(40).optional(),
+  packageType: z.enum(packageTypes).optional(),
+  collections: z
+    .array(z.enum(collectionOptions.map((x) => x[0])))
+    .max(6)
+    .refine((x) => new Set(x).size === x.length)
+    .optional(),
   summary: z.string().max(400),
   description: z.string().max(10000),
   image,
@@ -139,6 +161,18 @@ export const contentSchema = z.object({
 });
 export function publishErrors(c: z.infer<typeof contentSchema>) {
   return [
+    c.kind === "resort" &&
+      !c.demo &&
+      !c.stayDestinationSlug &&
+      "Choose a stay destination before publishing this property.",
+    c.kind === "resort" &&
+      !c.demo &&
+      !c.propertyVerified &&
+      "Verify the property information before publishing it in Resorts & Stays.",
+    c.kind === "resort" &&
+      c.stayDestinationSlug &&
+      c.demo &&
+      "Sample properties cannot be published in the verified stays directory.",
     !c.image && "Add a cover image.",
     !c.imageAlt && "Add image alt text.",
     !c.summary && "Add a summary.",

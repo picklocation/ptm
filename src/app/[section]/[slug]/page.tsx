@@ -1,8 +1,14 @@
+import { publicAsset } from "@/lib/assets";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { MapPin, Check, ArrowUpRight } from "lucide-react";
-import { publicContent, catalogueState } from "@/lib/store";
+import { publicContent, catalogueState, settings } from "@/lib/store";
+import {
+  stayDestinations,
+  stayDestinationKey,
+  isVerifiedStay,
+} from "@/lib/stays";
 import { CatalogueStatus } from "@/components/catalogue-status";
 import { paths } from "@/lib/types";
 import { Price, CheckList, TripCard } from "@/components/ui";
@@ -18,7 +24,12 @@ export async function generateMetadata({
     (x) => x.slug === slug && paths[x.kind] === section,
   );
   return {
-    title: item?.seoTitle || item?.title || ((await catalogueState()).unavailable ? "Trip details temporarily unavailable" : "Not found"),
+    title:
+      item?.seoTitle ||
+      item?.title ||
+      ((await catalogueState()).unavailable
+        ? "Trip details temporarily unavailable"
+        : "Not found"),
     description: item?.seoDescription || item?.summary,
     alternates: { canonical: `/${section}/${slug}` },
     robots: item?.demo ? { index: false, follow: false } : undefined,
@@ -41,6 +52,20 @@ export default async function Detail({
     );
   const item = all.find((x) => x.slug === slug && paths[x.kind] === section);
   if (!item) notFound();
+  if (
+    item.kind === "resort" &&
+    item.stayDestinationSlug &&
+    !isVerifiedStay(item)
+  )
+    notFound();
+  const stayPlace =
+    item.kind === "resort" && item.stayDestinationSlug
+      ? stayDestinations(all).find(
+          (p) => p.slug === stayDestinationKey(item.stayDestinationSlug!),
+        )
+      : undefined;
+  const whatsappEnabled =
+    item.kind === "resort" && !!(await settings()).whatsapp;
   const href = `/plan-my-trip?item=${encodeURIComponent(item.id)}&destination=${encodeURIComponent(item.location)}&kind=${item.kind === "destination" ? "holiday" : item.kind}`;
   return (
     <>
@@ -48,13 +73,27 @@ export default async function Detail({
         <div className="breadcrumb">
           <Link href="/">Home</Link>
           <span>/</span>
-          <Link href={`/${section}`}>{section.replaceAll("-", " ")}</Link>
+          <Link
+            href={item.kind === "resort" ? "/resorts-and-stays" : `/${section}`}
+          >
+            {item.kind === "resort"
+              ? "Resorts & Stays"
+              : section.replaceAll("-", " ")}
+          </Link>
+          {stayPlace && (
+            <>
+              <span>/</span>
+              <Link href={`/resorts-and-stays/${stayPlace.slug}`}>
+                {stayPlace.name}
+              </Link>
+            </>
+          )}
           <span>/</span>
           <span>{item.title}</span>
         </div>
         <div className="detail-hero">
           <Image
-            src={item.image || "/images/placeholder.svg"}
+            src={item.image || publicAsset("brand/placeholder.svg")}
             unoptimized={item.image.startsWith("/api/media/")}
             alt={item.imageAlt}
             fill
@@ -215,9 +254,23 @@ export default async function Detail({
               shape the details.
             </p>
             <Link className="button" href={href}>
-              Request a quote
+              {item.kind === "resort" ? "Enquire Now" : "Request a quote"}
               <ArrowUpRight size={18} />
             </Link>
+            {whatsappEnabled && (
+              <Link
+                className="button secondary stay-details-link"
+                href={`${href}&contact=whatsapp`}
+              >
+                WhatsApp
+              </Link>
+            )}
+            {item.kind === "resort" && (
+              <p className="small-note">
+                Share your dates and guests first. Your enquiry is saved before
+                you continue to WhatsApp.
+              </p>
+            )}
             <div className="aside-features">
               <p>
                 <Check size={14} />

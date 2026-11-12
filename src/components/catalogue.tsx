@@ -1,4 +1,6 @@
 "use client";
+import { publicAsset } from "@/lib/assets";
+
 import { useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X } from "lucide-react";
@@ -6,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { TripCard } from "./ui";
 import type { Content } from "@/lib/types";
+import { packageTypes } from "@/lib/classification";
 export function Catalogue({
   items,
   destinations = false,
@@ -22,16 +25,18 @@ export function Catalogue({
     [region, setRegion] = useState(search.get("region") || ""),
     [duration, setDuration] = useState(search.get("duration") || ""),
     [theme, setTheme] = useState(search.get("theme") || ""),
+    [packageType, setPackageType] = useState(search.get("type") || ""),
     [page, setPage] = useState(1);
   const normalTheme = (value: string) =>
     value === "Couple" ? "Couples" : value;
   const filtered = items.filter(
     (x) =>
       (!query ||
-        `${x.title} ${x.location} ${x.region} ${x.country || ""}`
+        `${x.title} ${x.location} ${x.region} ${x.country || ""} ${x.state || ""} ${(x.locations || []).join(" ")} ${x.packageType || ""}`
           .toLowerCase()
           .includes(query.toLowerCase())) &&
       (!region || x.region === region) &&
+      (!packageType || x.packageType === packageType) &&
       (!theme || x.themes.map(normalTheme).includes(normalTheme(theme))) &&
       (!duration ||
         (duration === "short"
@@ -46,12 +51,25 @@ export function Catalogue({
     if (region) p.set("region", region);
     if (duration) p.set("duration", duration);
     if (theme) p.set("theme", theme);
+    if (packageType) p.set("type", packageType);
     router.replace(`?${p}`, { scroll: false });
     setPage(1);
     dialog.current?.close();
   }
   const filters = (
     <>
+      <label>
+        Package format
+        <select
+          value={packageType}
+          onChange={(e) => setPackageType(e.target.value)}
+        >
+          <option value="">All formats</option>
+          {packageTypes.map((t) => (
+            <option key={t}>{t}</option>
+          ))}
+        </select>
+      </label>
       <label>
         Region
         <select value={region} onChange={(e) => setRegion(e.target.value)}>
@@ -99,6 +117,7 @@ export function Catalogue({
           setRegion("");
           setDuration("");
           setTheme("");
+          setPackageType("");
           setPage(1);
           router.replace("?", { scroll: false });
           dialog.current?.close();
@@ -139,6 +158,10 @@ export function Catalogue({
         >
           <Search size={20} />
           <input
+            type="search"
+            name="q"
+            autoComplete="off"
+            enterKeyHint="search"
             aria-label="Search destinations or trips"
             placeholder="Where would you like to go?"
             value={query}
@@ -158,7 +181,7 @@ export function Catalogue({
         </button>
       </div>
       <div className="filter-bar">{filters}</div>
-      <dialog className="filter-dialog" ref={dialog}>
+      <dialog className="filter-dialog" ref={dialog} aria-label="Filter trips">
         <div className="menu-top">
           <h2>Find your kind of trip</h2>
           <button
@@ -208,7 +231,7 @@ export function Catalogue({
                 href={`/destinations/${item.slug}`}
               >
                 <Image
-                  src={item.image || "/images/placeholder.svg"}
+                  src={item.image || publicAsset("brand/placeholder.svg")}
                   unoptimized={item.image.startsWith("/api/media/")}
                   alt={item.imageAlt}
                   fill
