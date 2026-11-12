@@ -9,6 +9,7 @@ import { getAuth } from "firebase-admin/auth";
 import { get, put, remove, firebaseMode, firebaseApp } from "./store";
 import type { Staff } from "./types";
 import { isDatabaseUnavailable } from "./service-errors";
+import { supabaseMode, publicSupabase, requestSupabase } from "./supabase";
 export function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   return salt + ":" + scryptSync(password, salt, 64).toString("hex");
@@ -23,6 +24,23 @@ export function verifyPassword(password: string, hash: string) {
 export const digest = (s: string) =>
   createHash("sha256").update(s).digest("hex");
 export async function currentStaff(): Promise<Staff | null> {
+  if (supabaseMode()) {
+    const token = (await cookies()).get("ptm_supabase_access")?.value;
+    if (!token) return null;
+    const client = await requestSupabase();
+    const {
+      data: { user },
+      error,
+    } = await client.auth.getUser(token);
+    if (error || !user) return null;
+    const { data: staff } = await client
+      .from("staff")
+      .select("id,email,role,active")
+      .eq("id", user.id)
+      .eq("active", true)
+      .maybeSingle();
+    return staff as Staff | null;
+  }
   const token = (await cookies()).get("ptm_session")?.value;
   if (!token) return null;
   const session = await get<{ staffId: string; expires: number }>(
@@ -52,6 +70,34 @@ export async function signIn(
   idToken?: string,
 ) {
   let staff: Staff | null = null;
+  if (supabaseMode()) {
+    const client = publicSupabase();
+    const { data, error } = await client.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error || !data.session) return null;
+    const { data: record } = await client
+      .from("staff")
+      .select("id,email,role,active")
+      .eq("id", data.user.id)
+      .eq("active", true)
+      .maybeSingle();
+    if (!record) {
+      await client.auth.signOut();
+      return null;
+    }
+    // Short-lived Auth access token, no password or refresh token in browser storage.
+    // Expired sessions require sign-in again; active staff is checked on each operation.
+    (await cookies()).set("ptm_supabase_access", data.session.access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: Math.min(data.session.expires_in, 3600),
+    });
+    return record as Staff;
+  }
   if (firebaseMode()) {
     if (!idToken) throw new Error("Use Firebase sign-in.");
     const decoded = await getAuth(firebaseApp()).verifyIdToken(idToken, true);
@@ -78,14 +124,22 @@ export async function signIn(
 }
 export async function signOut() {
   const jar = await cookies();
+  if (supabaseMode()) {
+    jar.delete("ptm_supabase_access");
+    jar.delete("ptm_session");
+    return;
+  }
   const token = jar.get("ptm_session")?.value;
   if (token) await remove("sessions", digest(token));
   jar.delete("ptm_session");
 }
 export function checkOrigin(request: Request) {
   const origin = request.headers.get("origin");
-  const expected = new URL(process.env.SITE_URL || "http://localhost:3000")
-    .origin;
+  const expected = new URL(
+    process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : process.env.SITE_URL || "http://localhost:3000",
+  ).origin;
   if (!origin || origin !== expected) throw new Error("FORBIDDEN");
 }
 export function errorResponse(error: unknown) {

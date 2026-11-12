@@ -4,6 +4,7 @@ import { requireStaff, checkOrigin, errorResponse } from "@/lib/auth";
 import { contentSchema, publishErrors } from "@/lib/validation";
 import { batch, list, get, demoEnabled } from "@/lib/store";
 import type { Content } from "@/lib/types";
+import { stayDestinations, stayDestinationKey } from "@/lib/stays";
 export async function POST(req: Request) {
   try {
     checkOrigin(req);
@@ -27,9 +28,23 @@ export async function POST(req: Request) {
     const c = parsed.data;
     if (action === "publish") {
       const errors = publishErrors(c);
+      if (
+        c.kind === "resort" &&
+        c.stayDestinationSlug &&
+        !stayDestinations(await list<Content>("publishedContent")).some(
+          (d) => d.slug === stayDestinationKey(c.stayDestinationSlug!),
+        )
+      )
+        errors.push(
+          "Publish the stay destination first, then assign this property to it.",
+        );
       if (errors.length)
         return Response.json({ error: errors.join(" ") }, { status: 400 });
-      if (c.demo && process.env.VERCEL_ENV === "production" && !(await demoEnabled()))
+      if (
+        c.demo &&
+        process.env.VERCEL_ENV === "production" &&
+        !(await demoEnabled())
+      )
         return Response.json(
           { error: "Demonstration content cannot be published in production." },
           { status: 400 },

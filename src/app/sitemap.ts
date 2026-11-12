@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { publicContent, demoEnabled } from "@/lib/store";
 import { paths } from "@/lib/types";
+import { stayDestinations } from "@/lib/stays";
 export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (await demoEnabled()) return [];
@@ -12,7 +13,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       "south-india",
       "international-trips",
       "domestic-trips",
-      "resorts-and-villas",
+      "resorts-and-stays",
+      "south-asia",
       "visa-free-destinations",
       "destinations",
       "europe-road-trips",
@@ -22,6 +24,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       "faqs",
       "plan-my-trip",
     ].map((p) => ({ url: `${base}/${p}` })),
+    ...stayDestinations(await publicContent()).map((p) => ({
+      url: `${base}/resorts-and-stays/${p.slug}`,
+    })),
     ...(await publicContent())
       .filter((x) => !x.demo)
       .map((x) => ({

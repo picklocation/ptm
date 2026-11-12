@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/500.css";
-import "@fontsource/inter/600.css";
+import "@fontsource/outfit/latin-400.css";
+import "@fontsource/outfit/latin-500.css";
+import "@fontsource/outfit/latin-600.css";
+import "@fontsource/outfit/latin-700.css";
 import "@fontsource/plus-jakarta-sans/500.css";
 import "@fontsource/plus-jakarta-sans/600.css";
 import "@fontsource/plus-jakarta-sans/700.css";
@@ -14,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
     title: {
-      default: "PickTheMap — A place in mind. A journey made yours.",
+      default: "PickTheMap | Custom Holidays & Road Trips",
       template: "%s | PickTheMap",
     },
     description:

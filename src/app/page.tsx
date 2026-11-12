@@ -20,6 +20,30 @@ import {
 import { visaGuides } from "@/lib/visa-guides";
 import { Footer } from "@/components/footer";
 import { CatalogueStatus } from "@/components/catalogue-status";
+import { inCollection } from "@/lib/classification";
+const destinationCaptions: Record<string, string> = {
+  Bali: "Temples, terraces & coast",
+  Switzerland: "Lakes beneath the Alps",
+  Kerala: "Backwaters & tea hills",
+  Thailand: "Islands & golden temples",
+  Italy: "Art, piazzas & coastlines",
+  Singapore: "Gardens above the city",
+  Maldives: "Life by the lagoon",
+  Malaysia: "City lights & island days",
+  "Sri Lanka": "Tea country to the coast",
+  Mauritius: "Beyond the blue lagoon",
+  Japan: "Mountain trails & city lights",
+  Norway: "Along the fjords",
+  Kenya: "Across the savannah",
+  Kashmir: "Lakes & mountain valleys",
+  Rajasthan: "Forts & desert skies",
+  "Delhi, Agra & Jaipur": "Three cities, centuries of stories",
+  Goa: "Slow days by the sea",
+  Andaman: "Islands in the blue",
+  Bhutan: "Monasteries in the mountains",
+  Nepal: "Himalayan trails & valleys",
+  "South India": "Hill stays & coastal escapes",
+};
 export const dynamic = "force-dynamic";
 export default async function Home() {
   const [items, s] = await Promise.all([publicContent(), settings()]);
@@ -28,29 +52,58 @@ export default async function Home() {
       .slice(0, 8),
     destinations = items.filter((x) => x.kind === "destination").slice(0, 6),
     resorts = items
-      .filter((x) => x.kind === "resort" && x.featured)
+      .filter((x) => inCollection(x, "resorts-and-villas") && x.featured)
       .slice(0, 4);
   const tile = (
     name: string,
     item: (typeof items)[number],
     href: string,
-  ): DestinationTile => ({ name, image: item.image, alt: item.imageAlt, href });
+  ): DestinationTile => ({
+    name,
+    caption: destinationCaptions[name],
+    image: item.image,
+    alt: item.imageAlt,
+    href,
+  });
   const popularTiles = destinations.map((d) =>
     tile(d.title, d, "/destinations/" + d.slug),
   );
-  const internationalTiles = popularTiles.filter(
-    (_, i) => destinations[i].region !== "India",
+  // Treat Bali and Indonesia as the same destination for row selection.
+  const destinationKey = (name: string) => {
+    const key = name.trim().toLowerCase();
+    return key === "bali" ? "indonesia" : key;
+  };
+  const usedDestinations = new Set(
+    destinations.flatMap((d) =>
+      [d.title, d.country]
+        .filter((name): name is string => !!name)
+        .map(destinationKey),
+    ),
   );
+  const internationalTiles: DestinationTile[] = [];
+  for (const destination of items.filter(
+    (x) =>
+      x.kind === "destination" && x.region !== "India" && x.country !== "India",
+  )) {
+    const keys = [destination.title, destination.country]
+      .filter((name): name is string => !!name)
+      .map(destinationKey);
+    if (keys.some((key) => usedDestinations.has(key))) continue;
+    internationalTiles.push(
+      tile(destination.title, destination, "/destinations/" + destination.slug),
+    );
+    keys.forEach((key) => usedDestinations.add(key));
+  }
   for (const item of items.filter(
-    (x) => x.kind === "holiday" && x.country && x.region !== "India",
+    (x) =>
+      x.kind === "holiday" &&
+      x.country &&
+      x.country !== "India" &&
+      x.region !== "India",
   )) {
     if (
       item.country!.includes("/") ||
-      internationalTiles.some(
-        (d) =>
-          d.name === item.country ||
-          (d.name === "Bali" && item.country === "Indonesia"),
-      )
+      usedDestinations.has(destinationKey(item.country!))
     )
       continue;
     internationalTiles.push(
@@ -60,6 +113,7 @@ export default async function Home() {
         "/international-trips?q=" + encodeURIComponent(item.country!),
       ),
     );
+    usedDestinations.add(destinationKey(item.country!));
   }
   const visaTiles = visaGuides.flatMap((v) => {
     const item = items.find(
@@ -94,8 +148,22 @@ export default async function Home() {
   const southIndiaCover =
     items.find((x) => x.id === "wayanad") ||
     items.find((x) => x.id === "kerala");
-  if (southIndiaCover)
-    domesticTiles.unshift(tile("South India", southIndiaCover, "/south-india"));
+  domesticTiles.unshift(
+    {
+      name: "Resorts & Stays",
+      caption: "Find your place to unwind",
+      image: photos.resort,
+      alt: "Travel inspiration for a resort stay",
+      href: "/resorts-and-stays",
+    },
+    {
+      name: "South India",
+      caption: "Hill stays & coastal escapes",
+      image: southIndiaCover?.image || photos.kerala,
+      alt: southIndiaCover?.imageAlt || "South India travel inspiration",
+      href: "/south-india",
+    },
+  );
   return (
     <>
       <main id="main">
@@ -174,7 +242,7 @@ export default async function Home() {
               items={internationalTiles}
             />
             <DestinationRow
-              title="Visa-free & free-visa destinations"
+              title="Visa-Free-destinations"
               items={visaTiles}
               href="/visa-free-destinations"
             />
@@ -190,9 +258,9 @@ export default async function Home() {
             {[
               ["International trips", "international-trips"],
               ["Domestic trips", "domestic-trips"],
-              ["Resorts & villas", "resorts-and-villas"],
+              ["Resorts & Stays", "resorts-and-stays"],
               ["Europe road trips", "europe-road-trips"],
-              ["Visa-free & free-visa destinations", "visa-free-destinations"],
+              ["Visa-Free-destinations", "visa-free-destinations"],
             ].map(([label, url]) => (
               <Link key={url} href={`/${url}`}>
                 {label}
@@ -205,7 +273,7 @@ export default async function Home() {
               {
                 icon: Globe2,
                 title: "International trips",
-                text: "Big adventures. Little escapes. All yours.",
+                text: "Multi-city holidays, island breaks and time to explore.",
                 href: "/international-trips",
               },
               {
@@ -216,9 +284,9 @@ export default async function Home() {
               },
               {
                 icon: Palmtree,
-                title: "Resorts & villas",
-                text: "Beautiful stays. Room to unwind.",
-                href: "/resorts-and-villas",
+                title: "Resorts & Stays",
+                text: "Find a stay for a weekend, a family trip or a quiet break.",
+                href: "/resorts-and-stays",
               },
             ].map((c) => (
               <Link href={c.href} key={c.title} className="service-card">
@@ -236,8 +304,8 @@ export default async function Home() {
           <section className="section">
             <SectionTitle
               eyebrow="Good places to start"
-              title="Your next great story starts here"
-              description="A few journeys to spark an idea. We’ll make the details your own."
+              title="Holidays to make your own"
+              description="Start with a route you like. We’ll help with the dates, stays and stops."
               href="/holidays"
               label="Explore holidays"
             />
@@ -313,8 +381,8 @@ export default async function Home() {
                 Wake up by the water. Wander through the green. Find a stay that
                 lets you simply be.
               </p>
-              <Link href="/resorts-and-villas" className="text-link">
-                Explore resorts & villas
+              <Link href="/resorts-and-stays" className="text-link">
+                Explore Resorts & Stays
                 <ArrowUpRight size={18} />
               </Link>
             </div>

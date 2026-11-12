@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
 import { publicContent, settings } from "@/lib/store";
@@ -7,10 +7,17 @@ import { visaGuides } from "@/lib/visa-guides";
 import { southIndiaLocations } from "@/lib/south-india";
 import { Footer } from "@/components/footer";
 import { CatalogueStatus } from "@/components/catalogue-status";
+import { inCollection, collectionOptions } from "@/lib/classification";
 const catalogues: Record<
   string,
   { kind: string; title: string; description: string }
 > = {
+  "south-asia": {
+    kind: "holiday",
+    title: "South Asia",
+    description:
+      "Explore holidays across South Asia, with routes and stays tailored to you.",
+  },
   "south-india": {
     kind: "destination",
     title: "South India",
@@ -31,13 +38,13 @@ const catalogues: Record<
   },
   "resorts-and-villas": {
     kind: "resort",
-    title: "Resorts & villas",
+    title: "Resorts & Stays",
     description:
       "Find your kind of downtime. Budget-friendly escapes, family stays and quiet places for two.",
   },
   "visa-free-destinations": {
     kind: "holiday",
-    title: "Visa-free & free-visa destinations",
+    title: "Visa-Free-destinations",
     description:
       "Travel inspiration for Indian passport holders, with entry conditions explained.",
   },
@@ -92,17 +99,23 @@ export default async function Page({
 }) {
   const { section } = await params;
   const c = catalogues[section];
+  if (section === "resorts-and-villas") permanentRedirect("/resorts-and-stays");
   if (c) {
-    const items = (await publicContent()).filter(
-      (x) =>
-        x.kind === c.kind &&
-        (section !== "south-india" ||
-          southIndiaLocations.some((place) => place.slug === x.slug)) &&
-        (section !== "domestic-trips" || x.region === "India") &&
-        (section !== "international-trips" || x.region !== "India") &&
-        (section !== "kerala-resorts" || /kerala/i.test(x.location)) &&
-        (section !== "visa-free-destinations" ||
-          visaGuides.some((v) => v.country === x.country)),
+    const items = (await publicContent()).filter((x) =>
+      collectionOptions.some(([id]) => id === section)
+        ? inCollection(x, section) ||
+          (section === "south-india" &&
+            x.kind === "destination" &&
+            southIndiaLocations.some((place) => place.slug === x.slug))
+        : x.kind === c.kind &&
+          (section !== "south-asia" || x.region === "South Asia") &&
+          (section !== "south-india" ||
+            southIndiaLocations.some((place) => place.slug === x.slug)) &&
+          (section !== "domestic-trips" || x.region === "India") &&
+          (section !== "international-trips" || x.region !== "India") &&
+          (section !== "kerala-resorts" || /kerala/i.test(x.location)) &&
+          (section !== "visa-free-destinations" ||
+            visaGuides.some((v) => v.country === x.country)),
     );
     return (
       <>
@@ -140,7 +153,9 @@ export default async function Page({
             <Catalogue
               items={items}
               stays={c.kind === "resort"}
-              destinations={c.kind === "destination"}
+              destinations={
+                c.kind === "destination" && section !== "south-india"
+              }
             />
           </Suspense>
         </main>

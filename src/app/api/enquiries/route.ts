@@ -8,6 +8,7 @@ import {
 } from "@/lib/store";
 import { checkOrigin, digest, errorResponse } from "@/lib/auth";
 import type { Enquiry } from "@/lib/types";
+import { stayDestinations, stayDestinationKey } from "@/lib/stays";
 export const runtime = "nodejs";
 export async function POST(request: Request) {
   try {
@@ -42,7 +43,8 @@ export async function POST(request: Request) {
         { error: "Too many enquiries. Please try again in a few minutes." },
         { status: 429 },
       );
-    const item = (await publicContent()).find((x) => x.id === d.itemId);
+    const content = await publicContent();
+    const item = content.find((x) => x.id === d.itemId);
     if (d.itemId && !item)
       return Response.json(
         {
@@ -58,6 +60,16 @@ export async function POST(request: Request) {
     void startedAt;
     const enquiry: Enquiry = {
       ...fields,
+      ...(item?.kind === "resort" && item.stayDestinationSlug
+        ? {
+            destination:
+              stayDestinations(content).find(
+                (place) =>
+                  place.slug === stayDestinationKey(item.stayDestinationSlug!),
+              )?.name || item.location,
+            kind: "resort",
+          }
+        : {}),
       id: requestId,
       itemTitle: item?.title || "",
       createdAt: now,

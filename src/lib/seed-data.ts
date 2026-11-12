@@ -1,21 +1,16 @@
+import { travelPhoto } from "./assets";
 import { southIndiaLocations } from "./south-india";
 import { expandedCatalogue } from "./expanded-catalogue";
 import type { Content } from "./types";
 export const photos = {
-  hero: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=85",
-  swiss:
-    "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1000&q=85",
-  bali: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1000&q=85",
-  kerala:
-    "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1000&q=85",
-  italy:
-    "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1000&q=85",
-  thailand:
-    "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1000&q=85",
-  singapore:
-    "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1000&q=85",
-  resort:
-    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1000&q=85",
+  hero: travelPhoto("photo-1464822759023-fed622ff2c3b"),
+  swiss: travelPhoto("photo-1531366936337-7c912a4589a7"),
+  bali: travelPhoto("photo-1537996194471-e657df975ab4"),
+  kerala: travelPhoto("photo-1602216056096-3b40cc0c9944"),
+  italy: travelPhoto("photo-1516483638261-f4dbaf036963"),
+  thailand: travelPhoto("photo-1528181304800-259b08848526"),
+  singapore: travelPhoto("photo-1525625293386-3f8f99389edd"),
+  resort: travelPhoto("photo-1571896349842-33c89424de2d"),
 };
 const base: Content = {
   id: "",
@@ -479,7 +474,7 @@ function sampleJourney(stops: string[]) {
 }
 const demoImage = (key: string) =>
   key === "india"
-    ? "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1000&q=85"
+    ? travelPhoto("photo-1564507592333-c60657eea523")
     : photos[key as keyof typeof photos];
 for (const [id, title, country, region, route, photo] of sampleRoutes) {
   const stops = route.split("|");

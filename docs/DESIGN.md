@@ -1,9 +1,30 @@
 # PickTheMap design specification
 
-Primary reference: MyTourCab, inspected at desktop and 390px mobile. Match the rounded photographic hero, compact navigation, destination tiles, trip information hierarchy, itinerary sections and reachable mobile action. PickTheMap adaptations: supplied icon, white/gray surfaces, green actions, enquiry-first conversion and full-service travel content. Use original implementation and licensed photography, never reference-site source or assets.
+Updated 11 November 2026. The full portable decision guide is [AI-HANDOVER.md](AI-HANDOVER.md). New explicit owner instructions take priority over historical notes.
 
-Fonts: Plus Jakarta Sans headings; Inter interface and body, locally bundled. Rhythm: 4/8px base, 42px mobile and 70px desktop sections. Main content 1240px max. Cards: 20px outside / 13px image corners. Mobile starts at 360px; 600/800/1100px layout changes. Touch controls 44px or larger. Dialogs use native modal focus management. Reduced motion disables transitions.
+## Direction
 
-Available skills applied: frontend-design, brand, design-system, ui-ux-pro-max, ui-styling, 21st-ui-build, 21st-cli-use, React best practices. Review: 21st-ui-review, web-design-guidelines, browser verification. 21st search attempted but requires account login. The local 21st review completed with zero errors/warnings and informational colour-token suggestions. No paid generation used.
+White/gray travel discovery with rounded photographic cards and restrained green. MyTourCab informs layout and trip hierarchy; PickYourTrail informs grouped destination photography and captions. Use original implementation/copy and licensed photographs. Preserve supplied logo artwork and proportions; no trailing wordmark dot.
 
-Demo records are flagged, labelled in development and excluded from production publication. Stock photos are destination inspiration, not verified property images. Before launch, replace property imagery with licensed photographs of the actual property and verify all travel details. No reviews, ratings, customer totals, discounts or availability have been fabricated.
+## Typography and colours
+
+Self-hosted **Outfit**, weights 400–700, for body and headings; **Plus Jakarta Sans** for the wordmark. Do not restore the former Inter body/Jakarta heading pairing. Keep headings restrained and copy conversational and place-specific.
+
+Canonical CSS is src/app/globals.css. Primary actions use #09B468 with white text/icons; hover is #08A660. Package-card circular actions use white backgrounds with green arrows. Main text is #122B25, secondary text #53635C, paper #F6F8F5, mint #E6F4EC, border #E1E7E2. No dominant yellow or decorative gradient washes. Photo overlays may shade text for readability. Check contrast for the actual font size/weight.
+
+## Current layout decisions
+
+- Preserve responsive layouts from 360px, comfortable touch controls, accessible labels, visible focus and reduced-motion behaviour.
+- Hero supporting paragraph is hidden at **901px and wider**; retained below that breakpoint.
+- Destination cards stay in a single manually scrollable row with hidden scrollbar. No autoplay/ticker.
+- Small destination photo captions sit above centred white place names. Captions are currently code-managed in src/app/page.tsx.
+- Popular and International destination rows use different places. Bali/Indonesia count as the same place.
+- Package cards retain pale green surfaces and rounded photos. Desktop grids show at least four cards where space permits; mobile cards remain readable.
+- Retain the exact requested label “Visa-Free-destinations”, while maintaining accurate passport-specific guidance.
+- Browser favicon and mobile icons derive from the supplied logo. Default title: “PickTheMap | Custom Holidays & Road Trips”.
+
+## Content and implementation discipline
+
+The service is enquiry-first, without instant booking, payments or live availability. Sample records retain internal demo flags and showcase/noindex safeguards. The owner requested removal of the public demo banner; this does not verify sample offers. Do not fabricate reviews, credentials, guarantees or driving times. Replace illustrative property photos/prices with approved content.
+
+Reuse existing components and tokens. Inspect responsive overrides before adding CSS. Use available design/frontend skills when relevant; do not install arbitrary UI kits or claim tools were used without evidence. Prior 21st catalogue access required authentication. The latest visual changes have not had a browser screenshot review. Respect the owner's preference to provide screenshots rather than open/automate browsers without a new request.

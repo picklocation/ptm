@@ -11,7 +11,7 @@ export function EnquiryList({ initial }: { initial: Enquiry[] }) {
   const rows = initial.filter(
     (x) =>
       (!status || x.status === status) &&
-      `${x.name} ${x.email} ${x.phone} ${x.destination}`
+      `${x.name} ${x.email} ${x.phone} ${x.destination} ${x.itemTitle}`
         .toLowerCase()
         .includes(q.toLowerCase()),
   );

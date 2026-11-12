@@ -10,6 +10,7 @@ import {
 } from "@/lib/auth";
 import { list, get, put, firebaseMode, firebaseApp } from "@/lib/store";
 import type { Staff } from "@/lib/types";
+import { supabaseMode, serviceSupabase, databaseError } from "@/lib/supabase";
 const schema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("create"),
@@ -50,6 +51,16 @@ export async function POST(req: Request) {
           { status: 409 },
         );
       let id = digest(email);
+      if (supabaseMode()) {
+        const { data, error } = await serviceSupabase().auth.admin.createUser({
+          email,
+          password: d.password,
+          email_confirm: true,
+        });
+        if (error || !data.user)
+          throw new Error("Could not create staff identity");
+        id = data.user.id;
+      }
       if (firebaseMode())
         id = (
           await getAuth(firebaseApp()).createUser({
@@ -57,13 +68,19 @@ export async function POST(req: Request) {
             password: d.password,
           })
         ).uid;
-      await put("staff", id, {
+      const record = {
         id,
         email,
         role: d.role,
         active: true,
-        ...(!firebaseMode() ? { passwordHash: hashPassword(d.password) } : {}),
-      });
+        ...(!firebaseMode() && !supabaseMode()
+          ? { passwordHash: hashPassword(d.password) }
+          : {}),
+      };
+      if (supabaseMode()) {
+        const { error } = await serviceSupabase().from("staff").insert(record);
+        databaseError(error);
+      } else await put("staff", id, record);
       target = email;
     } else {
       if (d.id === owner.id)
@@ -77,7 +94,13 @@ export async function POST(req: Request) {
           { error: "Staff member not found." },
           { status: 404 },
         );
-      await put("staff", d.id, { ...s, active: d.active });
+      if (supabaseMode()) {
+        const { error } = await serviceSupabase()
+          .from("staff")
+          .update({ active: d.active })
+          .eq("id", d.id);
+        databaseError(error);
+      } else await put("staff", d.id, { ...s, active: d.active });
       if (firebaseMode() && !d.active)
         await getAuth(firebaseApp()).revokeRefreshTokens(d.id);
       target = s.email;

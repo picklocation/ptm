@@ -14,6 +14,7 @@ type Props = {
   destination: string;
   kind: string;
   whatsappEnabled: boolean;
+  preferWhatsApp?: boolean;
 };
 export function EnquiryForm(p: Props) {
   const [step, setStep] = useState(0),
@@ -49,7 +50,7 @@ export function EnquiryForm(p: Props) {
     preferences: "",
     vehicle: "",
     mealPlan: "",
-    contactMethod: "phone",
+    contactMethod: p.preferWhatsApp ? "whatsapp" : "phone",
     consent: false,
     website: "",
   });
