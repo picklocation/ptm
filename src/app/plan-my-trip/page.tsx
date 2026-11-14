@@ -63,7 +63,7 @@ export default async function Plan({
           <div className="enquiry-visual">
             <Image
               src={photos.kerala}
-              alt="Lush green hills in Kerala"
+              alt="Houseboat on the palm-lined backwaters of Kerala"
               fill
               sizes="500px"
             />
