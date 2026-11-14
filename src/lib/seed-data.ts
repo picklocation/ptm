@@ -1,3 +1,4 @@
+import { withPlacePhoto } from "./place-photos";
 import { travelPhoto } from "./assets";
 import { southIndiaLocations } from "./south-india";
 import { expandedCatalogue } from "./expanded-catalogue";
@@ -691,3 +692,7 @@ for (const [id, title, country, route, photo] of [
     ),
   );
 }
+
+// Give every sample record the checked photograph for its own location.
+for (const [index, record] of seedContent.entries())
+  seedContent[index] = withPlacePhoto(record);

@@ -1,5 +1,6 @@
 import type { Content } from "./types";
 import { travelPhoto } from "./assets";
+import { placePhoto, placePhotoUrl } from "./place-photos";
 
 export const stayTags = [
   "Couples",
@@ -53,11 +54,19 @@ export function stayDestinations(items: Content[]): StayDestination[] {
       items.find(
         (x) => x.kind === "destination" && stayDestinationKey(x.slug) === slug,
       );
+    const fallback = placePhoto(slug);
     return {
       slug,
       name: record?.stayDestination ? record.title : name,
-      image: record?.image || travelPhoto("photo-1602216056096-3b40cc0c9944"),
-      alt: record?.imageAlt || "Green landscape used as travel inspiration",
+      image:
+        record?.image ||
+        (fallback
+          ? placePhotoUrl(fallback)
+          : travelPhoto("photo-1602216056096-3b40cc0c9944")),
+      alt:
+        record?.imageAlt ||
+        fallback?.alt ||
+        "Green landscape used as travel inspiration",
     };
   });
   for (const c of custom) {
