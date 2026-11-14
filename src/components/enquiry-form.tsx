@@ -8,6 +8,7 @@ import {
   Send,
 } from "lucide-react";
 import Link from "next/link";
+import { SuggestInput, DateField } from "./form-controls";
 type Props = {
   itemId: string;
   itemTitle: string;
@@ -88,6 +89,7 @@ export function EnquiryForm(p: Props) {
     consent: false,
     website: "",
   });
+  const today = new Date().toISOString().slice(0, 10);
   function change(key: string, value: unknown) {
     setD((old) => ({ ...old, [key]: value }));
     setErrors((old) => ({ ...old, [key]: "" }));
@@ -361,31 +363,15 @@ export function EnquiryForm(p: Props) {
       <div className="form-grid">
         {step === 0 && (
           <>
-            <label className="field full">
-              Where would you like to go?
-              <input
-                name="destination"
-                list="destination-suggestions"
-                value={d.destination}
-                onChange={(e) => change("destination", e.target.value)}
-                placeholder="Start typing a place, e.g. Munnar or Switzerland"
-                autoComplete="off"
-                aria-invalid={!!errors.destination}
-                aria-describedby={
-                  errors.destination ? "destination-error" : undefined
-                }
-              />
-              <datalist id="destination-suggestions">
-                {(p.places || []).map((place) => (
-                  <option key={place} value={place} />
-                ))}
-              </datalist>
-              {errors.destination && (
-                <span className="field-error" id="destination-error">
-                  {errors.destination}
-                </span>
-              )}
-            </label>
+            <SuggestInput
+              label="Where would you like to go?"
+              name="destination"
+              value={d.destination}
+              onChange={(value) => change("destination", value)}
+              options={p.places || []}
+              placeholder="Start typing a place, e.g. Munnar or Switzerland"
+              error={errors.destination}
+            />
             <div className="field full">
               <span className="field-hint">Or tap a popular choice</span>
               <div className="quick-picks">
@@ -416,8 +402,27 @@ export function EnquiryForm(p: Props) {
                 ))}
               </div>
             </div>
-            {field("startDate", "Preferred start date", "date")}
-            {field("endDate", "End date (optional)", "date")}
+            <DateField
+              label="Preferred start date"
+              name="startDate"
+              value={d.startDate}
+              min={today}
+              error={errors.startDate}
+              onChange={(value) => {
+                change("startDate", value);
+                // An end date before the new start date no longer makes sense.
+                if (value && d.endDate && d.endDate < value)
+                  change("endDate", "");
+              }}
+            />
+            <DateField
+              label="End date (optional)"
+              name="endDate"
+              value={d.endDate}
+              min={d.startDate || today}
+              error={errors.endDate}
+              onChange={(value) => change("endDate", value)}
+            />
             <label className="checkbox field full">
               <input
                 type="checkbox"
@@ -430,22 +435,14 @@ export function EnquiryForm(p: Props) {
             {stepper("children", "Children")}
             {d.children > 0 &&
               field("childAges", "Children’s ages (optional)", "text", true)}
-            <label className="field full">
-              Departure city (optional)
-              <input
-                name="departure"
-                list="departure-suggestions"
-                value={d.departure}
-                onChange={(e) => change("departure", e.target.value)}
-                placeholder="Where will you start from?"
-                autoComplete="off"
-              />
-              <datalist id="departure-suggestions">
-                {departureCities.map((city) => (
-                  <option key={city} value={city} />
-                ))}
-              </datalist>
-            </label>
+            <SuggestInput
+              label="Departure city (optional)"
+              name="departure"
+              value={d.departure}
+              onChange={(value) => change("departure", value)}
+              options={departureCities}
+              placeholder="Where will you start from?"
+            />
           </>
         )}
         {step === 1 && (

@@ -3397,3 +3397,112 @@ body:has(.hero-wrap) .hero-wrap {
 .credit-list a {
   text-decoration: underline;
 }
+
+/* Enquiry form: suggestion list under the input and a uniform date control. */
+.suggest-box,
+.date-box {
+  position: relative;
+  margin-top: 7px;
+}
+.suggest-box > svg,
+.date-box > svg {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #5d7366;
+  pointer-events: none;
+}
+.field .suggest-box input {
+  margin-top: 0;
+  padding-left: 40px;
+}
+.suggest-list {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(18, 43, 37, 0.12);
+  max-height: 264px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.suggest-list li {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink);
+  cursor: pointer;
+}
+.suggest-list li:hover,
+.suggest-list li[aria-selected="true"] {
+  background: var(--mint);
+}
+.date-box {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 44px 0 40px;
+  border: 1px solid #aebbaf;
+  border-radius: 9px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 400;
+  color: #7b897f;
+}
+.date-box.has-value {
+  color: var(--ink);
+}
+.date-box:focus-within {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+/* The real input covers the control invisibly; a tap opens the calendar. */
+.field .date-box input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.field .date-box input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.date-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #5d7366;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 1;
+}
+.date-clear:hover {
+  background: var(--mint);
+}
