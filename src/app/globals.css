@@ -3506,3 +3506,18 @@ body:has(.hero-wrap) .hero-wrap {
 .date-clear:hover {
   background: var(--mint);
 }
+/* A checkbox inside a form field keeps its own size and sits beside its label. */
+.field.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.field.checkbox input {
+  display: inline-block;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
