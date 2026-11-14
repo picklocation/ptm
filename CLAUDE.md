@@ -54,7 +54,7 @@ CI (`.github/workflows/checks.yml`) runs typecheck, tests and build on Node 24. 
 
 - Design: white-dominant, pale mint and restrained green; primary buttons `#09B468` with white text; package-card arrows are green circles with white arrows (owner request, 12 November 2026). No redesigns, new palettes, gradients, autoplay or new UI libraries for a small request. Full rules: `docs/DESIGN.md` and handover section 3.
 - Keep the label **Visa-Free-destinations** exactly. Keep the hero paragraph hidden at 901px and wider. Keep destination rows single-row, manually scrolled, with no repeated places between Popular and International.
-- The owner prefers to open pages and send screenshots. Do not open or automate a browser unless they ask. Say when visual verification has not happened.
+- Visual checks (owner decision, 14 November 2026): an automated browser may be used on a local build, only for changes that affect appearance, with at most two screenshots per change (one desktop, one phone width). Do not use it for other work. iPhone-specific behaviour still needs the owner's own check. Say when visual verification has not happened.
 - Public resorts appear only when published, non-sample and admin-verified. Never invent properties, prices, reviews or guarantees to fill an empty page.
 - Sample catalogue records keep their internal `demo` flag and showcase/noindex gating. Do not remove those safeguards or reseed data to mask an outage.
 - Enquiries are saved (idempotent UUID, transactional outbox) before success or WhatsApp is shown. Keep rate limits, honeypot, timing check and origin check.

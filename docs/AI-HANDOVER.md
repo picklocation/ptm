@@ -8,7 +8,7 @@ PickTheMap arranges personalised holidays, Indian domestic trips, international 
 
 The owner values practical action, short explanations and low tool/credit usage. Make reasonable routine decisions. Ask only when missing information affects the business workflow, architecture, cost or safety. Do not repeatedly ask permission for an already requested edit. Do not expand a small styling request into a redesign.
 
-The owner previously asked not to open or automate browsers; they prefer to open pages themselves and supply screenshots. Respect that unless they explicitly change the preference. Use source inspection, targeted checks and bounded HTTP reads where useful. State when visual browser verification has not happened.
+The owner previously asked not to open or automate browsers. On 14 November 2026 they changed this: an automated browser may be used on a local build for changes that affect appearance, limited to two screenshots per change (desktop and phone width), to keep usage low. Do not use it for anything else. Use source inspection, targeted checks and bounded HTTP reads where useful. State when visual browser verification has not happened.
 
 Do not install a collection of skills or packages simply because they are available. Use relevant installed design/frontend skills and existing project components. Only claim tools and checks actually used. Prior 21st catalogue access required authentication; no catalogue component retrieval or paid generation should be assumed available.
 

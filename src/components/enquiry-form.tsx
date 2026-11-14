@@ -369,7 +369,7 @@ export function EnquiryForm(p: Props) {
               value={d.destination}
               onChange={(value) => change("destination", value)}
               options={p.places || []}
-              placeholder="Start typing a place, e.g. Munnar or Switzerland"
+              placeholder="Type a place, e.g. Munnar"
               error={errors.destination}
             />
             <div className="field full">
