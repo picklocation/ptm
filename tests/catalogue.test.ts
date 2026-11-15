@@ -21,7 +21,8 @@ test("expanded catalogue has five complete fictional itineraries for each reques
       assert.equal(c.nights, c.days - 1);
       assert.ok(c.price && c.price > 0);
       assert.match(c.priceConditions, /Fictional/);
-      assert.equal(c.demo, true);
+      // Only the two real Europe self-drive packages are not samples.
+      assert.equal(c.demo, !["discover-europe", "euro-drive"].includes(c.id));
       assert.ok(c.accommodation && c.inclusions.length && c.exclusions.length);
     }
   }
@@ -35,6 +36,7 @@ test("all seed IDs and routes are unique and valid for publication", () => {
   for (const c of seedContent) {
     assert.ok(contentSchema.safeParse(c).success, c.id);
     assert.deepEqual(publishErrors(contentSchema.parse(c)), [], c.id);
-    assert.equal(c.demo, true);
+    // Only the two real Europe self-drive packages are not samples.
+    assert.equal(c.demo, !["discover-europe", "euro-drive"].includes(c.id));
   }
 });

@@ -1,4 +1,29 @@
 export type Kind = "holiday" | "road-trip" | "resort" | "destination";
+export type ItineraryDay = {
+  title: string;
+  description: string;
+  morning?: string[];
+  afternoon?: string[];
+  evening?: string[];
+  driveDistance?: string;
+  driveTime?: string;
+  driveNote?: string;
+  overnight?: string;
+};
+export type RouteStop = {
+  name: string;
+  country: string;
+  lat: number;
+  lng: number;
+  // True where the traveller sleeps; false for a daytime stop on the way.
+  overnight: boolean;
+};
+export type Highlight = {
+  name: string;
+  text: string;
+  image: string;
+  imageAlt: string;
+};
 export type Content = {
   id: string;
   kind: Kind;
@@ -29,7 +54,15 @@ export type Content = {
   order: number;
   status: "draft" | "published" | "archived";
   demo: boolean;
-  itinerary: { title: string; description: string }[];
+  itinerary: ItineraryDay[];
+  // Self-drive packages. All optional; a road trip with route stops uses the
+  // detailed driving layout.
+  countries?: string[];
+  routeStops?: RouteStop[];
+  highlights?: Highlight[];
+  drivingInfo?: { title: string; text: string }[];
+  travelTips?: string[];
+  faqs?: { question: string; answer: string }[];
   inclusions: string[];
   exclusions: string[];
   amenities: string[];

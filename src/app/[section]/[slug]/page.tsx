@@ -1,3 +1,4 @@
+import { RoadTripDetail } from "@/components/road-trip-detail";
 import { publicAsset, imageVariant, skipOptimizer } from "@/lib/assets";
 import Image from "next/image";
 import Link from "next/link";
@@ -64,8 +65,9 @@ export default async function Detail({
           (p) => p.slug === stayDestinationKey(item.stayDestinationSlug!),
         )
       : undefined;
+  const selfDrive = item.kind === "road-trip" && !!item.routeStops?.length;
   const whatsappEnabled =
-    item.kind === "resort" && !!(await settings()).whatsapp;
+    (item.kind === "resort" || selfDrive) && !!(await settings()).whatsapp;
   const href = `/plan-my-trip?item=${encodeURIComponent(item.id)}&destination=${encodeURIComponent(item.location)}&kind=${item.kind === "destination" ? "holiday" : item.kind}`;
   return (
     <>
@@ -91,202 +93,208 @@ export default async function Detail({
           <span>/</span>
           <span>{item.title}</span>
         </div>
-        <div className="detail-hero">
-          <Image
-            src={item.image || publicAsset("brand/placeholder.svg")}
-            unoptimized={skipOptimizer(item.image)}
-            alt={item.imageAlt}
-            fill
-            priority
-            sizes="100vw"
-          />
-          <div className="detail-heading">
-            {item.days > 0 && (
-              <span className="pill">
-                {item.days} days · {item.nights} nights
-              </span>
-            )}
-            <h1>{item.title}</h1>
-            <p>
-              <MapPin size={16} />
-              {item.location}
-            </p>
-          </div>
-        </div>
-        <div className="detail-grid">
-          <div>
-            <section className="detail-section">
-              <p className="eyebrow">A journey made yours</p>
-              <h2>
-                A little about this{" "}
-                {item.kind === "resort" ? "stay" : "journey"}
-              </h2>
-              <p>{item.description}</p>
-              <div className="tag-list">
-                {item.themes.map((t) => (
-                  <span key={t}>{t}</span>
-                ))}
-              </div>
-            </section>
-            {item.gallery.length > 0 && (
-              <section className="detail-section">
-                <h2>Picture yourself here</h2>
-                <div className="gallery-row">
-                  {item.gallery.map((url, i) => (
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noreferrer"
-                      key={i}
-                      aria-label={`Open photo ${i + 1} of ${item.title}`}
-                    >
-                      <Image
-                        src={imageVariant(url, "card")}
-                        unoptimized={skipOptimizer(url)}
-                        alt={
-                          item.galleryAlt?.[url] ||
-                          `${item.imageAlt} — view ${i + 1}`
-                        }
-                        fill
-                        sizes="200px"
-                      />
-                    </a>
-                  ))}
-                </div>
-              </section>
-            )}
-            {item.accommodation && (
-              <section className="detail-section">
-                <h2>Your accommodation</h2>
-                <p>{item.accommodation}</p>
-              </section>
-            )}
-            {item.kind !== "resort" && item.kind !== "destination" && (
-              <section className="detail-section">
-                <p className="eyebrow">One lovely day at a time</p>
-                <h2>
-                  {item.kind === "road-trip"
-                    ? "Your route, stop by stop"
-                    : "Your itinerary"}
-                </h2>
-                <ol className="timeline">
-                  {item.itinerary.map((d, i) => (
-                    <li key={i}>
-                      <span>{i + 1}</span>
-                      <div>
-                        <h3>{d.title}</h3>
-                        <p>{d.description}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-                <p className="small-note">
-                  Your final itinerary and arrangements will be confirmed in
-                  your personalised quote.
+        {selfDrive ? (
+          <RoadTripDetail item={item} href={href} whatsapp={whatsappEnabled} />
+        ) : (
+          <>
+            <div className="detail-hero">
+              <Image
+                src={item.image || publicAsset("brand/placeholder.svg")}
+                unoptimized={skipOptimizer(item.image)}
+                alt={item.imageAlt}
+                fill
+                priority
+                sizes="100vw"
+              />
+              <div className="detail-heading">
+                {item.days > 0 && (
+                  <span className="pill">
+                    {item.days} days · {item.nights} nights
+                  </span>
+                )}
+                <h1>{item.title}</h1>
+                <p>
+                  <MapPin size={16} />
+                  {item.location}
                 </p>
-              </section>
-            )}
-            {item.kind === "road-trip" && (
-              <section className="detail-section">
-                <h2>Travel comfortably</h2>
-                {item.vehicles.length ? (
-                  item.vehicles.map((v, i) => (
-                    <div className="vehicle-card" key={i}>
-                      <h3>{v.name}</h3>
-                      <p>
-                        Passengers: {v.passengers} · Luggage: {v.luggage}
-                      </p>
+              </div>
+            </div>
+            <div className="detail-grid">
+              <div>
+                <section className="detail-section">
+                  <p className="eyebrow">A journey made yours</p>
+                  <h2>
+                    A little about this{" "}
+                    {item.kind === "resort" ? "stay" : "journey"}
+                  </h2>
+                  <p>{item.description}</p>
+                  <div className="tag-list">
+                    {item.themes.map((t) => (
+                      <span key={t}>{t}</span>
+                    ))}
+                  </div>
+                </section>
+                {item.gallery.length > 0 && (
+                  <section className="detail-section">
+                    <h2>Picture yourself here</h2>
+                    <div className="gallery-row">
+                      {item.gallery.map((url, i) => (
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noreferrer"
+                          key={i}
+                          aria-label={`Open photo ${i + 1} of ${item.title}`}
+                        >
+                          <Image
+                            src={imageVariant(url, "card")}
+                            unoptimized={skipOptimizer(url)}
+                            alt={
+                              item.galleryAlt?.[url] ||
+                              `${item.imageAlt} — view ${i + 1}`
+                            }
+                            fill
+                            sizes="200px"
+                          />
+                        </a>
+                      ))}
                     </div>
-                  ))
-                ) : (
-                  <p>
-                    Tell us your group size and luggage requirements. Vehicle
-                    options will be included in your quote.
+                  </section>
+                )}
+                {item.accommodation && (
+                  <section className="detail-section">
+                    <h2>Your accommodation</h2>
+                    <p>{item.accommodation}</p>
+                  </section>
+                )}
+                {item.kind !== "resort" && item.kind !== "destination" && (
+                  <section className="detail-section">
+                    <p className="eyebrow">One lovely day at a time</p>
+                    <h2>
+                      {item.kind === "road-trip"
+                        ? "Your route, stop by stop"
+                        : "Your itinerary"}
+                    </h2>
+                    <ol className="timeline">
+                      {item.itinerary.map((d, i) => (
+                        <li key={i}>
+                          <span>{i + 1}</span>
+                          <div>
+                            <h3>{d.title}</h3>
+                            <p>{d.description}</p>
+                          </div>
+                        </li>
+                      ))}
+                    </ol>
+                    <p className="small-note">
+                      Your final itinerary and arrangements will be confirmed in
+                      your personalised quote.
+                    </p>
+                  </section>
+                )}
+                {item.kind === "road-trip" && (
+                  <section className="detail-section">
+                    <h2>Travel comfortably</h2>
+                    {item.vehicles.length ? (
+                      item.vehicles.map((v, i) => (
+                        <div className="vehicle-card" key={i}>
+                          <h3>{v.name}</h3>
+                          <p>
+                            Passengers: {v.passengers} · Luggage: {v.luggage}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p>
+                        Tell us your group size and luggage requirements.
+                        Vehicle options will be included in your quote.
+                      </p>
+                    )}
+                  </section>
+                )}
+                {item.kind === "resort" && (
+                  <>
+                    <section className="detail-section">
+                      <h2>Rooms & meal plans</h2>
+                      <CheckList items={item.rooms} />
+                      <CheckList items={item.mealPlans} />
+                    </section>
+                    <section className="detail-section">
+                      <h2>At the property</h2>
+                      {item.amenities.length ? (
+                        <CheckList items={item.amenities} />
+                      ) : (
+                        <p>
+                          Amenities and property information will be confirmed
+                          by the team.
+                        </p>
+                      )}
+                    </section>
+                  </>
+                )}
+                {item.kind !== "destination" && (
+                  <section className="detail-section">
+                    <h2>What’s included</h2>
+                    <CheckList items={item.inclusions} />
+                    <h2 style={{ marginTop: 30 }}>What’s not included</h2>
+                    <CheckList items={item.exclusions} />
+                  </section>
+                )}
+                {item.price && (
+                  <section className="detail-section">
+                    <h2>Pricing notes</h2>
+                    <Price item={item} />
+                  </section>
+                )}
+              </div>
+              <aside className="enquiry-aside">
+                <p className="eyebrow">Make this journey yours</p>
+                <h2>
+                  Your trip.
+                  <br />
+                  Your kind of perfect.
+                </h2>
+                <Price item={item} />
+                <p>
+                  Share your dates, travel style and little must-haves. We’ll
+                  help shape the details.
+                </p>
+                <Link className="button" href={href}>
+                  {item.kind === "resort" ? "Enquire Now" : "Request a quote"}
+                  <ArrowUpRight size={18} />
+                </Link>
+                {whatsappEnabled && (
+                  <Link
+                    className="button secondary stay-details-link"
+                    href={`${href}&contact=whatsapp`}
+                  >
+                    WhatsApp
+                  </Link>
+                )}
+                {item.kind === "resort" && (
+                  <p className="small-note">
+                    Share your dates and guests first. Your enquiry is saved
+                    before you continue to WhatsApp.
                   </p>
                 )}
-              </section>
-            )}
-            {item.kind === "resort" && (
-              <>
-                <section className="detail-section">
-                  <h2>Rooms & meal plans</h2>
-                  <CheckList items={item.rooms} />
-                  <CheckList items={item.mealPlans} />
-                </section>
-                <section className="detail-section">
-                  <h2>At the property</h2>
-                  {item.amenities.length ? (
-                    <CheckList items={item.amenities} />
-                  ) : (
-                    <p>
-                      Amenities and property information will be confirmed by
-                      the team.
-                    </p>
-                  )}
-                </section>
-              </>
-            )}
-            {item.kind !== "destination" && (
-              <section className="detail-section">
-                <h2>What’s included</h2>
-                <CheckList items={item.inclusions} />
-                <h2 style={{ marginTop: 30 }}>What’s not included</h2>
-                <CheckList items={item.exclusions} />
-              </section>
-            )}
-            {item.price && (
-              <section className="detail-section">
-                <h2>Pricing notes</h2>
-                <Price item={item} />
-              </section>
-            )}
-          </div>
-          <aside className="enquiry-aside">
-            <p className="eyebrow">Make this journey yours</p>
-            <h2>
-              Your trip.
-              <br />
-              Your kind of perfect.
-            </h2>
-            <Price item={item} />
-            <p>
-              Share your dates, travel style and little must-haves. We’ll help
-              shape the details.
-            </p>
-            <Link className="button" href={href}>
-              {item.kind === "resort" ? "Enquire Now" : "Request a quote"}
-              <ArrowUpRight size={18} />
-            </Link>
-            {whatsappEnabled && (
-              <Link
-                className="button secondary stay-details-link"
-                href={`${href}&contact=whatsapp`}
-              >
-                WhatsApp
-              </Link>
-            )}
-            {item.kind === "resort" && (
-              <p className="small-note">
-                Share your dates and guests first. Your enquiry is saved before
-                you continue to WhatsApp.
-              </p>
-            )}
-            <div className="aside-features">
-              <p>
-                <Check size={14} />
-                Personalised to your group
-              </p>
-              <p>
-                <Check size={14} />
-                Clear inclusions in your quote
-              </p>
-              <p>
-                <Check size={14} />
-                No booking or payment at this stage
-              </p>
+                <div className="aside-features">
+                  <p>
+                    <Check size={14} />
+                    Personalised to your group
+                  </p>
+                  <p>
+                    <Check size={14} />
+                    Clear inclusions in your quote
+                  </p>
+                  <p>
+                    <Check size={14} />
+                    No booking or payment at this stage
+                  </p>
+                </div>
+              </aside>
             </div>
-          </aside>
-        </div>
+          </>
+        )}
         {item.kind === "destination" && (
           <section className="section">
             <h2 style={{ marginBottom: 25 }}>

@@ -134,9 +134,49 @@ export const contentSchema = z.object({
       z.object({
         title: z.string().max(150),
         description: z.string().max(3000),
+        morning: z.array(text).max(12).optional(),
+        afternoon: z.array(text).max(12).optional(),
+        evening: z.array(text).max(12).optional(),
+        driveDistance: z.string().max(80).optional(),
+        driveTime: z.string().max(80).optional(),
+        driveNote: z.string().max(400).optional(),
+        overnight: z.string().max(100).optional(),
       }),
     )
     .max(100),
+  countries: z.array(z.string().trim().min(1).max(60)).max(30).optional(),
+  routeStops: z
+    .array(
+      z.object({
+        name: z.string().trim().min(1).max(80),
+        country: z.string().max(60),
+        lat: z.number().min(-90).max(90),
+        lng: z.number().min(-180).max(180),
+        overnight: z.boolean(),
+      }),
+    )
+    .max(40)
+    .optional(),
+  highlights: z
+    .array(
+      z.object({
+        name: z.string().trim().min(1).max(80),
+        text: z.string().max(400),
+        image,
+        imageAlt: z.string().max(300),
+      }),
+    )
+    .max(24)
+    .optional(),
+  drivingInfo: z
+    .array(z.object({ title: z.string().max(100), text }))
+    .max(20)
+    .optional(),
+  travelTips: z.array(text).max(30).optional(),
+  faqs: z
+    .array(z.object({ question: z.string().max(300), answer: text }))
+    .max(30)
+    .optional(),
   inclusions: z.array(text).max(50),
   exclusions: z.array(text).max(50),
   amenities: z.array(text).max(50),
@@ -186,5 +226,7 @@ export function publishErrors(c: z.infer<typeof contentSchema>) {
     c.originalPrice &&
       (!c.price || c.originalPrice <= c.price) &&
       "The original price must be higher than the offer price.",
+    (c.highlights || []).some((h) => h.image && !h.imageAlt.trim()) &&
+      "Add a description for every highlight photo.",
   ].filter(Boolean) as string[];
 }
