@@ -4028,3 +4028,38 @@ body:has(.hero-wrap) .hero-wrap {
   }
 }
 
+
+/* Admin: quick links to the photo behind each Resorts & Stays card. */
+.stay-photo-list {
+  margin-bottom: 20px;
+}
+.stay-photo-list summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+.stay-photo-list ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+}
+.stay-photo-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 50px;
+  background: #fff;
+  font-size: 13px;
+}
+.stay-photo-list a:hover {
+  background: var(--mint);
+}
+.stay-photo-list a span {
+  font-size: 11px;
+  color: #0a6b42;
+}

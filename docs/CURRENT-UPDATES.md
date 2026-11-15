@@ -113,3 +113,7 @@ After an enquiry is sent the visitor sees a centred thank-you panel with their f
 ## 15 November 2026: owner maintenance buttons removed
 
 The owner confirmed all four maintenance actions have been run on the live database ("Tidy package wording" reported 157 packages tidied; "Match photos to locations" reported everything already matching) and asked for the buttons to go. They are removed from Admin → Content & media. The owner-only endpoints (`/api/admin/content/photos`, `/wording`, `/europe-drives`) remain in the code without a button, so a future bulk change can be given a button again. Until then, changes to the two Europe packages are made in the admin editor, or need a button re-added to apply a code-side revision.
+
+## 15 November 2026: editing Resorts & Stays destination photos
+
+Six of the sixteen built-in stay destinations (Kakkadampoyil, Bangalore, Thekkady, Goa, Alleppey, Coorg) had no Destination record, so their card photos could not be changed in admin. Admin → Content & media now has a folded "Resorts & Stays destination photos" list of all sixteen places. A place with a record opens it; a place without one opens a new Destination record already filled in (name, slug, current photo, "include in Resorts & Stays" ticked, display order 900 so it stays out of the homepage Popular row). The owner replaces the cover and publishes. No records are created automatically.
