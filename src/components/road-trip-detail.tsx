@@ -337,12 +337,6 @@ export function RoadTripDetail({
           </div>
         </aside>
       </div>
-      <div className="drive-bar">
-        <span>{item.price ? <PriceFigure item={item} /> : item.title}</span>
-        <Link className="button small" href={href}>
-          Request a quote
-        </Link>
-      </div>
     </>
   );
 }

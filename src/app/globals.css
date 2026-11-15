@@ -3627,6 +3627,7 @@ body:has(.hero-wrap) .hero-wrap {
   stroke: #fff;
 }
 .route-map text {
+  font-size: calc(17px * var(--map-scale, 1));
   font-family: var(--font-sans);
   font-weight: 600;
   fill: var(--ink);
@@ -3689,12 +3690,6 @@ body:has(.hero-wrap) .hero-wrap {
   border-color: #cfe6d8;
   color: var(--ink);
   font-weight: 500;
-}
-.route-strip li + li::before {
-  content: "→";
-  margin-left: -22px;
-  margin-right: 10px;
-  color: #8a988f;
 }
 .highlight-grid {
   display: grid;
@@ -3885,9 +3880,6 @@ body:has(.hero-wrap) .hero-wrap {
 .tip-list {
   margin-top: 12px;
 }
-.drive-bar {
-  display: none;
-}
 @media (max-width: 900px) {
   .highlight-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3896,28 +3888,6 @@ body:has(.hero-wrap) .hero-wrap {
   .incl-grid,
   .info-grid {
     grid-template-columns: 1fr;
-  }
-  /* A booking bar stays within reach while the long page scrolls. */
-  .drive-bar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 30;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-    background: #fff;
-    border-top: 1px solid var(--line);
-    box-shadow: 0 -6px 20px rgba(18, 43, 37, 0.08);
-  }
-  .drive-bar .price-now {
-    font-size: 18px;
-  }
-  .drive-bar + * {
-    margin-bottom: 70px;
   }
 }
 @media (max-width: 560px) {
@@ -3932,5 +3902,15 @@ body:has(.hero-wrap) .hero-wrap {
   .highlight-grid {
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+  }
+}
+@media (max-width: 640px) {
+  /* On phones only overnight stops are labelled, in a larger size; every
+     place is still listed under the map and named when tapped. */
+  .route-map text {
+    font-size: calc(30px * var(--map-scale, 1));
+  }
+  .route-map .stop:not(.night):not(.active) text {
+    display: none;
   }
 }

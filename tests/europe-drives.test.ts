@@ -17,6 +17,13 @@ test("there are exactly two Europe driving packages, both publishable", () => {
   for (const c of europeDrives)
     assert.deepEqual(publishErrors(contentSchema.parse(c)), [], c.id);
 });
+test("automatic photo matching leaves the curated packages alone", () => {
+  const seeded = seedContent.find((c) => c.id === "euro-drive")!;
+  assert.equal(seeded.image, euroDrive.image);
+  assert.ok(euroDrive.image.endsWith("/lauterbrunnen.webp"));
+  assert.ok((euroDrive.highlights?.length || 0) >= 9);
+  assert.equal(discoverEurope.highlights?.length, 6);
+});
 test("brochure facts are preserved", () => {
   assert.deepEqual(
     [
@@ -34,7 +41,9 @@ test("brochure facts are preserved", () => {
   );
   assert.equal(euroDrive.countries?.length, 9);
   assert.equal(euroDrive.title, "Euro Drive");
-  assert.ok(!JSON.stringify(euroDrive).match(/\bzon\b|zonholidays|elegant europe/i));
+  assert.ok(
+    !JSON.stringify(euroDrive).match(/\bzon\b|zonholidays|elegant europe/i),
+  );
 });
 test("itineraries match the trip length and overnight sequence", () => {
   for (const c of europeDrives) {
