@@ -21,6 +21,7 @@ import { visaGuides } from "@/lib/visa-guides";
 import { Footer } from "@/components/footer";
 import { CatalogueStatus } from "@/components/catalogue-status";
 import { inCollection } from "@/lib/classification";
+import { placePhoto, placePhotoUrl } from "@/lib/place-photos";
 const destinationCaptions: Record<string, string> = {
   Bali: "Temples, terraces & coast",
   Switzerland: "Lakes beneath the Alps",
@@ -68,6 +69,16 @@ export default async function Home() {
   const popularTiles = destinations.map((d) =>
     tile(d.title, d, "/destinations/" + d.slug),
   );
+  // The Europe self-drive packages lead the row while any road trip is live.
+  const drivePhoto = placePhoto("seiser-alm");
+  if (drivePhoto && items.some((x) => x.kind === "road-trip"))
+    popularTiles.unshift({
+      name: "Euro Drive",
+      caption: "Discover Europe by road",
+      image: placePhotoUrl(drivePhoto),
+      alt: drivePhoto.alt,
+      href: "/europe-road-trips",
+    });
   // Treat Bali and Indonesia as the same destination for row selection.
   const destinationKey = (name: string) => {
     const key = name.trim().toLowerCase();
