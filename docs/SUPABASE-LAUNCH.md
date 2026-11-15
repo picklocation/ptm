@@ -34,7 +34,7 @@ Set these values on the migration **Preview environment first**, then on Product
 | `NEXT_PUBLIC_SUPABASE_URL` | Same URL — Config, used for public assets |
 | `SUPABASE_PUBLISHABLE_KEY` | Current project publishable key — Config |
 | `SUPABASE_SECRET_KEY` | Current server secret key — Secret; never prefix with NEXT_PUBLIC |
-| `SITE_URL` | Production canonical URL, currently `https://ptm-alpha.vercel.app` — Config |
+| `SITE_URL` | Production canonical URL, `https://www.pickthemap.in` since 12 November 2026 — Config. Forms are refused from any other address; redeploy after changing it |
 
 No database password, migration CA, Firebase service-account file, or owner password belongs in Vercel. Redeploy after saving environment variables. Preview request origins use Vercel's deployment URL automatically. Production uses `SITE_URL`; update it when connecting the final domain.
 
@@ -45,7 +45,7 @@ Git branch: `codex/migrate-supabase`. Do not change the current production branc
 - `/adminportal`: dashboard and counts.
 - `/adminportal/content`: create/edit/preview/publish/unpublish/archive packages, destinations, road trips and resorts. Publishing atomically writes the public snapshot and audit/revision records.
 - Galleries: upload JPEG/PNG/WebP, edit alt text and order URLs. Removing a URL from the gallery removes that reference; physical file deletion is not exposed in the existing editor. Archiving preserves history and enquiry references.
-- Uploads are validated, decoded and resized into WebP. They live in the private bucket and are served to visitors only when referenced by published content. Public seed assets use the public bucket with long-lived caching.
+- Uploads are shrunk in the browser, validated, and stored as 1600px and 640px WebP in the public bucket under `content/{contentId}/`; records keep the direct link (changed 12 November 2026). Earlier uploads in the private bucket are still served through `/api/media/{id}` when referenced by published content. Public seed assets use the public bucket with long-lived caching.
 - `/adminportal/enquiries`: new → contacted → quote sent → confirmed → closed, notes, assignment and follow-up. Submissions save before showing a WhatsApp link. The visitor still presses Send in WhatsApp.
 - Excel/CSV export remains available in admin. Continuous workbook sync runs on the owner's computer, never on Vercel. Configure `.env.local` with the Supabase server variables, then run `npm run excel:sync -- --watch`. Local workers explicitly use trusted server access; keep the server key private.
 - `/adminportal/settings`: contact details, WhatsApp, social links, FAQs and approved policy copy.
@@ -82,3 +82,10 @@ Supabase Free remains enabled. No paid services were activated. Monitor database
 3. Approve the fresh-start cutover, set Production variables, and promote/deploy the reviewed branch.
 4. Confirm a real test enquiry arrives and admin access works. Keep Firebase intact.
 5. To roll back, restore the prior production deployment and its Firebase environment values. Any enquiries received in Supabase after cutover must be retained/exported separately before returning to Firebase.
+
+## Hosting notes (updated 15 November 2026)
+
+- Domain: `www.pickthemap.in`. Staff portal: `/adminportal`.
+- Vercel function region: Singapore (`sin1`), matching the Supabase project region (`ap-southeast-1`). Keep them together; a distant function region makes every page slow.
+- Production is updated by promoting a `codex/migrate-supabase` deployment. The project is on Vercel's Hobby plan; check its terms for commercial use.
+- Further owner-only endpoints are listed at the end of `SCHEMA-AND-API.md`.

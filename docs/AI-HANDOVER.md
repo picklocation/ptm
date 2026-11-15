@@ -1,6 +1,6 @@
 # PickTheMap — portable AI development handover
 
-Updated 11 November 2026. You can upload this file to Claude, or use it alongside the repository in Claude Code. It is a specification of decisions and working methods, not a guarantee that different assistants will produce identical results. If working without repository access, request the relevant source files before claiming to implement or verify a change.
+Updated 15 November 2026. You can upload this file to Claude, or use it alongside the repository in Claude Code. It is a specification of decisions and working methods, not a guarantee that different assistants will produce identical results. If working without repository access, request the relevant source files before claiming to implement or verify a change.
 
 ## 1. Product and working style
 
@@ -85,7 +85,9 @@ Existing stack: Next.js App Router, React, TypeScript, Tailwind/global CSS; Supa
 | Package formats and collection assignment | `src/lib/classification.ts` |
 | Public asset URLs | `src/lib/assets.ts` |
 | Database migrations | `supabase/migrations/` |
-| Admin pages and HTTP endpoints | `src/app/admin/`, `src/app/api/` |
+| Admin pages (served at `/adminportal`) and HTTP endpoints | `src/app/adminportal/`, `src/app/api/` |
+| Europe self-drive packages, page and map | `src/lib/europe-drives.ts`, `src/components/road-trip-detail.tsx`, `src/components/route-map.tsx` |
+| Location photographs | `src/lib/place-photos.ts`, `public/images/places/` |
 
 `DATA_BACKEND=supabase` is the intended hosted mode. Legacy Firebase code remains for transition/rollback; local SQLite is not suitable for Vercel. Do not silently delete legacy resources or run Firebase seed scripts against the new setup.
 
@@ -117,7 +119,7 @@ Drafts and published snapshots are separate. Saving a draft does not replace pub
 
 The owner requested a fresh Supabase catalogue rather than a Firebase import. There are 200 sample published records as of the last direct check. Old Firebase enquiries/edits were not imported. Do not invent claims that historical data was migrated.
 
-Sample content remains flagged internally and uses showcase gating. The owner asked to remove visible demo wording and will review content. Do not silently remove internal demo/indexing safeguards, fabricate testimonials/operating guarantees or convert illustrative prices into verified offers.
+Sample content remains flagged internally and uses showcase gating. On 15 November 2026 the owner said they use the sample holidays as real packages and had the visible demonstration wording, generic accommodation notes and cover-only galleries removed. Whether to keep the formula-generated prices and whether to clear the internal sample flag are still open owner decisions. Do not silently remove internal demo/indexing safeguards, fabricate testimonials/operating guarantees or convert illustrative prices into verified offers.
 
 If packages disappear:
 
@@ -134,8 +136,8 @@ Successful public reads normally revalidate after 15 minutes; content mutations 
 
 - Repository: https://github.com/picklocation/ptm
 - Current working branch at handover: `codex/migrate-supabase` (verify with Git before working).
-- Public URL: https://ptm-alpha.vercel.app/
-- Admin: https://ptm-alpha.vercel.app/adminportal/login
+- Public URL: https://www.pickthemap.in/ (the earlier https://ptm-alpha.vercel.app/ still resolves, but forms only work on the address stored in `SITE_URL`)
+- Admin: https://www.pickthemap.in/adminportal/login
 - Vercel deployments: https://vercel.com/pickthemap/ptm/deployments
 - Supabase project URL: https://feqmnzutyhzochuyiint.supabase.co
 
@@ -162,7 +164,7 @@ For a data/permission fix, verify failure and success paths. For a visual change
 
 ## 9. Recent decisions and next checks
 
-Recent code through `7655569` includes: catalogue cache fix, showcase retry fix, Outfit/captions, browser icons, desktop hero paragraph removal, no duplicate places between Popular/International rows, mobile focus and admin responsive fixes, the Resorts & Stays directory, and removal of the South Asia homepage card. Check Git for later commits. Verified status and remaining work: `docs/IMPLEMENTATION_STATUS.md` and `docs/ROADMAP.md`. The latest public-domain promotion and full hosted flow have not been independently verified.
+As of 15 November 2026 the code also includes: admin at `/adminportal`, the rebuilt image system, permanent delete, admin speed work, new package cards with discount pricing, a two-step enquiry form, 72 location-checked photographs with a credits page, two Europe self-drive packages with a route-map page, and owner actions that apply photo, wording and package updates to the live database. Check Git for later commits. Verified status, open owner decisions and remaining work: `docs/IMPLEMENTATION_STATUS.md` and `docs/ROADMAP.md`; dated log: `docs/CURRENT-UPDATES.md`. The latest public-domain promotion and full hosted flow have not been independently verified.
 
 Priorities: verify the correct production deployment, package browsing, admin login and a test enquiry; review real photos/prices/legal copy; configure optional recovery email/notifications; connect a purchased domain when provided. Do not treat these as completed.
 

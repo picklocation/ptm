@@ -1,6 +1,6 @@
 # PickTheMap design specification
 
-Updated 11 November 2026. The full portable decision guide is [AI-HANDOVER.md](AI-HANDOVER.md). New explicit owner instructions take priority over historical notes.
+Updated 15 November 2026. The full portable decision guide is [AI-HANDOVER.md](AI-HANDOVER.md). New explicit owner instructions take priority over historical notes.
 
 ## Direction
 
@@ -28,3 +28,12 @@ Canonical CSS is src/app/globals.css. Primary actions use #09B468 with white tex
 The service is enquiry-first, without instant booking, payments or live availability. Sample records retain internal demo flags and showcase/noindex safeguards. The owner requested removal of the public demo banner; this does not verify sample offers. Do not fabricate reviews, credentials, guarantees or driving times. Replace illustrative property photos/prices with approved content.
 
 Reuse existing components and tokens. Inspect responsive overrides before adding CSS. Use available design/frontend skills when relevant; do not install arbitrary UI kits or claim tools were used without evidence. Prior 21st catalogue access required authentication. The latest visual changes have not had a browser screenshot review. Respect the owner's preference to provide screenshots rather than open/automate browsers without a new request.
+
+## Additions since 12 November 2026
+
+- **Package cards:** green stop line with a pin, day chip on the photo, "From" with a large price, green round arrow button beside the price, percentage badge when an original price is set.
+- **Self-drive package pages:** one reusable layout (summary bar, route map, highlights, accordion itinerary, inclusions, driving information, tips, FAQs). Same tokens and typography as the rest of the site; no new palette.
+- **Route map:** pale land, mint for visited countries, dashed green route, filled dots for overnight stops and hollow dots for stops on the way. No map tiles or third-party styling.
+- **Enquiry form:** two steps; pill buttons for trip type and popular places; plus/minus counters; a suggestion list that opens under the input; date fields shown as a styled control over the device's own calendar.
+- **Photographs:** real, location-checked photographs only, never generated images. Destination photos show the place named in their description.
+- **Checking appearance:** an automated browser may be used on a local build for appearance changes only, with at most one desktop and one phone-width screenshot per change. Real-device checks remain the owner's.
