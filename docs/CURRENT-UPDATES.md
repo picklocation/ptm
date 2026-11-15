@@ -85,3 +85,7 @@ Live checks after the documentation update found the public domain still serving
 At the owner's request, Day 7 is now Munich → Mittenwald → Vipiteno via the Brenner Pass → Bolzano area (263 km, 3 hr 25 min) and Day 8 is Bolzano → Glorenza → Reschen Pass → Landeck → Vaduz → Zürich area (358 km, 4 hr 50 min). Each leg's distance and time is listed in the day's drive note; the per-leg split is an estimate that adds up to the owner's daily totals. Overnights are the Bolzano area and the Zürich area. Name, price (₹193,000 per person) and the nine countries are unchanged. Innsbruck, the Seiser Alm and Merano are no longer stops.
 
 Because an installed package is never overwritten automatically, Admin → Content & media has a second owner action, "Update to latest version", which replaces both packages with the built-in version after a confirmation and discards admin edits to those two records.
+
+## 15 November 2026: Euro Drive homepage card photo
+
+Admin → Site settings & FAQs → "Homepage: Euro Drive card" lets the owner upload the photo for the first Popular destinations card. It is stored as the optional `driveCardImage` setting; empty falls back to the built-in Lake Reschen photo. Only an uploaded photo or a bundled `/images/` path is accepted.

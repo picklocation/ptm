@@ -13,7 +13,7 @@ import {
 } from "@/lib/classification";
 // Shrink large camera photos in the browser so uploads are quick and stay
 // under the host's request size limit. The server validates and re-encodes.
-async function shrinkImage(file: File): Promise<File> {
+export async function shrinkImage(file: File): Promise<File> {
   try {
     const bitmap = await createImageBitmap(file, {
       imageOrientation: "from-image",
