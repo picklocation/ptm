@@ -2,11 +2,13 @@
 
 Next.js travel discovery, personalised enquiries and a protected admin portal.
 
-## Current status — 11 November 2026
+## Current status — 15 November 2026
 
-The Supabase version is implemented and tested on `codex/migrate-supabase`. It uses PostgreSQL, Supabase Auth and Supabase Storage. Vercel remains the host. Recent updates add Outfit typography, destination photo captions, browser/home-screen icons and backend-specific catalogue caching. See [current updates and deployment checklist](docs/CURRENT-UPDATES.md).
+The site runs on Supabase (PostgreSQL, Auth, Storage) and Vercel at https://www.pickthemap.in, with the staff portal at `/adminportal`. Current work is on `codex/migrate-supabase`; the owner promotes its deployments to Production by hand.
 
-This is an owner-approved fresh start: 200 sample catalogue entries were recreated; historical Firebase enquiries and edits were not imported. Firebase remains intact. The owner reported promoting the migration deployment, but subsequent live checks found an unavailable catalogue. The cache fix and newer design changes are pushed; their production promotion and hosted end-to-end verification remain unconfirmed. Vercel screenshots show the six required variable names assigned to Production and Preview; masked values cannot be verified from screenshots.
+Recent work: rebuilt image uploads, new package cards with discount pricing, a two-step enquiry form, location-checked photographs, and two Europe self-drive packages with a route-map page. See [implementation status](docs/IMPLEMENTATION_STATUS.md), [roadmap](docs/ROADMAP.md) and the [dated change log](docs/CURRENT-UPDATES.md).
+
+The catalogue began as 200 sample entries. The owner now uses the holidays as real packages; their generated prices and internal sample flag are open decisions recorded in the status document. Firebase remains intact for rollback and holds the pre-migration enquiries.
 
 ## Start the prepared Supabase version
 
@@ -49,7 +51,7 @@ npx tsx scripts/migration/verify-access.ts
 npx tsx scripts/migration/verify-supabase-flow.ts
 ```
 
-Seventeen tests and the production build passed. The Supabase flow verified owner login, publishing, public detail pages, enquiry persistence/idempotency, delivery jobs, enquiry updates, Excel export, uploads, private/public image access, role isolation, account disabling, unpublishing and logout. Flow tests create and clean up disposable records in the configured Supabase project.
+39 unit tests and the production build pass as of 15 November 2026. The Supabase flow verified owner login, publishing, public detail pages, enquiry persistence/idempotency, delivery jobs, enquiry updates, Excel export, uploads, private/public image access, role isolation, account disabling, unpublishing and logout. Flow tests create and clean up disposable records in the configured Supabase project.
 
 ## Retained adapters
 

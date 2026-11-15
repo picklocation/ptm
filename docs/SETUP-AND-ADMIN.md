@@ -11,7 +11,7 @@ Use the [Supabase launch guide](SUPABASE-LAUNCH.md) for current configuration an
 - Local login: http://localhost:3005/adminportal/login
 - Local dashboard: http://localhost:3005/adminportal
 - Hosted preview: append `/adminportal/login` to the latest ready deployment URL from `codex/migrate-supabase`.
-- Production after cutover: https://ptm-alpha.vercel.app/adminportal/login
+- Production: https://www.pickthemap.in/adminportal/login (domain connected 12 November 2026; `/admin` redirects to `/adminportal`)
 
 The new Supabase login is separate from the old Firebase login. Editing `SUPABASE_OWNER_PASSWORD` in a local file after provisioning does not change an existing Auth password. Password recovery email configuration is not yet verified.
 

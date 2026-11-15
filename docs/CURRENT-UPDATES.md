@@ -1,6 +1,6 @@
 # Current website updates
 
-Updated 11 November 2026. This records implemented changes separately from what has been verified on the live domain.
+Updated 15 November 2026. A dated log: each section records a change as it was made, so earlier sections describe the site as it was then. For the present state read [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md). The public site is now https://www.pickthemap.in with the staff portal at `/adminportal`; older sections below still mention `ptm-alpha.vercel.app`.
 
 ## Website and admin
 

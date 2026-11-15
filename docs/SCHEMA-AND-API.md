@@ -1,6 +1,6 @@
 # Supabase schema and HTTP API
 
-Updated 11 November 2026. Canonical records: `src/lib/types.ts`; validation: `src/lib/validation.ts`. SQL migrations are under `supabase/migrations`.
+Updated 15 November 2026. Canonical records: `src/lib/types.ts`; validation: `src/lib/validation.ts`. SQL migrations are under `supabase/migrations`.
 
 ## Tables and relationships
 
@@ -96,3 +96,21 @@ Galleries hold at most 8 photos. When a save removes a photo, its files and `med
 ## Permanent deletion (added 12 November 2026)
 
 `POST /api/admin/content/delete` with `{id, confirm}` is owner only. The record must already be archived and `confirm` must equal its title. It unlinks enquiries that pointed at the record (they keep `itemTitle`), then deletes its `content_media`, `content_revisions`, `published_content` and `content` rows using the staff token so RLS applies, writes an audit event, and finally removes the record's uploaded photos from Storage when no other record uses them. Photo removal is best effort and reported as `photosRemoved`. The steps are ordered so a failure part-way leaves an archived record that can be deleted again; they are not one transaction.
+
+## Summary of additions (15 November 2026)
+
+The sections above record each change as it was made. In short:
+
+| Method / path | Permission | Purpose |
+|---|---|---|
+| POST `/api/admin/content/delete` | Owner | `{id, confirm}`. Permanently deletes an archived record, its revisions and unused photos. |
+| POST `/api/admin/content/photos` | Owner | Applies location photographs to sample records still on shared stock photos. → `{updated}` |
+| POST `/api/admin/content/wording` | Owner | Removes leftover sample wording, generic accommodation notes and stock gallery photos from sample holidays and destinations. → `{updated, remaining}` |
+| POST `/api/admin/content/europe-drives` | Owner | Adds the two Europe self-drive packages if missing and archives sample road trips; with `{mode:"update"}` overwrites both with the built-in version. → `{added, archived}` |
+| POST `/api/admin/upload` | Owner/editor | Now takes `file` and `contentId`; stores 1600px and 640px WebP in the public bucket; returns the direct link. |
+| POST `/api/admin/settings` | Owner | Also accepts optional `driveCardImage` (an uploaded photo or a bundled `/images/` path). |
+| POST `/api/enquiries` | Public | `email` is now required. `endDate`, `childAges`, `rooms`, `departure`, `budget`, `currency`, `budgetBasis`, `preferences`, `vehicle`, `mealPlan` and `contactMethod` are optional and default to neutral values. |
+
+Content JSONB gained optional fields, none needing a migration: `originalPrice`; `countries`, `routeStops`, `highlights`, `drivingInfo`, `travelTips`, `faqs`; and per itinerary day `morning`, `afternoon`, `evening`, `driveDistance`, `driveTime`, `driveNote` (up to 800 characters) and `overnight`. Galleries hold at most 8 photos.
+
+The owner actions read published snapshots through the public view, so snapshots hidden by the showcase switch are not rewritten; run them while samples are visible. Staff pages are served at `/adminportal`; `/admin` redirects. API paths under `/api/admin` are unchanged.

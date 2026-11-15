@@ -18,8 +18,8 @@ You chose a fresh start: old Firebase enquiries and edited content were not copi
 | Password | Your privately chosen Supabase password |
 | Local login | http://localhost:3005/adminportal/login |
 | Local dashboard | http://localhost:3005/adminportal |
-| Hosted preview login | Latest migration preview URL followed by /admin/login |
-| Production login after cutover | https://ptm-alpha.vercel.app/adminportal/login |
+| Hosted preview login | Latest migration preview URL followed by /adminportal/login |
+| Production login after cutover | https://www.pickthemap.in/adminportal/login |
 
 Use the Supabase password, which may differ from your old Firebase password. No password is written here. Changing the local setup file after account creation does not reset an existing password. Sessions last at most one hour; sign in again when required. Password-reset email delivery is not yet verified.
 
@@ -51,7 +51,7 @@ Older records use inferred suggestions until manually assigned. Use automatic su
 
 The content list now supports location/name search, section, format and status filters and displays assignments. Visitors can search local stops and filter package format. Existing sample records have not been mass-edited into new formats; assign and review them as you edit.
 
-1. Open **Content & media** at /admin/content and select an item or create one.
+1. Open **Content & media** at /adminportal/content and select an item or create one.
 2. Choose holiday, road trip, resort or destination.
 3. Edit the name, URL slug, locations, description, duration and itinerary.
 4. Add accommodation, inclusions/exclusions, vehicle details or room/meal-plan information.
@@ -71,7 +71,7 @@ The app accepts files below 8 MB, but Vercel may impose a smaller request limit.
 
 ## Manage enquiries
 
-Open /admin/enquiries. Search/filter requests, open details, add internal notes, assign follow-up and update status:
+Open /adminportal/enquiries. Search/filter requests, open details, add internal notes, assign follow-up and update status:
 
 **new → contacted → quote sent → confirmed → closed**
 
@@ -94,11 +94,11 @@ Keep the computer and worker running. The default workbook is .local/enquiries.x
 | Editor | Content and media |
 | Enquiries | Enquiries, notes and exports |
 
-Create or deactivate staff at /admin/staff. Use unique passwords. You cannot deactivate yourself through that screen. Database permissions independently restrict each role; disabling a staff record blocks its data access even if it still has a token.
+Create or deactivate staff at /adminportal/staff. Use unique passwords. You cannot deactivate yourself through that screen. Database permissions independently restrict each role; disabling a staff record blocks its data access even if it still has a token.
 
 ## Settings and content review
 
-At /admin/settings, enter business contact details, social links, WhatsApp number, FAQs, About text and business-approved privacy, terms and cancellation content.
+At /adminportal/settings, enter business contact details, social links, WhatsApp number, FAQs, About text and business-approved privacy, terms and cancellation content.
 
 Sample packages retain demo flags and fictional-price conditions. Showcase mode currently allows them to display while search indexing is disabled. Review routes, photographs, operating arrangements, prices and legal content before clearing demo flags. Hiding a demo banner does not verify an offer.
 
@@ -108,11 +108,11 @@ The Supabase code is on **codex/migrate-supabase**. Recent UI changes introduce 
 
 Next:
 1. Open the newest ready migration Preview deployment.
-2. Check homepage, catalogue images, /admin/login and one enquiry.
+2. Check homepage, catalogue images, /adminportal/login and one enquiry.
 3. Approve promotion to Production after those checks pass.
 4. Verify the public domain and admin again.
 
-The current public domain is https://ptm-alpha.vercel.app; the latest cache fix and design updates have not yet been verified on that domain. No custom domain purchase or DNS connection has been confirmed. Once purchased, add it in Vercel, apply Vercel's displayed DNS records at the registrar, and update production SITE_URL before redeploying.
+The public domain is https://www.pickthemap.in (connected 12 November 2026); the latest cache fix and design updates have not yet been verified on that domain. No custom domain purchase or DNS connection has been confirmed. Once purchased, add it in Vercel, apply Vercel's displayed DNS records at the registrar, and update production SITE_URL before redeploying.
 
 Do not delete the Firebase setup yet. If rolling back after taking new Supabase enquiries, retain/export those new enquiries first.
 
@@ -127,3 +127,45 @@ See [technical launch instructions](SUPABASE-LAUNCH.md) and [schema/API referenc
 ## Resorts & Stays update
 
 See [the Resorts & Stays guide](RESORTS-AND-STAYS.md) for the destination-first directory, admin verification and property assignment. Public resorts now require published, non-sample, admin-verified records; old mock resorts remain in admin but are hidden from public pages. The homepage category order is Resorts & Stays, South India, South Asia. Legacy property URLs and collection identifiers remain compatible.
+
+## Added 12–15 November 2026: quick guide
+
+Your website is https://www.pickthemap.in and your admin portal is https://www.pickthemap.in/adminportal. Always use that address. Logging in, uploading or sending an enquiry from another address shows "This operation is not permitted".
+
+**Photos on a package**
+Open the package → Images & gallery. Upload a cover, or choose several gallery photos at once (up to 8). Photos are shrunk and compressed for you. Use the arrows to reorder, the bin to remove, and "Use as cover" to swap. Add a description to each photo, then Save or Publish.
+
+**Discounts**
+In Pricing, enter the price customers pay in "From price" and the higher old price in "Original price before discount". The site strikes through the old price and shows the saving. Leave it empty for no discount. Only use an original price you have really charged.
+
+**Deleting a package**
+Archive it first. A red "Delete permanently" box then appears for the owner. Type the title and confirm. This cannot be undone.
+
+**Order of the Popular destinations cards**
+Open a destination, change "Display order (lower first)" and Publish. The six lowest numbers are shown. The Euro Drive card always comes first.
+
+**Photo on the Euro Drive homepage card**
+Site settings & FAQs → "Homepage: Euro Drive card" → Upload photo → Save.
+
+**Europe driving packages**
+DISCOVER Europe and Euro Drive are edited like any package. For road trips the editor has extra sections: countries, route stops (these draw the map), morning/afternoon/evening and drive details for each day, highlights, car and licence information, tips and questions.
+
+**Four buttons above the content list (owner only)**
+
+| Button | Use it when |
+|---|---|
+| Set up the two packages | Once, to add the two Europe packages and archive the old sample road trips. |
+| Update to latest version | After your developer changes a Europe package for you. It overwrites your own edits to those two packages. |
+| Match photos to locations | To replace the old shared stock photos with the right photo for each place. Your uploads are kept. |
+| Tidy package wording | To remove demonstration wording, generic accommodation notes and repeated gallery photos. Your own text and photos are kept. |
+
+All four are safe to press again, and none changes a price.
+
+**Putting a change live**
+Changes are prepared on a Preview first. When you say "merge", they go to the `codex/migrate-supabase` branch. Then in Vercel → Deployments, wait for Ready and choose Promote to Production.
+
+**Enquiry form**
+Customers now fill two short screens: the trip, then name, phone and email (all required).
+
+**Still for you to decide**
+Whether the package prices (which were generated, not set by you) should stay, and whether the packages should stop being marked as samples so Google can list the site. See `docs/IMPLEMENTATION_STATUS.md`.
