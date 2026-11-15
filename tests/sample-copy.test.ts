@@ -45,6 +45,26 @@ test("old wording is replaced and the price is untouched", () => {
   assert.equal(cleaned.price, old.price);
   assert.equal(withCleanCopy(fresh, fresh), fresh);
 });
+test("generic accommodation notes and cover-only galleries are removed", () => {
+  const upload =
+    "https://feqmnzutyhzochuyiint.supabase.co/storage/v1/object/public/website-public/content/x/0f8fad5b-d9cb-469f-a165-70867728950e-1600.webp";
+  const before = {
+    ...fresh,
+    accommodation:
+      "3 sample hotel nights in a standard double/twin room, shared by two adults.",
+    gallery: [fresh.image, upload],
+    galleryAlt: { [fresh.image]: "Cover again", [upload]: "Our own photo" },
+  };
+  const cleaned = withCleanCopy(before, fresh);
+  assert.equal(cleaned.accommodation, undefined);
+  assert.deepEqual(cleaned.gallery, [upload]);
+  assert.deepEqual(cleaned.galleryAlt, { [upload]: "Our own photo" });
+  const own = {
+    ...fresh,
+    accommodation: "Two nights at a lakeside homestay we know well.",
+  };
+  assert.equal(withCleanCopy(own, fresh), own);
+});
 test("text the owner rewrote is kept", () => {
   const edited = {
     ...old,

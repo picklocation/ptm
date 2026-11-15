@@ -1,4 +1,5 @@
 import type { Content } from "./types";
+import { isReplaceablePhoto } from "./place-photos";
 
 // Wording left over from the original sample catalogue: demonstration
 // notices, "fictional"/"mock" price notes, and text-generation slips such as
@@ -12,10 +13,15 @@ const isStale = (text: unknown) =>
   typeof text === "string" &&
   (staleWords.test(text) || inventedStop.test(text));
 
+// Stock accommodation notes written by the generator, old and new.
+const genericStay =
+  /hotel nights in a standard double|Comfortable hotels with private rooms|comfortable hotels with private rooms|in a hotel, resort or homestay to suit your budget|in accommodation selected around your budget/;
+const isGenericStay = (text: unknown) =>
+  typeof text === "string" && (genericStay.test(text) || isStale(text));
+
 const textFields = [
   "summary",
   "description",
-  "accommodation",
   "location",
   "priceBasis",
   "priceConditions",
@@ -43,9 +49,22 @@ export function withCleanCopy<T extends Content>(record: T, fresh: Content): T {
     fresh.itinerary.length
   )
     next.itinerary = fresh.itinerary;
-  if (record.galleryAlt && Object.values(record.galleryAlt).some(isStale))
+  // Generic accommodation notes add nothing; the section returns as soon as
+  // real accommodation details are written for a package.
+  if (isGenericStay(record.accommodation)) delete next.accommodation;
+  // The gallery only repeated the cover photo. Photos the owner uploaded stay.
+  if (record.gallery.some(isReplaceablePhoto)) {
+    next.gallery = record.gallery.filter((url) => !isReplaceablePhoto(url));
+    if (record.galleryAlt)
+      next.galleryAlt = Object.fromEntries(
+        Object.entries(record.galleryAlt).filter(([url]) =>
+          next.gallery.includes(url),
+        ),
+      );
+  }
+  if (next.galleryAlt && Object.values(next.galleryAlt).some(isStale))
     next.galleryAlt = Object.fromEntries(
-      Object.entries(record.galleryAlt).map(([url, alt]) => [
+      Object.entries(next.galleryAlt).map(([url, alt]) => [
         url,
         isStale(alt) ? next.imageAlt : alt,
       ]),
@@ -59,4 +78,6 @@ export const hasSampleWording = (record: Content) =>
     ...textFields.map((k) => record[k]),
     ...listFields.flatMap((k) => record[k]),
   ].some(isStale) ||
-    record.itinerary.some((d) => isStale(d.title) || isStale(d.description)));
+    record.itinerary.some((d) => isStale(d.title) || isStale(d.description)) ||
+    isGenericStay(record.accommodation) ||
+    record.gallery.some(isReplaceablePhoto));

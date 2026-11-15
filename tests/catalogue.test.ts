@@ -23,7 +23,10 @@ test("expanded catalogue has five complete itineraries for each requested market
       assert.match(c.priceConditions, /confirmed in your quote/);
       // Only the two real Europe self-drive packages are not samples.
       assert.equal(c.demo, !["discover-europe", "euro-drive"].includes(c.id));
-      assert.ok(c.accommodation && c.inclusions.length && c.exclusions.length);
+      assert.ok(c.inclusions.length && c.exclusions.length);
+      // Generic accommodation notes and cover-only galleries are gone.
+      assert.equal(c.accommodation, undefined);
+      assert.deepEqual(c.gallery, []);
     }
   }
 });

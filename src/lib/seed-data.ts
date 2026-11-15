@@ -432,8 +432,6 @@ for (const [id, title, country, region, route, photo] of sampleRoutes) {
         itinerary: sampleJourney(stops),
         imageAlt: `Travel photograph for ${title}`,
         description: `Explore ${country} through ${stops.length} thoughtfully paced days. The route follows ${stops.join(" → ")}. Adjust the number of nights, hotel style and experiences with your planner. All arrangements require a personalised quote.`,
-        accommodation:
-          "Comfortable hotels with private rooms. Hotel names, category and meal basis are confirmed in your quote.",
         inclusions: [
           "Proposed accommodation and transfers, subject to your final quote",
           "A personalised day-by-day itinerary",
@@ -535,8 +533,6 @@ for (const [index, place] of southIndiaLocations.entries()) {
           `Explore ${place.name} at your own pace`,
           "Check-out and onward travel",
         ]),
-        accommodation:
-          "Two nights in a hotel, resort or homestay to suit your budget. The property and room category will be confirmed in your quote.",
         imageAlt: `Scenery around ${place.name}`,
       },
     ),
@@ -574,8 +570,6 @@ for (const [id, title, country, route, photo] of [
         featured: false,
         description: `A six-day holiday in ${country}. Personalise your accommodation, transfers and experiences with us; everything is confirmed in your quote.`,
         itinerary: sampleJourney(stops),
-        accommodation:
-          "Five nights in accommodation selected around your budget and preferences. The property, room and meal plan will be confirmed in your quote.",
         imageAlt: `Travel photograph for ${country}`,
       },
     ),

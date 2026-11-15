@@ -186,8 +186,7 @@ export const expandedCatalogue: Content[] = [
       description: `Explore ${places.join(" and ")} on a ${style.days}-day holiday built around ${style.focus}. The route, hotels and experiences are tailored to your dates and your group, and everything is confirmed in your personalised quote.`,
       image: place.image,
       imageAlt: alt,
-      gallery: [place.image],
-      galleryAlt: { [place.image]: alt },
+      gallery: [],
       days: style.days,
       nights: style.days - 1,
       themes: [style.theme],
@@ -213,7 +212,6 @@ export const expandedCatalogue: Content[] = [
           description: `Time in ${stop} for ${day % 2 ? "a neighbourhood walk, regional food and a locally guided cultural visit" : "a scenic excursion followed by an unhurried afternoon"}. We set the pace around your group. Tickets, guides and transport between stops are confirmed in your quote.`,
         };
       }),
-      accommodation: `${style.days - 1} hotel nights in a standard double or twin room, shared by two adults. Hotels and room categories are confirmed in your quote. Family rooms, upgrades and extra beds are quoted separately.`,
       inclusions: [
         `${style.days - 1} hotel nights on twin sharing`,
         "Daily breakfast",
