@@ -18,7 +18,8 @@ import { ContentEditor } from "@/components/content-editor";
 import { EnquiryList, EnquiryDetail } from "@/components/admin-enquiries";
 import { SettingsEditor } from "@/components/settings-editor";
 import { StaffEditor } from "@/components/staff-editor";
-import { stayDestinations } from "@/lib/stays";
+import { stayDestinations, stayPlaces, stayDestinationKey } from "@/lib/stays";
+import { placePhoto, placePhotoUrl } from "@/lib/place-photos";
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Admin",
@@ -59,10 +60,38 @@ function blank(): Content {
     updatedAt: new Date().toISOString(),
   };
 }
+// A new Destination record for one of the built-in Resorts & Stays places,
+// filled in so the owner only has to change the photo and publish.
+function blankStayDestination(slug: string): Content | null {
+  const place = stayPlaces.find(([s]) => s === slug);
+  if (!place) return null;
+  const photo = placePhoto(slug);
+  return {
+    ...blank(),
+    kind: "destination",
+    title: place[1],
+    slug,
+    location: place[1],
+    region: "India",
+    country: "India",
+    summary: `Resorts and stays in ${place[1]}.`,
+    description: `Find a stay in ${place[1]} for your dates and your kind of trip.`,
+    image: photo ? placePhotoUrl(photo) : "",
+    imageAlt: photo?.alt || "",
+    stayDestination: true,
+    featured: false,
+    order: 900,
+    days: 0,
+    nights: 0,
+    themes: [],
+  };
+}
 export default async function Admin({
   params,
+  searchParams,
 }: {
   params: Promise<{ segments?: string[] }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const staff = await currentStaff();
   if (!staff) redirect("/adminportal/login");
@@ -142,7 +171,9 @@ export default async function Admin({
     if (staff.role === "enquiries") redirect("/adminportal");
     if (id) {
       const [c, places] = await Promise.all([
-        id === "new" ? blank() : get<Content>("content", id),
+        id === "new"
+          ? blankStayDestination((await searchParams).stay || "") || blank()
+          : get<Content>("content", id),
         listContent<Content>("content", "destination"),
       ]);
       if (!c) notFound();
@@ -165,6 +196,40 @@ export default async function Admin({
               Create content +
             </Link>
           </div>
+          <details className="admin-card stay-photo-list">
+            <summary>
+              Resorts & Stays destination photos ({stayPlaces.length})
+            </summary>
+            <p className="small-note">
+              Each card on the Resorts & Stays page takes its photo from a
+              destination record. Open a place to change its photo. Places
+              marked “Add” have no record yet: open one, upload your photo and
+              press Publish.
+            </p>
+            <ul>
+              {stayPlaces.map(([slug, name]) => {
+                const record = contents.find(
+                  (c) =>
+                    c.kind === "destination" &&
+                    stayDestinationKey(c.slug) === slug,
+                );
+                return (
+                  <li key={slug}>
+                    <Link
+                      href={
+                        record
+                          ? `/adminportal/content/${record.id}`
+                          : `/adminportal/content/new?stay=${slug}`
+                      }
+                    >
+                      {name}
+                      <span>{record ? "Edit photo" : "Add"}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
           <AdminCatalogue items={contents} />
         </>
       );
