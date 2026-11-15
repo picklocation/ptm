@@ -109,3 +109,7 @@ At the owner's request, holiday packages no longer carry the generic "Your accom
 ## 15 November 2026: enquiry confirmation screen
 
 After an enquiry is sent the visitor sees a centred thank-you panel with their first name, a short summary (package if any, destination, travellers, dates), three "what happens next" steps showing the phone and email they gave, and buttons to keep exploring or continue on WhatsApp. The enquiry reference is no longer shown to the visitor, and the prepared WhatsApp message now opens with the visitor's name instead of the reference. The reference still exists on the enquiry in admin and exports. No response time is promised.
+
+## 15 November 2026: owner maintenance buttons removed
+
+The owner confirmed all four maintenance actions have been run on the live database ("Tidy package wording" reported 157 packages tidied; "Match photos to locations" reported everything already matching) and asked for the buttons to go. They are removed from Admin → Content & media. The owner-only endpoints (`/api/admin/content/photos`, `/wording`, `/europe-drives`) remain in the code without a button, so a future bulk change can be given a button again. Until then, changes to the two Europe packages are made in the admin editor, or need a button re-added to apply a code-side revision.

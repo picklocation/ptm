@@ -1,10 +1,5 @@
 import { skipOptimizer } from "@/lib/assets";
 import { AdminCatalogue } from "@/components/admin-catalogue";
-import {
-  MatchPhotos,
-  InstallEuropeDrives,
-  TidyWording,
-} from "@/components/match-photos";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect, notFound } from "next/navigation";
@@ -171,18 +166,6 @@ export default async function Admin({
             </Link>
           </div>
           <AdminCatalogue items={contents} />
-          {staff.role === "owner" && (
-            <details className="admin-card owner-tools">
-              <summary>Maintenance tools</summary>
-              <p className="small-note">
-                One-off helpers for the owner. Each is safe to press again and
-                none changes a price. You rarely need them.
-              </p>
-              <InstallEuropeDrives />
-              <MatchPhotos />
-              <TidyWording />
-            </details>
-          )}
         </>
       );
     }

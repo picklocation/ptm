@@ -45,7 +45,7 @@ CI (`.github/workflows/checks.yml`) runs typecheck, tests and build on Node 24. 
 | Collection/static pages, detail pages | `src/app/[section]/page.tsx`, `src/app/[section]/[slug]/page.tsx` |
 | Resorts & Stays hub and destination listings | `src/app/resorts-and-stays/`, `src/lib/stays.ts`, `src/components/stay-listings.tsx` |
 | Admin UI (single catch-all route, served at `/adminportal`) | `src/app/adminportal/[[...segments]]/page.tsx`, `src/components/admin-*.tsx`, `content-editor.tsx`, `settings-editor.tsx` |
-| Owner maintenance actions | `src/components/match-photos.tsx`, `src/app/api/admin/content/{photos,wording,europe-drives,delete}/` |
+| Owner maintenance endpoints (no buttons in admin since 15 November 2026; the owner has run them) | `src/app/api/admin/content/{photos,wording,europe-drives}/`; permanent delete: `.../delete/` |
 | Europe self-drive packages, page and map | `src/lib/europe-drives.ts`, `src/components/road-trip-detail.tsx`, `route-map.tsx`, `src/lib/europe-map.ts` (generated) |
 | Location photographs and matching | `public/images/places/`, `src/lib/place-photos.ts`, `src/app/photo-credits/` |
 | Sample-copy clean-up | `src/lib/sample-copy.ts` |
