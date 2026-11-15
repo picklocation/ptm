@@ -11,7 +11,10 @@ export function AdminCatalogue({ items }: { items: Content[] }) {
   const [query, setQuery] = useState(""),
     [section, setSection] = useState(""),
     [format, setFormat] = useState(""),
-    [status, setStatus] = useState("");
+    [status, setStatus] = useState(""),
+    [kind, setKind] = useState("");
+  // Ignore case, spaces and punctuation so "srilanka" finds "Sri Lanka".
+  const plain = (text: string) => text.toLowerCase().replace(/[^a-z0-9]/g, "");
   const filtered = items.filter(
     (c) =>
       (!query ||
@@ -23,9 +26,10 @@ export function AdminCatalogue({ items }: { items: Content[] }) {
           c.stayDestinationSlug,
           ...(c.locations || []),
         ]
+          .map((part) => plain(part || ""))
           .join(" ")
-          .toLowerCase()
-          .includes(query.toLowerCase())) &&
+          .includes(plain(query))) &&
+      (!kind || c.kind === kind) &&
       (!section || assignedCollections(c).some((x) => x === section)) &&
       (!format || c.packageType === format) &&
       (!status || c.status === status),
@@ -59,6 +63,16 @@ export function AdminCatalogue({ items }: { items: Content[] }) {
             {packageTypes.map((t) => (
               <option key={t}>{t}</option>
             ))}
+          </select>
+        </label>
+        <label className="field">
+          Type
+          <select value={kind} onChange={(e) => setKind(e.target.value)}>
+            <option value="">All types</option>
+            <option value="holiday">Holiday packages</option>
+            <option value="road-trip">Road trips</option>
+            <option value="destination">Destinations</option>
+            <option value="resort">Stays</option>
           </select>
         </label>
         <label className="field">

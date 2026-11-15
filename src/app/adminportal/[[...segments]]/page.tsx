@@ -19,7 +19,7 @@ import { EnquiryList, EnquiryDetail } from "@/components/admin-enquiries";
 import { SettingsEditor } from "@/components/settings-editor";
 import { StaffEditor } from "@/components/staff-editor";
 import { stayDestinations, stayPlaces, stayDestinationKey } from "@/lib/stays";
-import { placePhoto, placePhotoUrl } from "@/lib/place-photos";
+import { placePhoto, placePhotoFor, placePhotoUrl } from "@/lib/place-photos";
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Admin",
@@ -79,6 +79,33 @@ function blankStayDestination(slug: string): Content | null {
     image: photo ? placePhotoUrl(photo) : "",
     imageAlt: photo?.alt || "",
     stayDestination: true,
+    featured: false,
+    order: 900,
+    days: 0,
+    nights: 0,
+    themes: [],
+  };
+}
+// A new Destination record for a country that only has holiday packages, so
+// its homepage card gets a photo of its own that the owner can change.
+function blankCountryDestination(name: string, region: string): Content | null {
+  if (!/^[A-Za-z][A-Za-z .&'-]{1,40}$/.test(name)) return null;
+  const photo = placePhotoFor({ title: name, location: name, country: name });
+  return {
+    ...blank(),
+    kind: "destination",
+    title: name,
+    slug: name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, ""),
+    location: name,
+    region: /^[A-Za-z ]{2,30}$/.test(region) ? region : "International",
+    country: name,
+    summary: `Holidays in ${name}, planned around you.`,
+    description: `Explore ${name} with a holiday shaped around your dates, your group and what you enjoy.`,
+    image: photo ? placePhotoUrl(photo) : "",
+    imageAlt: photo?.alt || "",
     featured: false,
     order: 900,
     days: 0,
@@ -172,7 +199,12 @@ export default async function Admin({
     if (id) {
       const [c, places] = await Promise.all([
         id === "new"
-          ? blankStayDestination((await searchParams).stay || "") || blank()
+          ? blankStayDestination((await searchParams).stay || "") ||
+            blankCountryDestination(
+              (await searchParams).country || "",
+              (await searchParams).region || "",
+            ) ||
+            blank()
           : get<Content>("content", id),
         listContent<Content>("content", "destination"),
       ]);
@@ -188,6 +220,32 @@ export default async function Admin({
       const contents = (await listContentSummary<Content>()).sort(
         (a, b) => a.order - b.order,
       );
+      // Countries with a published holiday but no destination record.
+      const key = (name: string) => {
+        const k = name.trim().toLowerCase();
+        return k === "bali" ? "indonesia" : k;
+      };
+      const haveRecord = new Set(
+        contents
+          .filter((c) => c.kind === "destination")
+          .flatMap((c) => [c.title, c.country || ""].map(key)),
+      );
+      const countryCards = [
+        ...new Map(
+          contents
+            .filter(
+              (c) =>
+                c.kind === "holiday" &&
+                c.status === "published" &&
+                c.country &&
+                c.country !== "India" &&
+                c.region !== "India" &&
+                !c.country.includes("/") &&
+                !haveRecord.has(key(c.country)),
+            )
+            .map((c) => [c.country!, c.region || "International"] as const),
+        ),
+      ].sort((a, b) => a[0].localeCompare(b[0]));
       body = (
         <>
           <div className="admin-top">
@@ -230,6 +288,32 @@ export default async function Admin({
               })}
             </ul>
           </details>
+          {countryCards.length > 0 && (
+            <details className="admin-card stay-photo-list">
+              <summary>
+                Homepage country cards without their own record (
+                {countryCards.length})
+              </summary>
+              <p className="small-note">
+                These countries appear on the homepage using the photo of one of
+                their holiday packages. Open one, upload a photo and press
+                Publish to give its card a photo of its own. The holiday
+                packages themselves are in the list below; search by country.
+              </p>
+              <ul>
+                {countryCards.map(([name, region]) => (
+                  <li key={name}>
+                    <Link
+                      href={`/adminportal/content/new?country=${encodeURIComponent(name)}&region=${encodeURIComponent(region)}`}
+                    >
+                      {name}
+                      <span>Add</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
           <AdminCatalogue items={contents} />
         </>
       );
