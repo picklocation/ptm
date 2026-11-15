@@ -42,6 +42,7 @@ export function RouteMap({
     <figure className="route-map">
       <svg
         viewBox={`${x0} ${y0} ${x1 - x0} ${y1 - y0}`}
+        style={{ "--map-scale": scale } as React.CSSProperties}
         role="img"
         aria-label={`Map of the ${title} driving route: ${stops.map((s) => s.name).join(", ")}`}
       >
@@ -98,7 +99,6 @@ export function RouteMap({
                 x={p.x + (left ? -13 : 13) * scale}
                 y={p.y + 5 * scale}
                 textAnchor={left ? "end" : "start"}
-                fontSize={17 * scale}
                 strokeWidth={4.5 * scale}
               >
                 {p.name}
