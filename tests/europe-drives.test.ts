@@ -35,9 +35,11 @@ test("brochure facts are preserved", () => {
     [7, 6, 5999, "AED"],
   );
   assert.equal(discoverEurope.countries?.length, 5);
+  assert.ok(discoverEurope.inclusions.includes("Rental car"));
+  for (const c of europeDrives) assert.equal(c.priceBasis, "per person");
   assert.deepEqual(
     [euroDrive.days, euroDrive.nights, euroDrive.price, euroDrive.currency],
-    [11, 10, 195000, "INR"],
+    [11, 10, 193000, "INR"],
   );
   assert.equal(euroDrive.countries?.length, 9);
   assert.equal(euroDrive.title, "Euro Drive");

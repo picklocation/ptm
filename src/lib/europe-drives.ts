@@ -36,7 +36,7 @@ const cover = (key: string) => {
 const drivingInfo = [
   {
     title: "Your rental car",
-    text: "A rental car is collected and returned in Paris. The car category, transmission and pick-up point are confirmed in your quote; models are always subject to the rental company’s availability. Tell us your group size and luggage so we can suggest the right size.",
+    text: "A rental car is included, collected and returned in Paris. The car category, transmission and pick-up point are confirmed in your quote; models are always subject to the rental company’s availability. Tell us your group size and luggage so we can suggest the right size.",
   },
   {
     title: "Insurance",
@@ -132,9 +132,9 @@ export const discoverEurope: Content = {
   ...cover("paris"),
   price: 5999,
   currency: "AED",
-  priceBasis: "starting price",
+  priceBasis: "per person",
   priceConditions:
-    "Starting price as advertised. Your final price depends on travel dates, group size, hotel and car category, and is confirmed in your written quote.",
+    "Starting price per person. Your final price depends on travel dates, group size, hotel and car category, and is confirmed in your written quote.",
   accommodation:
     "Six nights in hotels with breakfast: two in Paris, then one each in Brussels, Amsterdam, Cologne and Reims. Hotel names and room types are confirmed in your quote.",
   routeStops: [
@@ -340,6 +340,7 @@ export const discoverEurope: Content = {
     "Round-trip international flights from the UAE to Paris",
     "Visa charges",
     "Hotel with breakfast",
+    "Rental car",
     "Basic car insurance",
     "Travel insurance",
     "Cross-border charges",
@@ -372,7 +373,7 @@ export const discoverEurope: Content = {
   ],
   seoTitle: "DISCOVER Europe: 7-day self-drive through 5 countries",
   seoDescription:
-    "A 7-day, 6-night self-drive loop from Paris through Brussels, Amsterdam, Cologne, Luxembourg and Reims. Starting from AED 5,999.",
+    "A 7-day, 6-night self-drive loop from Paris through Brussels, Amsterdam, Cologne, Luxembourg and Reims. Starting from AED 5,999 per person.",
 };
 
 export const euroDrive: Content = {
@@ -414,11 +415,11 @@ export const euroDrive: Content = {
   description:
     "Euro Drive is our longest self-drive route. It begins with two nights in Paris, runs north through Brussels and Amsterdam, turns south-east through Luxembourg to Munich, then climbs over the Brenner Pass to a night on the Seiser Alm meadows in the Italian Dolomites. From there the road crosses Liechtenstein to Zurich and Interlaken before a final long drive back to Paris. Expect a mix of easy two-hour hops and three long motorway days, with the mountain scenery as the reward.",
   ...cover("lauterbrunnen"),
-  price: 195000,
+  price: 193000,
   currency: "INR",
-  priceBasis: "starting price",
+  priceBasis: "per person",
   priceConditions:
-    "Starting price as advertised. Your final price depends on travel dates, group size, hotel and car category, and is confirmed in your written quote.",
+    "Starting price per person. Your final price depends on travel dates, group size, hotel and car category, and is confirmed in your written quote.",
   accommodation:
     "Ten nights in 3-star hotels with breakfast: Paris (two nights at the start and one at the end), Brussels, Amsterdam, Luxembourg City, Munich, Seiser Alm, Zurich and Interlaken. Hotel names and room types are confirmed in your quote.",
   routeStops: [
@@ -758,7 +759,7 @@ export const euroDrive: Content = {
   ],
   seoTitle: "Euro Drive: 11-day self-drive through 9 countries",
   seoDescription:
-    "An 11-day, 10-night self-drive loop from Paris through Brussels, Amsterdam, Luxembourg, Munich, the Dolomites, Liechtenstein and Switzerland. Starting from ₹195,000.",
+    "An 11-day, 10-night self-drive loop from Paris through Brussels, Amsterdam, Luxembourg, Munich, the Dolomites, Liechtenstein and Switzerland. Starting from ₹193,000 per person.",
 };
 
 export const europeDrives = [discoverEurope, euroDrive];
