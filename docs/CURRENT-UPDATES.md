@@ -105,3 +105,7 @@ At the owner's request ("I use the sample packages as my packages"), the visible
 ## 15 November 2026: accommodation notes and galleries removed from sample packages
 
 At the owner's request, holiday packages no longer carry the generic "Your accommodation" note or a gallery that only repeated the cover photo, so the "Your accommodation" and "Picture yourself here" sections no longer appear on them. Both sections still exist on the page and return for any package once real accommodation text or gallery photos are added in admin. "Tidy package wording" applies this to existing records: it removes only generator-written accommodation notes and stock or place photos from galleries; accommodation the owner wrote and photos the owner uploaded are kept. The two Europe self-drive packages keep their "Where you'll stay" section.
+
+## 15 November 2026: enquiry confirmation screen
+
+After an enquiry is sent the visitor sees a centred thank-you panel with their first name, a short summary (package if any, destination, travellers, dates), three "what happens next" steps showing the phone and email they gave, and buttons to keep exploring or continue on WhatsApp. The enquiry reference is no longer shown to the visitor, and the prepared WhatsApp message now opens with the visitor's name instead of the reference. The reference still exists on the enquiry in admin and exports. No response time is promised.
