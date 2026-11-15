@@ -120,6 +120,86 @@ export function ContentEditor({
       setBusy(false);
     }
   }
+  function setDay(
+    index: number,
+    change: Partial<Content["itinerary"][number]>,
+  ) {
+    update(
+      "itinerary",
+      c.itinerary.map((day, j) => (j === index ? { ...day, ...change } : day)),
+    );
+  }
+  // Repeating rows for the list fields of a self-drive package.
+  type ListKey = "routeStops" | "highlights" | "drivingInfo" | "faqs";
+  function rows<K extends ListKey>(
+    key: K,
+    blank: NonNullable<Content[K]>[number],
+    render: (
+      row: NonNullable<Content[K]>[number],
+      set: (change: Partial<NonNullable<Content[K]>[number]>) => void,
+    ) => React.ReactNode,
+    addLabel: string,
+  ) {
+    const list = (c[key] || []) as NonNullable<Content[K]>[number][];
+    const put = (next: unknown[]) => update(key, next);
+    return (
+      <>
+        {list.map((row, i) => (
+          <div className="repeat-row" key={i}>
+            <div className="form-grid">
+              {render(row, (change) =>
+                put(list.map((x, j) => (j === i ? { ...x, ...change } : x))),
+              )}
+            </div>
+            <div className="editor-actions">
+              <button
+                type="button"
+                className="icon-button"
+                aria-label={`Move row ${i + 1} up`}
+                disabled={i === 0}
+                onClick={() => {
+                  const next = [...list];
+                  [next[i - 1], next[i]] = [next[i], next[i - 1]];
+                  put(next);
+                }}
+              >
+                <ArrowUp size={16} />
+              </button>
+              <button
+                type="button"
+                className="icon-button"
+                aria-label={`Move row ${i + 1} down`}
+                disabled={i === list.length - 1}
+                onClick={() => {
+                  const next = [...list];
+                  [next[i + 1], next[i]] = [next[i], next[i + 1]];
+                  put(next);
+                }}
+              >
+                <ArrowDown size={16} />
+              </button>
+              <button
+                type="button"
+                className="icon-button"
+                aria-label={`Remove row ${i + 1}`}
+                onClick={() => put(list.filter((_, j) => j !== i))}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          </div>
+        ))}
+        <button
+          type="button"
+          className="button secondary small"
+          onClick={() => put([...list, blank])}
+        >
+          <Plus size={16} />
+          {addLabel}
+        </button>
+      </>
+    );
+  }
   const maxGallery = 8;
   const gallery = c.gallery.filter(Boolean);
   function moveGallery(index: number, step: number) {
@@ -198,6 +278,14 @@ export function ContentEditor({
             amenities: c.amenities.filter(Boolean),
             rooms: c.rooms.filter(Boolean),
             mealPlans: c.mealPlans.filter(Boolean),
+            countries: c.countries?.map((x) => x.trim()).filter(Boolean),
+            travelTips: c.travelTips?.map((x) => x.trim()).filter(Boolean),
+            itinerary: c.itinerary.map((day) => ({
+              ...day,
+              morning: day.morning?.map((x) => x.trim()).filter(Boolean),
+              afternoon: day.afternoon?.map((x) => x.trim()).filter(Boolean),
+              evening: day.evening?.map((x) => x.trim()).filter(Boolean),
+            })),
           },
           action,
         }),
@@ -566,6 +654,188 @@ export function ContentEditor({
               {lines("gallery", "Gallery image URLs in display order")}
             </details>
           </section>
+          {c.kind === "road-trip" && (
+            <section className="admin-card">
+              <h2>Self-drive route</h2>
+              <p className="small-note">
+                Adding route stops switches this package to the detailed
+                self-drive page with a route map.
+              </p>
+              <label className="field">
+                Countries visited <span className="muted">(one per line)</span>
+                <textarea
+                  rows={4}
+                  value={(c.countries || []).join("\n")}
+                  onChange={(e) =>
+                    update("countries", e.target.value.split("\n"))
+                  }
+                />
+              </label>
+              <h3>Route stops, in driving order</h3>
+              <p className="small-note">
+                Repeat the first place at the end for a loop. Latitude and
+                longitude place the stop on the map; search the place in any
+                online map and copy the two numbers.
+              </p>
+              {rows(
+                "routeStops",
+                {
+                  name: "",
+                  country: "",
+                  lat: 48.8566,
+                  lng: 2.3522,
+                  overnight: true,
+                },
+                (x, set) => (
+                  <>
+                    <label className="field">
+                      Place
+                      <input
+                        value={x.name}
+                        onChange={(e) => set({ name: e.target.value })}
+                      />
+                    </label>
+                    <label className="field">
+                      Country
+                      <input
+                        value={x.country}
+                        onChange={(e) => set({ country: e.target.value })}
+                      />
+                    </label>
+                    <label className="field">
+                      Latitude
+                      <input
+                        type="number"
+                        step="0.0001"
+                        value={x.lat}
+                        onChange={(e) => set({ lat: Number(e.target.value) })}
+                      />
+                    </label>
+                    <label className="field">
+                      Longitude
+                      <input
+                        type="number"
+                        step="0.0001"
+                        value={x.lng}
+                        onChange={(e) => set({ lng: Number(e.target.value) })}
+                      />
+                    </label>
+                    <label className="checkbox">
+                      <input
+                        type="checkbox"
+                        checked={x.overnight}
+                        onChange={(e) => set({ overnight: e.target.checked })}
+                      />
+                      Overnight stay here
+                    </label>
+                  </>
+                ),
+                "Add stop",
+              )}
+              <h3>Destination highlights</h3>
+              <p className="small-note">
+                Paste an image link from this package’s gallery or a location
+                photo. Every photo needs a description.
+              </p>
+              {rows(
+                "highlights",
+                { name: "", text: "", image: "", imageAlt: "" },
+                (x, set) => (
+                  <>
+                    <label className="field">
+                      Place
+                      <input
+                        value={x.name}
+                        onChange={(e) => set({ name: e.target.value })}
+                      />
+                    </label>
+                    <label className="field">
+                      One-line description
+                      <input
+                        value={x.text}
+                        onChange={(e) => set({ text: e.target.value })}
+                      />
+                    </label>
+                    <label className="field">
+                      Photo link
+                      <input
+                        value={x.image}
+                        onChange={(e) => set({ image: e.target.value })}
+                      />
+                    </label>
+                    <label className="field">
+                      Photo description (alt text)
+                      <input
+                        value={x.imageAlt}
+                        onChange={(e) => set({ imageAlt: e.target.value })}
+                      />
+                    </label>
+                  </>
+                ),
+                "Add highlight",
+              )}
+              <h3>Car, insurance and licence information</h3>
+              {rows(
+                "drivingInfo",
+                { title: "", text: "" },
+                (x, set) => (
+                  <>
+                    <label className="field">
+                      Heading
+                      <input
+                        value={x.title}
+                        onChange={(e) => set({ title: e.target.value })}
+                      />
+                    </label>
+                    <label className="field">
+                      Text
+                      <textarea
+                        rows={3}
+                        value={x.text}
+                        onChange={(e) => set({ text: e.target.value })}
+                      />
+                    </label>
+                  </>
+                ),
+                "Add information block",
+              )}
+              <label className="field">
+                Travel tips <span className="muted">(one per line)</span>
+                <textarea
+                  rows={6}
+                  value={(c.travelTips || []).join("\n")}
+                  onChange={(e) =>
+                    update("travelTips", e.target.value.split("\n"))
+                  }
+                />
+              </label>
+              <h3>Questions about this trip</h3>
+              {rows(
+                "faqs",
+                { question: "", answer: "" },
+                (x, set) => (
+                  <>
+                    <label className="field">
+                      Question
+                      <input
+                        value={x.question}
+                        onChange={(e) => set({ question: e.target.value })}
+                      />
+                    </label>
+                    <label className="field">
+                      Answer
+                      <textarea
+                        rows={3}
+                        value={x.answer}
+                        onChange={(e) => set({ answer: e.target.value })}
+                      />
+                    </label>
+                  </>
+                ),
+                "Add question",
+              )}
+            </section>
+          )}
           {c.kind !== "resort" && c.kind !== "destination" && (
             <section className="admin-card">
               <h2>Day-by-day itinerary</h2>
@@ -600,6 +870,55 @@ export function ContentEditor({
                       }
                     />
                   </label>
+                  {c.kind === "road-trip" && (
+                    <div className="form-grid">
+                      {(
+                        [
+                          ["morning", "Morning (one activity per line)"],
+                          ["afternoon", "Afternoon"],
+                          ["evening", "Evening"],
+                        ] as const
+                      ).map(([part, label]) => (
+                        <label className="field" key={part}>
+                          {label}
+                          <textarea
+                            rows={4}
+                            value={(day[part] || []).join("\n")}
+                            onChange={(e) =>
+                              setDay(i, { [part]: e.target.value.split("\n") })
+                            }
+                          />
+                        </label>
+                      ))}
+                      {(
+                        [
+                          [
+                            "driveDistance",
+                            "Drive distance, e.g. Approximately 320 km",
+                          ],
+                          [
+                            "driveTime",
+                            "Driving time, e.g. Around 3.5–4 hours",
+                          ],
+                          ["driveNote", "Drive note (route, stops, cautions)"],
+                          [
+                            "overnight",
+                            "Overnight in (leave empty on the last day)",
+                          ],
+                        ] as const
+                      ).map(([key, label]) => (
+                        <label className="field" key={key}>
+                          {label}
+                          <input
+                            value={day[key] || ""}
+                            onChange={(e) =>
+                              setDay(i, { [key]: e.target.value })
+                            }
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  )}
                   <div className="editor-actions">
                     <button
                       className="icon-button"

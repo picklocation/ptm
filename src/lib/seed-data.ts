@@ -1,4 +1,5 @@
 import { withPlacePhoto } from "./place-photos";
+import { europeDrives } from "./europe-drives";
 import { travelPhoto } from "./assets";
 import { southIndiaLocations } from "./south-india";
 import { expandedCatalogue } from "./expanded-catalogue";
@@ -115,35 +116,6 @@ export const seedContent: Content[] = [
     "Southeast Asia",
     photos.thailand,
     { order: 4 },
-  ),
-  item(
-    "alps-to-italian-lakes",
-    "From the Alps to the Italian lakes",
-    "Zürich → Lucerne → Lake Como",
-    "Europe",
-    photos.italy,
-    {
-      kind: "road-trip",
-      order: 5,
-      days: 8,
-      nights: 7,
-      themes: ["Road trip", "Couple"],
-      vehicles: [
-        {
-          name: "Vehicle arranged to suit your group",
-          passengers: 4,
-          luggage: "Capacity to be confirmed with the operator",
-        },
-      ],
-    },
-  ),
-  item(
-    "switzerland-scenic-loop",
-    "The scenic Swiss loop",
-    "Zürich → Interlaken → Lucerne",
-    "Europe",
-    photos.hero,
-    { kind: "road-trip", order: 6, days: 7, nights: 6 },
   ),
   item(
     "backwater-retreat",
@@ -360,50 +332,6 @@ const sampleRoutes = [
     "italy",
   ],
 ] as const;
-const sampleRoads = [
-  [
-    "bavaria-austria-road",
-    "Bavaria & Austrian lakes",
-    "Germany / Austria",
-    "Munich|Munich surrounds|Salzburg|Salzburg|Hallstatt|Innsbruck|Departure",
-    "hero",
-  ],
-  [
-    "tuscany-road-trip",
-    "A slow road through Tuscany",
-    "Italy",
-    "Florence|Florence|Siena|Val d’Orcia|Tuscan countryside|Pisa|Departure",
-    "italy",
-  ],
-  [
-    "provence-road",
-    "Provence & the French Riviera",
-    "France",
-    "Nice|Nice coast|Aix-en-Provence|Provence villages|Avignon|Departure",
-    "italy",
-  ],
-  [
-    "portugal-coastal-road",
-    "Portugal: the coastal road",
-    "Portugal",
-    "Lisbon|Sintra|Óbidos|Coimbra|Porto|Douro Valley|Departure",
-    "italy",
-  ],
-  [
-    "norway-fjord-road",
-    "Norway fjords & scenic stops",
-    "Norway",
-    "Bergen|Bergen waterfront|Voss|Flåm|Aurland|Bergen|Departure",
-    "hero",
-  ],
-  [
-    "croatia-coast-road",
-    "Croatia along the Adriatic",
-    "Croatia",
-    "Zagreb|Plitvice option|Zadar|Split|Split leisure|Dubrovnik|Departure",
-    "italy",
-  ],
-] as const;
 const sampleStays = [
   [
     "munnar-budget-retreat",
@@ -514,53 +442,8 @@ for (const [id, title, country, region, route, photo] of sampleRoutes) {
     ),
   );
 }
-for (const [id, title, country, route, photo] of sampleRoads) {
-  const stops = route.split("|");
-  seedContent.push(
-    item(
-      id,
-      title,
-      stops.slice(0, -1).join(" → "),
-      "Europe",
-      demoImage(photo),
-      {
-        kind: "road-trip",
-        country,
-        order: 80 + seedContent.length,
-        days: stops.length,
-        nights: stops.length - 1,
-        themes: ["Road trip", "Family", "Couples"],
-        itinerary: sampleJourney(stops),
-        imageAlt: "Illustrative European scenery; sample route imagery",
-        description: `A customisable sample road trip through ${country}, following ${stops.join(" → ")}. Discuss private cab or self-drive preferences, overnight stops and luggage with your planner. Driving times, border permissions and vehicle availability require operator confirmation.`,
-        accommodation:
-          "Sample overnight stays in hotels or guesthouses along the route; properties and parking arrangements will be agreed in your quote.",
-        vehicles: [
-          {
-            name: "Sample compact car configuration",
-            passengers: 3,
-            luggage:
-              "Discuss suitcase dimensions; actual model and capacity require confirmation",
-          },
-          {
-            name: "Sample family van configuration",
-            passengers: 6,
-            luggage:
-              "Group luggage capacity depends on vehicle model; confirm with operator",
-          },
-        ],
-        inclusions: [
-          "Route and overnight-stop planning",
-          "Transport and accommodation only as itemised in the quote",
-        ],
-        exclusions: [
-          "Fuel, tolls, parking and cross-border fees unless specified",
-          "Flights, insurance and optional activities",
-        ],
-      },
-    ),
-  );
-}
+// Europe self-drive packages replace the earlier sample road trips.
+seedContent.push(...europeDrives);
 for (const [id, title, location, styles, photo] of sampleStays) {
   seedContent.push(
     item(id, title, location, "India", demoImage(photo), {
