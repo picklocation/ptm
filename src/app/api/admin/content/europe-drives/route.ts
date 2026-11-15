@@ -11,11 +11,14 @@ export async function POST(req: Request) {
   try {
     checkOrigin(req);
     const owner = await requireStaff("owner");
+    // "update" replaces both packages with the current built-in version,
+    // discarding edits made in admin. It is only sent after a confirmation.
+    const update = (await req.json().catch(() => null))?.mode === "update";
     const now = new Date().toISOString();
     const writes: { collection: string; id: string; data: unknown }[] = [];
     const added: string[] = [];
     for (const pack of europeDrives) {
-      if (await get<Content>("content", pack.id)) continue;
+      if (!update && (await get<Content>("content", pack.id))) continue;
       const record = { ...pack, updatedAt: now };
       writes.push(
         { collection: "content", id: pack.id, data: record },

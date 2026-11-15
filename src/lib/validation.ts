@@ -139,7 +139,7 @@ export const contentSchema = z.object({
         evening: z.array(text).max(12).optional(),
         driveDistance: z.string().max(80).optional(),
         driveTime: z.string().max(80).optional(),
-        driveNote: z.string().max(400).optional(),
+        driveNote: z.string().max(800).optional(),
         overnight: z.string().max(100).optional(),
       }),
     )
