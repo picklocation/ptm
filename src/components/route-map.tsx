@@ -38,6 +38,51 @@ export function RouteMap({
     (p, i) => points.findIndex((q) => q.name === p.name) === i,
   );
   const visited = (name: string) => countries.some((c) => sameCountry(c, name));
+  // Place each label beside its dot, preferring overnight stops. A label that
+  // would collide on both sides is left off; the place stays tappable and is
+  // listed under the map.
+  // Every dot is an obstacle, so a label never sits on top of another stop.
+  const placed: { x0: number; x1: number; y0: number; y1: number }[] =
+    unique.map((p) => ({
+      x0: p.x - 9 * scale,
+      x1: p.x + 9 * scale,
+      y0: p.y - 9 * scale,
+      y1: p.y + 9 * scale,
+    }));
+  const labels = new Map<string, "start" | "end">();
+  for (const p of [...unique].sort(
+    (a, b) => Number(b.overnight) - Number(a.overnight),
+  )) {
+    // Overnight labels are drawn larger on phones, so they reserve that
+    // larger space here and stay clear of each other at every width.
+    const size = (p.overnight ? 36 : 17) * scale;
+    const width = p.name.length * size * 0.56;
+    const preferLeft = p.x > (x0 + x1) / 2 + (x1 - x0) * 0.28;
+    for (const left of preferLeft ? [true, false] : [false, true]) {
+      const bx0 = left ? p.x - 13 * scale - width : p.x + 13 * scale;
+      const box = {
+        x0: bx0,
+        x1: bx0 + width,
+        y0: p.y - size * 0.75,
+        y1: p.y + size * 0.55,
+      };
+      const clash =
+        box.x0 < x0 ||
+        box.x1 > x1 ||
+        placed.some(
+          (o) =>
+            box.x0 < o.x1 && box.x1 > o.x0 && box.y0 < o.y1 && box.y1 > o.y0,
+        );
+      if (!clash) {
+        placed.push(box);
+        labels.set(p.name, left ? "end" : "start");
+        break;
+      }
+    }
+    // An overnight stop is always named, even in a crowded corner.
+    if (p.overnight && !labels.has(p.name))
+      labels.set(p.name, preferLeft ? "end" : "start");
+  }
   return (
     <figure className="route-map">
       <svg
@@ -73,7 +118,8 @@ export function RouteMap({
           />
         ))}
         {unique.map((p, i) => {
-          const left = p.x > (x0 + x1) / 2 + (x1 - x0) * 0.28;
+          const anchor = labels.get(p.name);
+          const left = anchor === "end";
           return (
             <g
               key={p.name}
@@ -95,14 +141,16 @@ export function RouteMap({
                 strokeWidth={2.5 * scale}
                 className="dot"
               />
-              <text
-                x={p.x + (left ? -13 : 13) * scale}
-                y={p.y + 5 * scale}
-                textAnchor={left ? "end" : "start"}
-                strokeWidth={4.5 * scale}
-              >
-                {p.name}
-              </text>
+              {(anchor || active === i) && (
+                <text
+                  x={p.x + (left ? -13 : 13) * scale}
+                  y={p.y + 5 * scale}
+                  textAnchor={left ? "end" : "start"}
+                  strokeWidth={4.5 * scale}
+                >
+                  {p.name}
+                </text>
+              )}
             </g>
           );
         })}

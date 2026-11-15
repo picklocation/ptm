@@ -70,7 +70,7 @@ export default async function Home() {
     tile(d.title, d, "/destinations/" + d.slug),
   );
   // The Europe self-drive packages lead the row while any road trip is live.
-  const drivePhoto = placePhoto("seiser-alm");
+  const drivePhoto = placePhoto("reschen");
   if (drivePhoto && items.some((x) => x.kind === "road-trip"))
     popularTiles.unshift({
       name: "Euro Drive",

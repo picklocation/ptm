@@ -3908,7 +3908,7 @@ body:has(.hero-wrap) .hero-wrap {
   /* On phones only overnight stops are labelled, in a larger size; every
      place is still listed under the map and named when tapped. */
   .route-map text {
-    font-size: calc(30px * var(--map-scale, 1));
+    font-size: calc(36px * var(--map-scale, 1));
   }
   .route-map .stop:not(.night):not(.active) text {
     display: none;

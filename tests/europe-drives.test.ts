@@ -17,11 +17,34 @@ test("there are exactly two Europe driving packages, both publishable", () => {
   for (const c of europeDrives)
     assert.deepEqual(publishErrors(contentSchema.parse(c)), [], c.id);
 });
+test("Euro Drive days 7 and 8 follow the revised route and totals", () => {
+  const [day7, day8] = [euroDrive.itinerary[6], euroDrive.itinerary[7]];
+  assert.match(day7.driveDistance!, /263 km/);
+  assert.match(day7.driveTime!, /3 hr 25 min/);
+  assert.match(day8.driveDistance!, /358 km/);
+  assert.match(day8.driveTime!, /4 hr 50 min/);
+  // The legs quoted in each note add up to the daily totals.
+  const sum = (note: string, unit: RegExp) =>
+    [...note.matchAll(unit)].reduce((total, m) => total + Number(m[1]), 0);
+  const minutes = (note: string) =>
+    sum(note, /(\d+) hr/g) * 60 + sum(note, /(\d+) min/g);
+  assert.equal(sum(day7.driveNote!, /about (\d+) km/g), 263);
+  assert.equal(minutes(day7.driveNote!), 205);
+  assert.equal(sum(day8.driveNote!, /about (\d+) km/g), 358);
+  assert.equal(minutes(day8.driveNote!), 290);
+  const names = euroDrive.routeStops!.map((s) => s.name).join(" > ");
+  assert.match(
+    names,
+    /Munich > Mittenwald > Vipiteno > Bolzano > Glorenza > Reschen Pass > Landeck > Vaduz > Zürich/,
+  );
+  assert.equal(euroDrive.price, 193000);
+  assert.equal(euroDrive.countries?.length, 9);
+});
 test("automatic photo matching leaves the curated packages alone", () => {
   const seeded = seedContent.find((c) => c.id === "euro-drive")!;
   assert.equal(seeded.image, euroDrive.image);
   assert.ok(euroDrive.image.endsWith("/lauterbrunnen.webp"));
-  assert.ok((euroDrive.highlights?.length || 0) >= 9);
+  assert.ok((euroDrive.highlights?.length || 0) >= 7);
   assert.equal(discoverEurope.highlights?.length, 6);
 });
 test("brochure facts are preserved", () => {
@@ -69,8 +92,8 @@ test("itineraries match the trip length and overnight sequence", () => {
       "Amsterdam",
       "Luxembourg City",
       "Munich",
-      "Seiser Alm",
-      "Zurich",
+      "the Bolzano area",
+      "the Zürich area",
       "Interlaken",
       "Paris",
     ],

@@ -541,6 +541,42 @@ export const placePhotos: PlacePhoto[] = [
     licence: "CC BY-SA 4.0",
     page: "https://commons.wikimedia.org/wiki/File:Vaduz_Castle_1.jpg",
   },
+  {
+    key: "reschen",
+    alt: "The sunken bell tower in Lake Reschen, South Tyrol",
+    match: ["reschen", "lake reschen", "resia"],
+    source: "Wikimedia Commons",
+    author: "Dietmar Rabich",
+    licence: "CC BY-SA 4.0",
+    page: "https://commons.wikimedia.org/wiki/File:Graun_im_Vinschgau_(IT),_Campanile_di_Santa_Caterina_--_2026_--_3005.jpg",
+  },
+  {
+    key: "bolzano",
+    alt: "Piazza Walther in the centre of Bolzano",
+    match: ["bolzano", "bozen"],
+    source: "Wikimedia Commons",
+    author: "Aciarium",
+    licence: "CC BY-SA 4.0",
+    page: "https://commons.wikimedia.org/wiki/File:Waltherplatz_Bozen_Luftansicht.jpg",
+  },
+  {
+    key: "glorenza",
+    alt: "The walled town of Glorenza in the Venosta valley",
+    match: ["glorenza", "glurns"],
+    source: "Wikimedia Commons",
+    author: "Kuebi",
+    licence: "CC BY-SA 3.0",
+    page: "https://commons.wikimedia.org/wiki/File:Glurns_Stadt_01.jpg",
+  },
+  {
+    key: "mittenwald",
+    alt: "Frescoed house front on the Obermarkt, Mittenwald",
+    match: ["mittenwald"],
+    source: "Wikimedia Commons",
+    author: "Johannes Robalotoff",
+    licence: "CC BY-SA 3.0 de",
+    page: "https://commons.wikimedia.org/wiki/File:Obermarkt-1-Mittenwald-JR-E-6259-2022-08-14.jpg",
+  },
   // PLACE-PHOTOS-END
 ];
 export const placePhotoUrl = (photo: PlacePhoto) =>

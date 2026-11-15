@@ -8,12 +8,16 @@ function OwnerAction({
   button,
   endpoint,
   done,
+  confirm,
+  body,
 }: {
   title: string;
   text: string;
   button: string;
   endpoint: string;
   done: (result: Record<string, unknown>) => string;
+  confirm?: string;
+  body?: unknown;
 }) {
   const [busy, setBusy] = useState(false),
     [note, setNote] = useState("");
@@ -26,10 +30,19 @@ function OwnerAction({
         className="button secondary small"
         disabled={busy}
         onClick={async () => {
+          if (confirm && !window.confirm(confirm)) return;
           setBusy(true);
           setNote("Working…");
           try {
-            const r = await fetch(endpoint, { method: "POST" });
+            const r = await fetch(endpoint, {
+              method: "POST",
+              ...(body
+                ? {
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body),
+                  }
+                : {}),
+            });
             const j = await r.json().catch(() => ({}));
             if (!r.ok) throw new Error(j.error || "Update failed.");
             setNote(done(j));
@@ -64,17 +77,28 @@ export function MatchPhotos() {
 }
 export function InstallEuropeDrives() {
   return (
-    <OwnerAction
-      title="Europe driving trips."
-      text="Add the DISCOVER Europe and Euro Drive packages and archive the sample road trips, so only those two are offered. Packages you have already edited are not overwritten."
-      button="Set up the two packages"
-      endpoint="/api/admin/content/europe-drives"
-      done={(j) => {
-        const added = (j.added as string[]) || [];
-        return added.length || j.archived
-          ? `${added.length ? "Added " + added.join(" and ") + ". " : ""}${j.archived ? j.archived + " sample road trips archived." : ""}`
-          : "Both packages are already set up.";
-      }}
-    />
+    <>
+      <OwnerAction
+        title="Update the two packages."
+        text="Replace DISCOVER Europe and Euro Drive with the latest version prepared for the website, such as a revised itinerary. This overwrites any edits you made to those two packages in admin."
+        button="Update to latest version"
+        endpoint="/api/admin/content/europe-drives"
+        body={{ mode: "update" }}
+        confirm="Replace both Europe driving packages with the latest version? Edits you made to them in admin will be lost."
+        done={(j) => `Updated ${((j.added as string[]) || []).join(" and ")}.`}
+      />
+      <OwnerAction
+        title="Europe driving trips."
+        text="Add the DISCOVER Europe and Euro Drive packages and archive the sample road trips, so only those two are offered. Packages you have already edited are not overwritten."
+        button="Set up the two packages"
+        endpoint="/api/admin/content/europe-drives"
+        done={(j) => {
+          const added = (j.added as string[]) || [];
+          return added.length || j.archived
+            ? `${added.length ? "Added " + added.join(" and ") + ". " : ""}${j.archived ? j.archived + " sample road trips archived." : ""}`
+            : "Both packages are already set up.";
+        }}
+      />
+    </>
   );
 }
