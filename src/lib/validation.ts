@@ -5,7 +5,7 @@ export const enquirySchema = z
   .object({
     requestId: z.string().uuid(),
     name: z.string().trim().min(2).max(100),
-    email: z.union([z.email(), z.literal("")]),
+    email: z.email("Enter a valid email address."),
     phone: z
       .string()
       .trim()
@@ -16,20 +16,23 @@ export const enquirySchema = z
     destination: text.min(2),
     kind: z.enum(["holiday", "road-trip", "resort"]),
     startDate: z.string().max(10),
-    endDate: z.string().max(10),
+    endDate: z.string().max(10).default(""),
     flexible: z.boolean(),
     adults: z.number().int().min(1).max(100),
     children: z.number().int().min(0).max(50),
-    childAges: z.string().max(200),
-    rooms: z.number().int().min(1).max(50),
-    departure: z.string().max(150),
-    budget: z.string().regex(/^\d{0,9}(\.\d{1,2})?$/),
-    currency: z.enum(["INR", "EUR", "USD", "GBP", "AED"]),
-    budgetBasis: z.enum(["total", "per person"]),
-    preferences: text,
-    vehicle: z.string().max(150),
-    mealPlan: z.string().max(150),
-    contactMethod: z.enum(["phone", "email", "whatsapp"]),
+    childAges: z.string().max(200).default(""),
+    rooms: z.number().int().min(1).max(50).default(1),
+    departure: z.string().max(150).default(""),
+    budget: z
+      .string()
+      .regex(/^\d{0,9}(\.\d{1,2})?$/)
+      .default(""),
+    currency: z.enum(["INR", "EUR", "USD", "GBP", "AED"]).default("INR"),
+    budgetBasis: z.enum(["total", "per person"]).default("total"),
+    preferences: text.default(""),
+    vehicle: z.string().max(150).default(""),
+    mealPlan: z.string().max(150).default(""),
+    contactMethod: z.enum(["phone", "email", "whatsapp"]).default("phone"),
     itemId: z.string().max(100),
     method: z.enum(["submit", "whatsapp"]),
     consent: z.literal(true),
@@ -37,12 +40,6 @@ export const enquirySchema = z
     startedAt: z.number(),
   })
   .superRefine((d, ctx) => {
-    if (d.contactMethod === "email" && !d.email)
-      ctx.addIssue({
-        code: "custom",
-        path: ["email"],
-        message: "Email is required for email contact.",
-      });
     for (const field of ["startDate", "endDate"] as const) {
       if (
         d[field] &&

@@ -20,32 +20,6 @@ type Props = {
   places?: string[];
   popular?: string[];
 };
-const departureCities = [
-  "Kochi",
-  "Kozhikode",
-  "Thiruvananthapuram",
-  "Kannur",
-  "Bengaluru",
-  "Chennai",
-  "Hyderabad",
-  "Mumbai",
-  "Pune",
-  "Delhi",
-  "Kolkata",
-  "Ahmedabad",
-  "Coimbatore",
-  "Mangaluru",
-  "Goa",
-  "Dubai",
-  "Abu Dhabi",
-  "Doha",
-  "Muscat",
-  "Riyadh",
-  "Kuwait City",
-  "London",
-  "Frankfurt",
-  "Singapore",
-];
 const tripKinds = [
   ["holiday", "Holiday"],
   ["road-trip", "Europe road trip"],
@@ -178,8 +152,6 @@ export function EnquiryForm(p: Props) {
         errs.destination = "Tell us a destination or enter “Help me choose”.";
       if (!d.flexible && !d.startDate)
         errs.startDate = "Choose a date or select flexible dates.";
-      if (d.startDate && d.endDate && d.endDate < d.startDate)
-        errs.endDate = "End date must follow your start date.";
     }
     if (Object.keys(errs).length) {
       setErrors(errs);
@@ -192,6 +164,20 @@ export function EnquiryForm(p: Props) {
     setTimeout(() => heading.current?.focus(), 0);
   }
   async function submit(method: "submit" | "whatsapp") {
+    const errs: Record<string, string> = {};
+    if (d.name.trim().length < 2) errs.name = "Please enter your name.";
+    if (!/^\+?[\d\s()-]{7,25}$/.test(d.phone.trim()))
+      errs.phone = "Enter a valid phone number with country code.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email.trim()))
+      errs.email = "Enter a valid email address.";
+    if (!d.consent)
+      errs.consent = "Please confirm before sending your enquiry.";
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      setError("Please check your details.");
+      setTimeout(() => errorSummary.current?.focus(), 0);
+      return;
+    }
     setBusy(true);
     setError("");
     setErrors({});
@@ -202,6 +188,10 @@ export function EnquiryForm(p: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...d,
+          name: d.name.trim(),
+          phone: d.phone.trim(),
+          email: d.email.trim(),
+          contactMethod: method === "whatsapp" ? "whatsapp" : d.contactMethod,
           itemId: p.itemId,
           requestId: requestId.current,
           startedAt: start.current,
@@ -214,30 +204,10 @@ export function EnquiryForm(p: Props) {
         const keys = Object.keys(json.fields || {});
         if (
           keys.some((key) =>
-            [
-              "destination",
-              "startDate",
-              "endDate",
-              "adults",
-              "children",
-              "departure",
-            ].includes(key),
+            ["destination", "startDate", "adults", "children"].includes(key),
           )
         )
           setStep(0);
-        else if (
-          keys.some((key) =>
-            [
-              "budget",
-              "currency",
-              "preferences",
-              "rooms",
-              "vehicle",
-              "mealPlan",
-            ].includes(key),
-          )
-        )
-          setStep(1);
         throw new Error(
           json.error || "Your enquiry could not be saved. Please retry.",
         );
@@ -305,13 +275,13 @@ export function EnquiryForm(p: Props) {
       className="enquiry-form"
       onSubmit={(e) => {
         e.preventDefault();
-        if (step < 2) advance();
+        if (step < 1) advance();
         else submit("submit");
       }}
       noValidate
     >
-      <div className="steps" aria-label={`Step ${step + 1} of 3`}>
-        {["Your trip", "The details", "Let’s connect"].map((s, i) => (
+      <div className="steps" aria-label={`Step ${step + 1} of 2`}>
+        {["Your trip", "Your details"].map((s, i) => (
           <span className={i <= step ? "active" : ""} key={s}>
             <b>{i < step ? <Check size={13} /> : i + 1}</b>
             {s}
@@ -324,20 +294,13 @@ export function EnquiryForm(p: Props) {
         </div>
       )}
       <h2 ref={heading} tabIndex={-1} className="form-title">
-        {
-          [
-            "Where are we taking you?",
-            "Make it feel like you.",
-            "A little hello goes a long way.",
-          ][step]
-        }
+        {["Where are we taking you?", "A little hello goes a long way."][step]}
       </h2>
       <p className="form-subtitle">
         {
           [
             "Nothing needs to be set in stone. A little inspiration is enough.",
-            "Share what matters. You can leave optional details for later.",
-            "Your enquiry goes straight to our team.",
+            "Three details and you’re done. Your enquiry goes straight to our team.",
           ][step]
         }
       </p>
@@ -415,14 +378,6 @@ export function EnquiryForm(p: Props) {
                   change("endDate", "");
               }}
             />
-            <DateField
-              label="End date (optional)"
-              name="endDate"
-              value={d.endDate}
-              min={d.startDate || today}
-              error={errors.endDate}
-              onChange={(value) => change("endDate", value)}
-            />
             <label className="checkbox field full">
               <input
                 type="checkbox"
@@ -433,82 +388,13 @@ export function EnquiryForm(p: Props) {
             </label>
             {stepper("adults", "Adults")}
             {stepper("children", "Children")}
-            {d.children > 0 &&
-              field("childAges", "Children’s ages (optional)", "text", true)}
-            <SuggestInput
-              label="Departure city (optional)"
-              name="departure"
-              value={d.departure}
-              onChange={(value) => change("departure", value)}
-              options={departureCities}
-              placeholder="Where will you start from?"
-            />
           </>
         )}
         {step === 1 && (
           <>
-            {field("budget", "Budget (optional)", "text")}
-            <label className="field">
-              Currency
-              <select
-                value={d.currency}
-                onChange={(e) => change("currency", e.target.value)}
-              >
-                {["INR", "EUR", "USD", "GBP", "AED"].map((x) => (
-                  <option key={x}>{x}</option>
-                ))}
-              </select>
-            </label>
-            <label className="field full">
-              Budget is
-              <select
-                value={d.budgetBasis}
-                onChange={(e) => change("budgetBasis", e.target.value)}
-              >
-                <option value="total">For the whole group</option>
-                <option value="per person">Per person</option>
-              </select>
-            </label>
-            {d.kind === "road-trip" &&
-              field(
-                "vehicle",
-                "Vehicle, luggage & preferred stops (optional)",
-                "text",
-                true,
-              )}
-            {d.kind === "resort" && (
-              <>
-                {stepper("rooms", "Rooms")}
-                {field("mealPlan", "Meal plan preference (optional)")}
-              </>
-            )}
-            <label className="field full">
-              What would make this trip special? (optional)
-              <textarea
-                value={d.preferences}
-                onChange={(e) => change("preferences", e.target.value)}
-                placeholder="A honeymoon, a family adventure, a slower pace, a particular stay…"
-                rows={5}
-              />
-            </label>
-          </>
-        )}
-        {step === 2 && (
-          <>
             {field("name", "Your name", "text", true)}
             {field("phone", "Phone / WhatsApp with country code", "tel", true)}
-            {field("email", "Email (optional unless preferred)", "email", true)}
-            <label className="field full">
-              How should we get in touch?
-              <select
-                value={d.contactMethod}
-                onChange={(e) => change("contactMethod", e.target.value)}
-              >
-                <option value="phone">Phone</option>
-                <option value="whatsapp">WhatsApp</option>
-                <option value="email">Email</option>
-              </select>
-            </label>
+            {field("email", "Email", "email", true)}
             <div className="field full">
               <dl className="review-list">
                 <div>
@@ -529,14 +415,6 @@ export function EnquiryForm(p: Props) {
                     {d.flexible ? " · flexible" : ""}
                   </dd>
                 </div>
-                {d.budget && (
-                  <div>
-                    <dt>Budget</dt>
-                    <dd>
-                      {d.currency} {d.budget} · {d.budgetBasis}
-                    </dd>
-                  </div>
-                )}
               </dl>
               <label className="checkbox">
                 <input
@@ -582,7 +460,7 @@ export function EnquiryForm(p: Props) {
             Back
           </button>
         )}
-        {step < 2 ? (
+        {step < 1 ? (
           <button className="button">
             Continue
             <ArrowRight size={17} />
@@ -605,7 +483,7 @@ export function EnquiryForm(p: Props) {
           </div>
         )}
       </div>
-      {step === 2 && (
+      {step === 1 && (
         <p className="form-fineprint">
           Both options save your enquiry securely.{" "}
           {p.whatsappEnabled

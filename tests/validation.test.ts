@@ -10,7 +10,7 @@ import { safeCell } from "../src/lib/excel";
 const valid = {
   requestId: "5e1faed7-06a0-4c90-a8e1-b5b713f8343f",
   name: "Test Traveller",
-  email: "",
+  email: "traveller@example.com",
   phone: "+491234567890",
   destination: "Kerala",
   kind: "holiday",
@@ -37,13 +37,16 @@ const valid = {
 };
 test("accepts flexible-date enquiry without demanding unnecessary personal details", () =>
   assert.equal(enquirySchema.safeParse(valid).success, true));
-test("rejects invalid dates, empty groups, spam, missing consent and email preference without email", () => {
+test("rejects invalid dates, empty groups, spam, missing consent and missing contact details", () => {
   for (const change of [
     { startDate: "2027-02-30" },
     { adults: 0 },
     { website: "spam" },
     { consent: false },
-    { contactMethod: "email" },
+    { email: "" },
+    { email: "not-an-email" },
+    { name: "A" },
+    { phone: "12" },
     { startDate: "2027-04-20", endDate: "2027-04-10" },
     { budget: "-200" },
   ])
@@ -51,6 +54,38 @@ test("rejects invalid dates, empty groups, spam, missing consent and email prefe
       enquirySchema.safeParse({ ...valid, ...change }).success,
       false,
     );
+});
+test("accepts the short form: only trip basics, name, phone and email", () => {
+  const short = {
+    requestId: valid.requestId,
+    name: "Test Traveller",
+    email: "traveller@example.com",
+    phone: "+491234567890",
+    destination: "Kerala",
+    kind: "holiday",
+    startDate: "",
+    flexible: true,
+    adults: 2,
+    children: 0,
+    itemId: "",
+    method: "submit",
+    consent: true,
+    website: "",
+    startedAt: valid.startedAt,
+  };
+  const parsed = enquirySchema.safeParse(short);
+  assert.equal(parsed.success, true);
+  // Fields removed from the form are filled with neutral values for storage.
+  assert.deepEqual(
+    parsed.success && [
+      parsed.data.endDate,
+      parsed.data.departure,
+      parsed.data.budget,
+      parsed.data.rooms,
+      parsed.data.contactMethod,
+    ],
+    ["", "", "", 1, "phone"],
+  );
 });
 test("requires price basis and conditions when publishing a price", () =>
   assert.ok(

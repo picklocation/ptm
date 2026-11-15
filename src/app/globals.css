@@ -3507,12 +3507,14 @@ body:has(.hero-wrap) .hero-wrap {
   background: var(--mint);
 }
 /* A checkbox inside a form field keeps its own size and sits beside its label. */
-.field.checkbox {
+.field.checkbox,
+.field .checkbox {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.field.checkbox input {
+.field.checkbox input,
+.field .checkbox input {
   display: inline-block;
   flex: none;
   width: 20px;
