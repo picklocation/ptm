@@ -98,7 +98,9 @@ export function RoadTripDetail({
           )}
           {item.price && (
             <div>
-              <dt>Starting from</dt>
+              <dt>
+                Starting from{item.priceBasis ? `, ${item.priceBasis}` : ""}
+              </dt>
               <dd>
                 <PriceFigure item={item} />
               </dd>
@@ -312,7 +314,9 @@ export function RoadTripDetail({
           </h2>
           {item.price ? (
             <p className="aside-price">
-              <span className="price-from">Starting from</span>
+              <span className="price-from">
+                Starting from{item.priceBasis ? `, ${item.priceBasis}` : ""}
+              </span>
               <PriceFigure item={item} />
             </p>
           ) : null}
