@@ -224,52 +224,106 @@ export function EnquiryForm(p: Props) {
       setBusy(false);
     }
   }
-  if (result)
+  if (result) {
+    const firstName = d.name.trim().split(/\s+/)[0];
+    const travellers = `${d.adults} ${d.adults === 1 ? "adult" : "adults"}${
+      d.children
+        ? `, ${d.children} ${d.children === 1 ? "child" : "children"}`
+        : ""
+    }`;
+    const viaWhatsApp = result.method === "whatsapp" && !!result.whatsappUrl;
     return (
       <div className="enquiry-form success-panel" role="status">
         <div className="success-icon">
           <Check size={30} />
         </div>
-        <h2>
-          Your next chapter
-          <br />
-          starts here.
-        </h2>
-        <p>Your enquiry has been saved. Keep this reference:</p>
-        <strong>{result.id}</strong>
-        <p>
-          The team can now review your travel ideas. This is an enquiry, not a
-          confirmed booking.
+        <h2>Thank you{firstName ? `, ${firstName}` : ""}.</h2>
+        <p className="success-lead">
+          We’ve received your enquiry
+          {d.destination ? ` for ${d.destination}` : ""}. Our team will be in
+          touch to plan it with you.
         </p>
-        {result.method === "whatsapp" && result.whatsappUrl && (
-          <>
+        <dl className="success-summary">
+          {p.itemTitle && (
+            <div>
+              <dt>Package</dt>
+              <dd>{p.itemTitle}</dd>
+            </div>
+          )}
+          <div>
+            <dt>Destination</dt>
+            <dd>{d.destination}</dd>
+          </div>
+          <div>
+            <dt>Travellers</dt>
+            <dd>{travellers}</dd>
+          </div>
+          <div>
+            <dt>Dates</dt>
+            <dd>
+              {d.startDate
+                ? new Date(d.startDate + "T00:00:00").toLocaleDateString(
+                    "en-GB",
+                    { day: "numeric", month: "short", year: "numeric" },
+                  )
+                : "Flexible"}
+              {d.startDate && d.flexible ? " · flexible" : ""}
+            </dd>
+          </div>
+        </dl>
+        <ol className="success-steps">
+          <li>
+            <strong>We read your request</strong>A travel planner looks at where
+            you want to go and who is travelling.
+          </li>
+          <li>
+            <strong>We get in touch</strong>
+            We call or message you on {d.phone.trim()} or write to{" "}
+            {d.email.trim()}.
+          </li>
+          <li>
+            <strong>You receive a personal quote</strong>
+            Nothing is booked or charged until you confirm it.
+          </li>
+        </ol>
+        <div className="success-actions">
+          {viaWhatsApp && (
             <a
               className="button"
-              href={result.whatsappUrl}
+              href={result.whatsappUrl!}
               target="_blank"
               rel="noreferrer"
             >
               <MessageCircle size={18} />
               Continue on WhatsApp
             </a>
-            <p className="small-note">
-              Your summary is ready. Tap Send in WhatsApp to send it. Your
-              enquiry is already saved even if you don’t send a message.
-            </p>
-          </>
-        )}
-        {result.method === "whatsapp" && !result.whatsappUrl && (
-          <p>
-            WhatsApp is not configured yet. Your enquiry is safely saved for the
-            team.
+          )}
+          <Link
+            href="/holidays"
+            className={viaWhatsApp ? "button secondary" : "button"}
+          >
+            Keep exploring
+            <ArrowRight size={17} />
+          </Link>
+          <Link href="/" className="text-link">
+            Back to home
+          </Link>
+        </div>
+        {viaWhatsApp && (
+          <p className="small-note">
+            Your message is ready in WhatsApp; tap Send there. Your enquiry is
+            already saved even if you don’t send it.
           </p>
         )}
-        <Link href="/holidays" className="text-link">
-          Keep exploring
-          <ArrowRight size={17} />
-        </Link>
+        {result.method === "whatsapp" && !result.whatsappUrl && (
+          <p className="small-note">
+            WhatsApp isn’t available right now, but your enquiry is safely saved
+            and the team will contact you.
+          </p>
+        )}
       </div>
     );
+  }
   return (
     <form
       className="enquiry-form"

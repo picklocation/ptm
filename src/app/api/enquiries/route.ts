@@ -94,13 +94,13 @@ export async function POST(request: Request) {
       return Response.json(
         {
           error:
-            "This submission reference has already been used. Please reload the form.",
+            "This form has already been sent. Please reload the page to send a new enquiry.",
         },
         { status: 409 },
       );
     const s = await settings();
     const number = s.whatsapp || process.env.WHATSAPP_NUMBER;
-    const summary = `Hello PickTheMap! My enquiry reference is ${saved.id}.\nI’m planning a trip to ${saved.destination}${saved.itemTitle ? " (" + saved.itemTitle + ")" : ""}.\nTravellers: ${saved.adults} adults, ${saved.children} children.\nDates: ${saved.startDate || "Not decided"}${saved.flexible ? " (flexible)" : ""}.\nPlease help me plan my trip.`;
+    const summary = `Hello PickTheMap! I’m ${saved.name}.\nI’m planning a trip to ${saved.destination}${saved.itemTitle ? " (" + saved.itemTitle + ")" : ""}.\nTravellers: ${saved.adults} adults, ${saved.children} children.\nDates: ${saved.startDate || "Not decided"}${saved.flexible ? " (flexible)" : ""}.\nPlease help me plan my trip.`;
     return Response.json(
       {
         id: saved.id,
