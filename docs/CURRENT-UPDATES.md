@@ -101,3 +101,7 @@ At the owner's request ("I use the sample packages as my packages"), the visible
 ## 15 November 2026: shorter enquiry form
 
 "Plan my trip" is now two short steps. Step 1: destination, kind of trip, preferred start date or flexible, adults and children. Step 2: name, phone and email (all mandatory) plus consent. Removed from the form: the whole "details" step (budget, currency, rooms, meal plan, vehicle, preferences), end date, departure city, children's ages and the contact-method choice. The server schema makes email mandatory and gives the removed fields neutral defaults, so stored enquiries and exports keep the same shape. Honeypot, timing, rate limit, origin and idempotency checks are unchanged.
+
+## 15 November 2026: accommodation notes and galleries removed from sample packages
+
+At the owner's request, holiday packages no longer carry the generic "Your accommodation" note or a gallery that only repeated the cover photo, so the "Your accommodation" and "Picture yourself here" sections no longer appear on them. Both sections still exist on the page and return for any package once real accommodation text or gallery photos are added in admin. "Tidy package wording" applies this to existing records: it removes only generator-written accommodation notes and stock or place photos from galleries; accommodation the owner wrote and photos the owner uploaded are kept. The two Europe self-drive packages keep their "Where you'll stay" section.

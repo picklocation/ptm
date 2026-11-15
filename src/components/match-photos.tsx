@@ -79,7 +79,7 @@ export function TidyWording() {
   return (
     <OwnerAction
       title="Package wording."
-      text="Remove the demonstration notices and fix text slips in the original packages. Text you have rewritten yourself is kept, and prices are not changed."
+      text="Remove the demonstration notices, the generic “Your accommodation” note and the repeated cover photo under “Picture yourself here”, and fix text slips in the original packages. Text and photos you added yourself are kept, and prices are not changed."
       button="Tidy package wording"
       endpoint="/api/admin/content/wording"
       done={(j) =>
