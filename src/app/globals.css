@@ -4028,15 +4028,3 @@ body:has(.hero-wrap) .hero-wrap {
   }
 }
 
-/* Owner maintenance tools sit folded away under the content list. */
-.owner-tools {
-  margin-top: 20px;
-}
-.owner-tools summary {
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-}
-.owner-tools .notice {
-  margin: 12px 0 0;
-}

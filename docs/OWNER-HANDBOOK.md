@@ -150,17 +150,6 @@ Site settings & FAQs → "Homepage: Euro Drive card" → Upload photo → Save.
 **Europe driving packages**
 DISCOVER Europe and Euro Drive are edited like any package. For road trips the editor has extra sections: countries, route stops (these draw the map), morning/afternoon/evening and drive details for each day, highlights, car and licence information, tips and questions.
 
-**Four buttons above the content list (owner only)**
-
-| Button | Use it when |
-|---|---|
-| Set up the two packages | Once, to add the two Europe packages and archive the old sample road trips. |
-| Update to latest version | After your developer changes a Europe package for you. It overwrites your own edits to those two packages. |
-| Match photos to locations | To replace the old shared stock photos with the right photo for each place. Your uploads are kept. |
-| Tidy package wording | To remove demonstration wording, generic accommodation notes and repeated gallery photos. Your own text and photos are kept. |
-
-All four are safe to press again, and none changes a price.
-
 **Putting a change live**
 Changes are prepared on a Preview first. When you say "merge", they go to the `codex/migrate-supabase` branch. Then in Vercel → Deployments, wait for Ready and choose Promote to Production.
 

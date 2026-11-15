@@ -16,7 +16,7 @@ How this was checked: source and Git history read; typecheck clean, 39 unit test
 | Vercel plan | Hobby | Owner screenshot. Check Vercel's terms on commercial use |
 | How Production updates | Manual promotion of a `codex/migrate-supabase` deployment. Pushes create Previews only | Owner screenshot |
 | Which commit is live | **Unknown.** Last merge was `d677145` | |
-| Owner actions pressed on the live database | **Unknown** (see "Owner actions" below) | |
+| Owner actions on the live database | All four run by the owner; wording action reported 157 packages tidied | Owner screenshot, 15 November |
 
 ## Complete in code
 
@@ -43,9 +43,9 @@ How this was checked: source and Git history read; typecheck clean, 39 unit test
 - Supabase schema, RLS, storage, atomic functions; one-hour cookie session.
 - Outage handling, backend-specific cache keys, noindex while samples show.
 
-## Owner actions (Admin → Content & media, owner only)
+## Owner actions (endpoints only; buttons removed 15 November 2026)
 
-Each is safe to press again. None changes prices.
+The owner ran all four on the live database and asked for the buttons to be removed. The endpoints remain. Each is safe to call again and none changes prices.
 
 | Button | What it does | Endpoint |
 | --- | --- | --- |
