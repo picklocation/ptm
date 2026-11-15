@@ -7,7 +7,7 @@ import {
 } from "../src/lib/expanded-catalogue";
 import { seedContent } from "../src/lib/seed-data";
 import { contentSchema, publishErrors } from "../src/lib/validation";
-test("expanded catalogue has five complete fictional itineraries for each requested market", () => {
+test("expanded catalogue has five complete itineraries for each requested market", () => {
   assert.equal(internationalPlaces.length, 10);
   assert.equal(regionalPlaces.length, 16);
   assert.equal(expandedCatalogue.length, 130);
@@ -20,7 +20,7 @@ test("expanded catalogue has five complete fictional itineraries for each reques
       assert.equal(c.itinerary.length, c.days);
       assert.equal(c.nights, c.days - 1);
       assert.ok(c.price && c.price > 0);
-      assert.match(c.priceConditions, /Fictional/);
+      assert.match(c.priceConditions, /confirmed in your quote/);
       // Only the two real Europe self-drive packages are not samples.
       assert.equal(c.demo, !["discover-europe", "euro-drive"].includes(c.id));
       assert.ok(c.accommodation && c.inclusions.length && c.exclusions.length);

@@ -1,6 +1,10 @@
 import { skipOptimizer } from "@/lib/assets";
 import { AdminCatalogue } from "@/components/admin-catalogue";
-import { MatchPhotos, InstallEuropeDrives } from "@/components/match-photos";
+import {
+  MatchPhotos,
+  InstallEuropeDrives,
+  TidyWording,
+} from "@/components/match-photos";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect, notFound } from "next/navigation";
@@ -170,6 +174,7 @@ export default async function Admin({
             <>
               <InstallEuropeDrives />
               <MatchPhotos />
+              <TidyWording />
             </>
           )}
           <AdminCatalogue items={contents} />

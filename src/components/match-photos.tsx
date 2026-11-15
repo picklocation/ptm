@@ -75,6 +75,19 @@ export function MatchPhotos() {
     />
   );
 }
+export function TidyWording() {
+  return (
+    <OwnerAction
+      title="Package wording."
+      text="Remove the demonstration notices and fix text slips in the original packages. Text you have rewritten yourself is kept, and prices are not changed."
+      button="Tidy package wording"
+      endpoint="/api/admin/content/wording"
+      done={(j) =>
+        `${j.updated ? j.updated + " packages tidied." : "Nothing left to tidy."}${j.remaining ? " " + j.remaining + " still contain sample wording and need editing by hand." : ""}`
+      }
+    />
+  );
+}
 export function InstallEuropeDrives() {
   return (
     <>
