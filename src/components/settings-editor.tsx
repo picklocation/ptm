@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { imageVariant } from "@/lib/assets";
+import { shrinkImage } from "./content-editor";
 import type { Settings } from "@/lib/types";
 export function SettingsEditor({ initial }: { initial: Settings }) {
   const [s, setS] = useState(initial),
@@ -60,6 +62,71 @@ export function SettingsEditor({ initial }: { initial: Settings }) {
                 />
               </label>
             ))}
+          </section>
+          <section className="admin-card">
+            <h2>Homepage: Euro Drive card</h2>
+            <p className="small-note">
+              The first card in Popular destinations. Upload a photo, then press
+              Save. A wide or square photo with the subject near the centre
+              works best.
+            </p>
+            <div className="photo-item">
+              <div className="photo-thumb">
+                {s.driveCardImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={imageVariant(s.driveCardImage, "card")} alt="" />
+                ) : (
+                  <span className="muted">Default photo in use</span>
+                )}
+              </div>
+              <div className="photo-fields">
+                <label className="button secondary small photo-pick">
+                  {s.driveCardImage ? "Replace photo" : "Upload photo"}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    disabled={busy}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      e.target.value = "";
+                      if (!file) return;
+                      setBusy(true);
+                      setMessage("Uploading photo…");
+                      try {
+                        const body = new FormData();
+                        body.set("file", await shrinkImage(file));
+                        body.set("contentId", "site-settings");
+                        const r = await fetch("/api/admin/upload", {
+                          method: "POST",
+                          body,
+                        });
+                        const j = await r.json().catch(() => ({}));
+                        if (!r.ok) throw new Error(j.error || "Upload failed.");
+                        setS((old) => ({ ...old, driveCardImage: j.url }));
+                        setMessage("Photo uploaded. Press Save to use it.");
+                      } catch (error) {
+                        setMessage(
+                          error instanceof Error
+                            ? error.message
+                            : "Upload failed.",
+                        );
+                      } finally {
+                        setBusy(false);
+                      }
+                    }}
+                  />
+                </label>
+                {s.driveCardImage && (
+                  <button
+                    type="button"
+                    className="button secondary small"
+                    onClick={() => setS({ ...s, driveCardImage: "" })}
+                  >
+                    Use default photo
+                  </button>
+                )}
+              </div>
+            </div>
           </section>
           <section className="admin-card">
             <h2>Approved content & policies</h2>

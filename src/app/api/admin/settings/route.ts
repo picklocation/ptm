@@ -28,6 +28,20 @@ const schema = z.object({
       }),
     )
     .max(40),
+  // An uploaded photo or a bundled image; empty restores the default card.
+  driveCardImage: z
+    .string()
+    .max(1000)
+    .refine(
+      (v) =>
+        !v ||
+        v.startsWith("/images/") ||
+        v.startsWith(
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL || "https://feqmnzutyhzochuyiint.supabase.co"}/storage/v1/object/public/website-public/`,
+        ),
+      "Upload a photo for the card.",
+    )
+    .default(""),
 });
 export async function POST(req: Request) {
   try {

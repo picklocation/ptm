@@ -75,8 +75,11 @@ export default async function Home() {
     popularTiles.unshift({
       name: "Euro Drive",
       caption: "Discover Europe by road",
-      image: placePhotoUrl(drivePhoto),
-      alt: drivePhoto.alt,
+      // The owner can replace this photo in Site settings.
+      image: s.driveCardImage || placePhotoUrl(drivePhoto),
+      alt: s.driveCardImage
+        ? "Self-drive holidays across Europe"
+        : drivePhoto.alt,
       href: "/europe-road-trips",
     });
   // Treat Bali and Indonesia as the same destination for row selection.

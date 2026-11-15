@@ -133,6 +133,8 @@ export type Settings = {
   terms: string;
   cancellation: string;
   faqs: { question: string; answer: string }[];
+  // Photo for the Euro Drive card on the homepage. Empty uses the default.
+  driveCardImage?: string;
 };
 export const statuses = [
   "new",
