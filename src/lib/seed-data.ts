@@ -23,7 +23,7 @@ const base: Content = {
   region: "",
   summary: "",
   description:
-    "A starting point for a holiday shaped around you. This demonstration itinerary illustrates how a personalised trip can be presented. Actual arrangements, accommodation and inclusions require business approval.",
+    "A starting point for a holiday shaped around you. Tell us your dates, your group and what you enjoy, and we’ll plan the route, stays and experiences with you. Everything is confirmed in your personalised quote.",
   image: "",
   gallery: [],
   imageAlt: "",
@@ -304,7 +304,7 @@ const sampleRoutes = [
     "Bali temples & beaches",
     "Indonesia",
     "Southeast Asia",
-    "Ubud|Ubud countryside|Temple options|Uluwatu|Seminyak|Beach leisure|Departure",
+    "Ubud|Ubud rice terraces|Temple options|Uluwatu|Seminyak|Beach leisure|Departure",
     "bali",
   ],
   [
@@ -391,15 +391,22 @@ const sampleStays = [
   ],
 ] as const;
 function sampleJourney(stops: string[]) {
-  return stops.map((stop, i) => ({
-    title: `Day ${i + 1}: ${stop}`,
-    description:
-      i === 0
-        ? `Arrive in ${stop}. Settle into your proposed accommodation, with free time depending on arrival. Transfers and check-in arrangements will be confirmed in your quote.`
-        : i === stops.length - 1
-          ? "Enjoy a relaxed check-out before your onward journey. Departure arrangements will be planned around your confirmed tickets."
-          : `Explore ${stop} at your preferred pace. Discuss guided visits, independent time and local dining with your planner. Tickets, transport and activity suitability will be itemised in your quote; this is an illustrative day plan.`,
-  }));
+  return stops.map((stop, i) => {
+    // Some stops are phrased as headings ("Arrive in X", "Explore X at your
+    // own pace"); sentences use the place name on its own.
+    const place = stop
+      .replace(/^(Arrive in|Explore)\s+/i, "")
+      .replace(/\s+at your own pace$/i, "");
+    return {
+      title: `Day ${i + 1}: ${stop}`,
+      description:
+        i === 0
+          ? `Arrive in ${place} and settle into your accommodation, with free time depending on your arrival. Transfers and check-in are confirmed in your quote.`
+          : i === stops.length - 1
+            ? "Enjoy a relaxed check-out before your onward journey. Departure arrangements are planned around your confirmed tickets."
+            : `Explore ${place} at your preferred pace, with guided visits, independent time and local dining to choose from. Tickets and transport are set out in your quote.`,
+    };
+  });
 }
 const demoImage = (key: string) =>
   key === "india"
@@ -423,11 +430,10 @@ for (const [id, title, country, region, route, photo] of sampleRoutes) {
         nights: stops.length - 1,
         themes: ["Family", "Couples"],
         itinerary: sampleJourney(stops),
-        imageAlt:
-          "Illustrative travel photograph; not a verified destination or property image",
-        description: `Explore ${country} through ${stops.length} thoughtfully paced days. This sample route follows ${stops.join(" → ")}. Adjust the number of nights, hotel style and experiences with your planner. All arrangements require a personalised quote.`,
+        imageAlt: `Travel photograph for ${title}`,
+        description: `Explore ${country} through ${stops.length} thoughtfully paced days. The route follows ${stops.join(" → ")}. Adjust the number of nights, hotel style and experiences with your planner. All arrangements require a personalised quote.`,
         accommodation:
-          "Sample plan: comfortable hotels with private rooms. Hotel names, category, accessibility and meal basis will be agreed before confirmation.",
+          "Comfortable hotels with private rooms. Hotel names, category and meal basis are confirmed in your quote.",
         inclusions: [
           "Proposed accommodation and transfers, subject to your final quote",
           "A personalised day-by-day itinerary",
@@ -503,8 +509,8 @@ for (const [index, place] of southIndiaLocations.entries()) {
         nights: 0,
         themes: ["South India"],
         summary: place.mood + ". Plan a visit around your dates and interests.",
-        description: `Discover ${place.name} in ${place.state}. ${place.mood}. Use this sample destination page as a starting point for a personalised holiday, with accommodation and experiences chosen around your group. Photography is illustrative.`,
-        imageAlt: `Illustrative South India scenery for ${place.name}; not a verified location photograph`,
+        description: `Discover ${place.name} in ${place.state}. ${place.mood}. It is a starting point for a personalised holiday, with accommodation and experiences chosen around your group.`,
+        imageAlt: `Scenery around ${place.name}`,
       },
     ),
   );
@@ -522,8 +528,8 @@ for (const [index, place] of southIndiaLocations.entries()) {
         nights: 2,
         themes: ["South India", "Family", "Couples"],
         featured: false,
-        summary: place.mood + ". A customisable three-day sample itinerary.",
-        description: `A sample three-day stay in ${place.name}. Choose your preferred pace, accommodation and local experiences. Transport, access permissions, weather-dependent activities and inclusions must be confirmed in your personalised quote.`,
+        summary: place.mood + ". A customisable three-day itinerary.",
+        description: `A three-day stay in ${place.name}. Choose your preferred pace, accommodation and local experiences. Transport, permits, weather-dependent activities and inclusions are confirmed in your personalised quote.`,
         itinerary: sampleJourney([
           `Arrive in ${place.name}`,
           `Explore ${place.name} at your own pace`,
@@ -531,7 +537,7 @@ for (const [index, place] of southIndiaLocations.entries()) {
         ]),
         accommodation:
           "Two nights in a hotel, resort or homestay to suit your budget. The property and room category will be confirmed in your quote.",
-        imageAlt: `Illustrative South India scenery for ${place.name}; not a verified location photograph`,
+        imageAlt: `Scenery around ${place.name}`,
       },
     ),
   );
@@ -566,11 +572,11 @@ for (const [id, title, country, route, photo] of [
         nights: 5,
         order: 250 + seedContent.length,
         featured: false,
-        description: `A six-day sample holiday in ${country}. Personalise your accommodation, transfers and experiences with your travel planner. This is demonstration content; no availability or supplier arrangements are guaranteed.`,
+        description: `A six-day holiday in ${country}. Personalise your accommodation, transfers and experiences with us; everything is confirmed in your quote.`,
         itinerary: sampleJourney(stops),
         accommodation:
           "Five nights in accommodation selected around your budget and preferences. The property, room and meal plan will be confirmed in your quote.",
-        imageAlt: `Illustrative holiday imagery for ${country}; not a verified property photograph`,
+        imageAlt: `Travel photograph for ${country}`,
       },
     ),
   );

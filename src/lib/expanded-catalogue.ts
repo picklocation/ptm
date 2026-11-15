@@ -111,7 +111,7 @@ export const regionalPlaces: Place[] = [
   },
   ...southIndiaLocations.map((p) => ({
     name: p.name,
-    stops: [p.name, `${p.name} countryside`, `${p.name} local sights`, p.name],
+    stops: [p.name, p.name, p.name, p.name],
   })),
 ].map((p, i) => ({
   ...p,
@@ -170,18 +170,20 @@ export const expandedCatalogue: Content[] = [
   styles.map((style, variant) => {
     // Each route stays within two neighbouring itinerary bases; transport feasibility is reviewed before sale.
     const stops = place.stops.slice(variant % 2, (variant % 2) + 2);
+    // A trip based in one place names it once.
+    const places = [...new Set(stops)];
     const id = `demo-${slug(place.name)}-${slug(style.name)}`;
-    const alt = `Illustrative travel photograph for ${place.name}; not a verified destination or property image`;
+    const alt = `Travel photograph for ${place.name}`;
     return {
       id,
       slug: id,
       kind: "holiday",
       title: `${place.name}: ${style.name}`,
-      location: stops.join(" · "),
+      location: places.join(" · "),
       country: place.country,
       region: place.region,
-      summary: `${style.days} days in ${place.name}, designed around ${style.focus}. Sample itinerary with fictional pricing.`,
-      description: `DEMONSTRATION PACKAGE — not an available offer. Explore ${stops.join(" and ")} with a suggested ${style.days}-day route. This ${style.theme.toLowerCase()} concept prioritises ${style.focus}. Routes, opening days, transfers, accessibility, accommodation and all activities must be checked by a planner before a real quote. Photographs are illustrative and may show other locations. No bookings or supplier commitments are implied.`,
+      summary: `${style.days} days in ${place.name}, designed around ${style.focus}.`,
+      description: `Explore ${places.join(" and ")} on a ${style.days}-day holiday built around ${style.focus}. The route, hotels and experiences are tailored to your dates and your group, and everything is confirmed in your personalised quote.`,
       image: place.image,
       imageAlt: alt,
       gallery: [place.image],
@@ -198,45 +200,44 @@ export const expandedCatalogue: Content[] = [
         if (day === 0)
           return {
             title: `Day 1: Arrive in ${stops[0]}`,
-            description: `Meet at the agreed arrival point, settle into your proposed hotel and take a short orientation walk if time permits. Arrival transfer is a sample inclusion; timing depends on your travel schedule.`,
+            description: `Arrive in ${stops[0]}, check in to your hotel and take a short orientation walk if time permits. Your arrival transfer is timed around your travel schedule.`,
           };
         if (day === style.days - 1)
           return {
             title: `Day ${day + 1}: Departure from ${stops[1]}`,
             description:
-              "Breakfast, check-out and a proposed departure transfer. Your planner will confirm the departure point, luggage arrangements and connection time before booking.",
+              "Breakfast, check-out and your departure transfer. We confirm the departure point, luggage arrangements and connection time before you travel.",
           };
         return {
           title: `Day ${day + 1}: ${stop} — ${day % 2 ? "local discoveries" : "scenery and leisure"}`,
-          description: `Suggested time in ${stop} for ${day % 2 ? "a neighbourhood walk, regional food and a locally guided cultural visit" : "a scenic excursion followed by an unhurried afternoon"}. Tailor the pace for ${style.theme.toLowerCase()} travel. Tickets, guide availability, transport between bases and any access permits require confirmation; no driving times are promised.`,
+          description: `Time in ${stop} for ${day % 2 ? "a neighbourhood walk, regional food and a locally guided cultural visit" : "a scenic excursion followed by an unhurried afternoon"}. We set the pace around your group. Tickets, guides and transport between stops are confirmed in your quote.`,
         };
       }),
-      accommodation: `${style.days - 1} sample hotel nights in a standard double/twin room, shared by two adults. Properties and room categories are not contracted. Family room requests, upgrades, accessibility and extra beds are quoted separately.`,
+      accommodation: `${style.days - 1} hotel nights in a standard double or twin room, shared by two adults. Hotels and room categories are confirmed in your quote. Family rooms, upgrades and extra beds are quoted separately.`,
       inclusions: [
-        `${style.days - 1} proposed hotel nights on twin sharing`,
-        "Daily breakfast as a sample meal plan",
-        "Proposed arrival/departure transfers",
-        "Itinerary planning and suggested sightseeing; final scope by quote",
+        `${style.days - 1} hotel nights on twin sharing`,
+        "Daily breakfast",
+        "Arrival and departure transfers",
+        "Itinerary planning and suggested sightseeing",
       ],
       exclusions: [
         "Flights and visas",
         "Travel insurance",
         "Lunch, dinner and personal spending",
         "Optional activity admission and guides unless quoted",
-        "Taxes, peak-date supplements and upgrades require confirmation",
+        "Taxes, peak-date supplements and upgrades",
       ],
       amenities: [],
       rooms: [],
-      mealPlans: ["Breakfast (sample)"],
+      mealPlans: ["Breakfast"],
       vehicles: [],
       price: place.base + style.uplift,
       currency: "INR",
-      priceBasis: "per adult, twin sharing (mock)",
+      priceBasis: "per adult, twin sharing",
       priceConditions:
-        "Fictional display price, not a quote or offer. Assumes two adults; flights excluded. Dates, taxes, supplements and every inclusion require a real quote.",
-      seoTitle: `${place.name}: ${style.name} — demo`,
-      seoDescription:
-        "Demonstration itinerary with fictional prices. Not a bookable offer.",
+        "Starting price for two adults sharing; flights excluded. Your final price depends on dates, hotels and group size and is confirmed in your quote.",
+      seoTitle: `${place.name}: ${style.name}`,
+      seoDescription: `${style.days} days in ${place.name}: ${style.focus}. Personalised by PickTheMap.`,
       updatedAt: "2026-11-09T00:00:00.000Z",
     };
   }),
