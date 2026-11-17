@@ -7,6 +7,12 @@ import { CatalogueStatus } from "@/components/catalogue-status";
 import { paths, sectionLabels } from "@/lib/types";
 import { Price, CheckList, TripCard } from "@/components/ui";
 import { Footer } from "@/components/footer";
+import {
+  fallbackDescription,
+  FALLBACK_ITINERARY_NOTE,
+  FALLBACK_INCLUSIONS,
+  FALLBACK_EXCLUSIONS,
+} from "@/lib/content-fallbacks";
 export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params,
@@ -82,7 +88,10 @@ export default async function Detail({
                 A little about this{" "}
                 {item.kind === "resort" ? "stay" : "journey"}
               </h2>
-              <p>{item.description}</p>
+              <p>
+                {item.description ||
+                  fallbackDescription(item.location, item.kind)}
+              </p>
               <div className="tag-list">
                 {item.themes.map((t) => (
                   <span key={t}>{t}</span>
@@ -130,17 +139,21 @@ export default async function Detail({
                     ? "Your route, stop by stop"
                     : "Your itinerary"}
                 </h2>
-                <ol className="timeline">
-                  {item.itinerary.map((d, i) => (
-                    <li key={i}>
-                      <span>{i + 1}</span>
-                      <div>
-                        <h3>{d.title}</h3>
-                        <p>{d.description}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
+                {item.itinerary.length ? (
+                  <ol className="timeline">
+                    {item.itinerary.map((d, i) => (
+                      <li key={i}>
+                        <span>{i + 1}</span>
+                        <div>
+                          <h3>{d.title}</h3>
+                          <p>{d.description}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p>{FALLBACK_ITINERARY_NOTE}</p>
+                )}
                 <p className="small-note">
                   Your final itinerary and arrangements will be confirmed in
                   your personalised quote.
@@ -190,9 +203,21 @@ export default async function Detail({
             {item.kind !== "destination" && (
               <section className="detail-section">
                 <h2>What’s included</h2>
-                <CheckList items={item.inclusions} />
+                <CheckList
+                  items={
+                    item.inclusions.length
+                      ? item.inclusions
+                      : FALLBACK_INCLUSIONS
+                  }
+                />
                 <h2 style={{ marginTop: 30 }}>What’s not included</h2>
-                <CheckList items={item.exclusions} />
+                <CheckList
+                  items={
+                    item.exclusions.length
+                      ? item.exclusions
+                      : FALLBACK_EXCLUSIONS
+                  }
+                />
               </section>
             )}
             {item.price && (

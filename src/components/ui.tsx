@@ -3,6 +3,7 @@ import Image from "next/image";
 import { ArrowUpRight, ArrowRight, MapPin, Clock, Check } from "lucide-react";
 import type { Content } from "@/lib/types";
 import { paths } from "@/lib/types";
+import { fallbackSummary } from "@/lib/content-fallbacks";
 export function Logo() {
   return (
     <Link href="/" className="brand" aria-label="PickTheMap home">
@@ -106,7 +107,9 @@ export function TripCard({ item }: { item: Content }) {
         <Link href={`/${paths[item.kind]}/${item.slug}`}>
           <h3>{item.title}</h3>
         </Link>
-        <p className="card-summary">{item.summary}</p>
+        <p className="card-summary">
+          {item.summary || fallbackSummary(item.location, item.kind)}
+        </p>
         <div className="card-bottom">
           <Price item={item} />
         </div>

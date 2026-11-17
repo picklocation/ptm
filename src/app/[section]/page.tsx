@@ -7,6 +7,16 @@ import { visaGuides } from "@/lib/visa-guides";
 import { southIndiaLocations } from "@/lib/south-india";
 import { Footer } from "@/components/footer";
 import { CatalogueStatus } from "@/components/catalogue-status";
+import {
+  PRIVACY_TEMPLATE,
+  TERMS_TEMPLATE,
+  CANCELLATION_TEMPLATE,
+} from "@/lib/legal-templates";
+const policyTemplates = {
+  privacy: PRIVACY_TEMPLATE,
+  terms: TERMS_TEMPLATE,
+  cancellation: CANCELLATION_TEMPLATE,
+};
 const catalogues: Record<
   string,
   { kind: string; title: string; description: string }
@@ -220,7 +230,7 @@ export default async function Page({
         ) : (
           <div className="policy-text">
             {s[section as "privacy" | "terms" | "cancellation"] ||
-              "Business-approved policy content has not been published yet. Please contact the team for the applicable information before confirming travel arrangements."}
+              policyTemplates[section as "privacy" | "terms" | "cancellation"]}
           </div>
         )}
       </main>
