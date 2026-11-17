@@ -137,6 +137,14 @@ export const contentSchema = z.object({
   seoDescription: z.string().max(300),
   updatedAt: z.string(),
 });
+// Below this, a photo displayed full-width on a hero/card renders visibly
+// blurry on standard retina screens once CSS stretches it to fit.
+export const MIN_UPLOAD_EDGE_PX = 1600;
+export function uploadResolutionError(width: number, height: number) {
+  return Math.max(width, height) < MIN_UPLOAD_EDGE_PX
+    ? `Image is too small (${width}x${height}px). Upload a photo with its longest side at least ${MIN_UPLOAD_EDGE_PX}px so it stays sharp on large screens.`
+    : null;
+}
 export function publishErrors(c: z.infer<typeof contentSchema>) {
   return [
     !c.image && "Add a cover image.",

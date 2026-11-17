@@ -5,6 +5,7 @@ import sharp from "sharp";
 import { getStorage } from "firebase-admin/storage";
 import { requireStaff, checkOrigin, errorResponse } from "@/lib/auth";
 import { put, firebaseMode, firebaseApp } from "@/lib/store";
+import { uploadResolutionError } from "@/lib/validation";
 export async function POST(req: Request) {
   try {
     checkOrigin(req);
@@ -36,6 +37,9 @@ export async function POST(req: Request) {
         !meta.height
       )
         throw new Error();
+      const resolutionError = uploadResolutionError(meta.width, meta.height);
+      if (resolutionError)
+        return Response.json({ error: resolutionError }, { status: 400 });
       output = await image
         .rotate()
         .resize({

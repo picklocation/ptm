@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { MapPin, Check, ArrowUpRight } from "lucide-react";
 import { publicContent, catalogueState } from "@/lib/store";
 import { CatalogueStatus } from "@/components/catalogue-status";
-import { paths } from "@/lib/types";
+import { paths, sectionLabels } from "@/lib/types";
 import { Price, CheckList, TripCard } from "@/components/ui";
 import { Footer } from "@/components/footer";
 export const dynamic = "force-dynamic";
@@ -48,7 +48,7 @@ export default async function Detail({
         <div className="breadcrumb">
           <Link href="/">Home</Link>
           <span>/</span>
-          <Link href={`/${section}`}>{section.replaceAll("-", " ")}</Link>
+          <Link href={`/${section}`}>{sectionLabels[item.kind]}</Link>
           <span>/</span>
           <span>{item.title}</span>
         </div>
