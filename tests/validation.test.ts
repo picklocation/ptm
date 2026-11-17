@@ -9,6 +9,15 @@ import {
 import { seedContent } from "../src/lib/seed-data";
 import { safeCell } from "../src/lib/excel";
 import { sectionLabels } from "../src/lib/types";
+import {
+  fallbackSummary,
+  fallbackDescription,
+} from "../src/lib/content-fallbacks";
+import {
+  PRIVACY_TEMPLATE,
+  TERMS_TEMPLATE,
+  CANCELLATION_TEMPLATE,
+} from "../src/lib/legal-templates";
 const valid = {
   requestId: "5e1faed7-06a0-4c90-a8e1-b5b713f8343f",
   name: "Test Traveller",
@@ -85,4 +94,16 @@ test("section breadcrumb labels are human-readable, not raw URL slugs", () => {
   }
   assert.equal(sectionLabels["road-trip"], "Europe road trips");
   assert.equal(sectionLabels.resort, "Resorts & villas");
+});
+test("trip-data fallbacks mention the location but invent no specific facts", () => {
+  assert.match(fallbackSummary("Vagamon", "holiday"), /Vagamon/);
+  assert.match(fallbackDescription("Vagamon", "holiday"), /Vagamon/);
+  assert.match(fallbackSummary("Kochi", "resort"), /stay/);
+  assert.match(fallbackSummary("Kochi", "holiday"), /journey/);
+});
+test("legal boilerplate templates are non-empty and flagged as general templates", () => {
+  for (const t of [PRIVACY_TEMPLATE, TERMS_TEMPLATE, CANCELLATION_TEMPLATE]) {
+    assert.ok(t.length > 200);
+    assert.match(t, /general template/);
+  }
 });
