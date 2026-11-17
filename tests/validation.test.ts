@@ -1,8 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { enquirySchema, publishErrors } from "../src/lib/validation";
+import {
+  enquirySchema,
+  publishErrors,
+  uploadResolutionError,
+  MIN_UPLOAD_EDGE_PX,
+} from "../src/lib/validation";
 import { seedContent } from "../src/lib/seed-data";
 import { safeCell } from "../src/lib/excel";
+import { sectionLabels } from "../src/lib/types";
 const valid = {
   requestId: "5e1faed7-06a0-4c90-a8e1-b5b713f8343f",
   name: "Test Traveller",
@@ -65,4 +71,18 @@ test("neutralises spreadsheet formulas in exported visitor input", () => {
   );
   assert.equal(safeCell("+4912345"), "'+4912345");
   assert.equal(safeCell("Normal text"), "Normal text");
+});
+test("rejects uploads below the minimum retina-safe resolution", () => {
+  assert.match(uploadResolutionError(800, 600) || "", /too small/);
+  assert.equal(uploadResolutionError(MIN_UPLOAD_EDGE_PX, 900), null);
+  assert.equal(uploadResolutionError(1200, MIN_UPLOAD_EDGE_PX), null);
+  assert.equal(uploadResolutionError(MIN_UPLOAD_EDGE_PX - 1, 400), "Image is too small (1599x400px). Upload a photo with its longest side at least 1600px so it stays sharp on large screens.");
+});
+test("section breadcrumb labels are human-readable, not raw URL slugs", () => {
+  for (const label of Object.values(sectionLabels)) {
+    assert.doesNotMatch(label, /-/);
+    assert.match(label, /^[A-Z]/);
+  }
+  assert.equal(sectionLabels["road-trip"], "Europe road trips");
+  assert.equal(sectionLabels.resort, "Resorts & villas");
 });
