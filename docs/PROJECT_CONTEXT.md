@@ -34,7 +34,7 @@ Two Europe self-drive packages are the flagship offers: **DISCOVER Europe** (7 d
 | `/{section}/{slug}` | Detail pages. A road trip that has route stops uses the self-drive layout; everything else uses the standard layout. |
 | `/resorts-and-stays`, `/resorts-and-stays/{destination}` | Destination-first stays directory. `/resorts-and-villas` redirects to it; property URLs under it still work. |
 | `/plan-my-trip` | Two-step enquiry form. |
-| `/photo-credits` | Credits for Wikimedia Commons photographs; linked in the footer. |
+| `/privacy`, `/terms`, `/cancellation` | Built-in policy text (`src/lib/legal-defaults.ts`) unless the owner has written their own in Site settings. The Terms page ends with the photograph credits. |
 | `/about`, `/contact`, `/faqs`, `/privacy`, `/terms`, `/cancellation` | Text pages from admin settings. |
 | `/adminportal` | Staff portal. `/admin` redirects here. |
 

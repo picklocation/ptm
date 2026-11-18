@@ -21,14 +21,14 @@ How this was checked: source and Git history read; typecheck clean, 39 unit test
 ## Complete in code
 
 **Public site**
-- Homepage, collection pages, detail pages, text and legal pages, sitemap, robots, Photo credits page.
+- Homepage, collection pages, detail pages, text and legal pages, sitemap, robots, Photograph credits at the end of the Terms page.
 - Package cards: green stop line, day chip, large price, green round arrow button, discount badge.
 - Discount pricing: optional original price shown struck through with a percentage tag.
 - Homepage Popular destinations row led by a Euro Drive card linking to `/europe-road-trips`; its photo is an admin setting.
 - Resorts & Stays directory with verified-only listings.
 - Two Europe self-drive packages (DISCOVER Europe, Euro Drive) with a dedicated detail layout: summary bar, route map with country borders, highlights, day-by-day itinerary with morning, afternoon, evening and drive details, stays, inclusions, driving information, tips, FAQs, WhatsApp enquiry.
 - Enquiry form in two steps: trip basics, then name, phone and email (all mandatory) with consent. Styled suggestion list and uniform date control.
-- 72 location-checked photographs with credits; automatic matching of sample records to their own place.
+- 72 location-checked photographs with credits (end of the Terms page); automatic matching of sample records to their own place.
 - Sample packages free of demonstration wording, generic accommodation notes and cover-only galleries.
 
 **Admin**
@@ -72,7 +72,8 @@ The owner ran all four on the live database and asked for the buttons to be remo
 | Item | What is missing |
 | --- | --- |
 | Resorts & Stays listings | No verified real property exists. The sample stays describe properties that do not exist and stay hidden. |
-| About, privacy, terms, cancellation, contact details | Placeholder text until filled in Site settings. |
+| Privacy, terms and cancellation | Built-in draft text is shown until the owner writes their own in Site settings. It is general information, not legal advice, and sets no refund percentages or deadlines; the owner should have it reviewed and add the real cancellation charges. |
+| About text, contact details | Placeholder text until filled in Site settings. |
 | New-enquiry alerts | Outbox jobs are written, but nothing sends them without a webhook and a scheduled worker. |
 | Password reset, staff invitations | Need Supabase email delivery. |
 | Excel workbook sync | Local worker only; use the export buttons on Vercel. |
@@ -97,7 +98,7 @@ Live availability, booking, payments, customer accounts, CRM, reviews, blog, mul
 3. **Published snapshots hidden by the showcase switch are not rewritten** by the photo and wording actions, because those read the public view. Run the actions while samples are visible.
 4. **One address only.** Changing `SITE_URL` without redeploying, or using the other domain, produces "This operation is not permitted".
 5. **Repository size.** `public/images/places` holds about 17 MB of photographs.
-6. **Wikimedia photographs carry attribution duties** (CC BY / BY-SA). `/photo-credits` meets them; keep it linked.
+6. **Wikimedia photographs carry attribution duties** (CC BY / BY-SA). The credits at the end of the Terms page meet them; keep them while these photos are used.
 7. **Dependency advisories** from the 10 November audit (4 high, 9 moderate, mostly legacy Firebase packages) have not been re-run.
 8. Admin enquiry lists still load everything in memory; `rate_limits` rows are never cleaned up; no MFA or recovery email.
 9. Supabase Free limits and inactivity pausing; about 280 KB of storage per uploaded photo.

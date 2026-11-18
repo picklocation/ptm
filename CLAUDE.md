@@ -47,8 +47,9 @@ CI (`.github/workflows/checks.yml`) runs typecheck, tests and build on Node 24. 
 | Admin UI (single catch-all route, served at `/adminportal`) | `src/app/adminportal/[[...segments]]/page.tsx`, `src/components/admin-*.tsx`, `content-editor.tsx`, `settings-editor.tsx` |
 | Owner maintenance endpoints (no buttons in admin since 15 November 2026; the owner has run them) | `src/app/api/admin/content/{photos,wording,europe-drives}/`; permanent delete: `.../delete/` |
 | Europe self-drive packages, page and map | `src/lib/europe-drives.ts`, `src/components/road-trip-detail.tsx`, `route-map.tsx`, `src/lib/europe-map.ts` (generated) |
-| Location photographs and matching | `public/images/places/`, `src/lib/place-photos.ts`, `src/app/photo-credits/` |
+| Location photographs and matching | `public/images/places/`, `src/lib/place-photos.ts`, `src/components/photo-credits.tsx` |
 | Sample-copy clean-up | `src/lib/sample-copy.ts` |
+| Policy pages (built-in text, renderer) | `src/lib/legal-defaults.ts`, `src/lib/policy.ts`, `src/components/policy-text.tsx`; text written in Admin → Site settings overrides the built-in text |
 | Enquiry form and its controls | `src/components/enquiry-form.tsx`, `form-controls.tsx` |
 | HTTP endpoints | `src/app/api/` |
 | Data adapters and public caches | `src/lib/store.ts`, `src/lib/supabase.ts` |
@@ -66,7 +67,7 @@ CI (`.github/workflows/checks.yml`) runs typecheck, tests and build on Node 24. 
 - Enquiries are saved (idempotent UUID, transactional outbox) before success or WhatsApp is shown. Keep rate limits, honeypot, timing check and origin check. The form has two steps; name, phone and email are mandatory.
 - Live data is changed only by owner-only admin actions the owner presses, never by a script from a session. Each action must be safe to run twice, must keep owner-written text and uploaded photos, and must not change prices.
 - The two Europe packages keep the owner's facts: names, durations, countries, prices (AED 5,999 and ₹193,000 per person), inclusions and exclusions. Do not promise a car model or hotel.
-- Photographs must show the place they are labelled with and carry usable rights. Wikimedia files need the credit on `/photo-credits`. Never use generated images.
+- Photographs must show the place they are labelled with and carry usable rights. Wikimedia files (CC BY / BY-SA) need their credit; it is listed at the end of the Terms page (`src/components/photo-credits.tsx`). The separate `/photo-credits` page was removed on 18 November 2026 at the owner's request; do not delete the credits without replacing those photos. Never use generated images.
 - When checking pages locally, stop earlier servers first (`pkill -f next-server`); a stale one serves old pages.
 - Staff writes go through the staff token so RLS applies. The server secret is used only for the narrow paths listed in `docs/SCHEMA-AND-API.md`. Never expose it through `NEXT_PUBLIC_`.
 - Catalogue and showcase failures must be handled outside `unstable_cache` so an outage is never cached as an empty result.

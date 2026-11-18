@@ -62,7 +62,6 @@ export async function Footer() {
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
           <Link href="/cancellation">Cancellation</Link>
-          <Link href="/photo-credits">Photo credits</Link>
         </div>
       </div>
     </footer>
