@@ -72,7 +72,7 @@ The owner ran all four on the live database and asked for the buttons to be remo
 | Item | What is missing |
 | --- | --- |
 | Resorts & Stays listings | No verified real property exists. The sample stays describe properties that do not exist and stay hidden. |
-| Privacy, terms and cancellation | Built-in draft text is shown until the owner writes their own in Site settings. It is general information, not legal advice, and sets no refund percentages or deadlines; the owner should have it reviewed and add the real cancellation charges. |
+| Privacy, terms and cancellation | Built-in draft text is shown until the owner writes their own in Site settings. It is general information, not legal advice. Cancellation charges are pass-through, as the owner decided on 18 November 2026: resorts follow the resort's own policy, international bookings follow the booking partners' policies, and refunds are paid after the partner refunds. No percentages or deadlines are stated; the owner should have the text reviewed. |
 | About text, contact details | Placeholder text until filled in Site settings. |
 | New-enquiry alerts | Outbox jobs are written, but nothing sends them without a webhook and a scheduled worker. |
 | Password reset, staff invitations | Need Supabase email delivery. |
