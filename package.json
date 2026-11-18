@@ -15,7 +15,8 @@
     "test:rules": "tsx scripts/verify-rules.ts",
     "notifications:send": "tsx scripts/notifications.ts",
     "media:upload": "tsx scripts/upload-media.ts",
-    "content:upsert": "tsx scripts/upsert-content.ts"
+    "content:upsert": "tsx scripts/upsert-content.ts",
+    "photos:fix-real": "tsx scripts/fix-real-package-photos.ts"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.0",
