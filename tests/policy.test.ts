@@ -4,11 +4,12 @@ import { parsePolicy } from "../src/lib/policy";
 import { legalDefaults } from "../src/lib/legal-defaults";
 test("policy markup becomes headings, paragraphs and lists", () => {
   assert.deepEqual(
-    parsePolicy("# One\nIntro line\nsecond line\n\n- a\n- b\n\nEnd"),
+    parsePolicy("# One\nIntro line\nsecond line\n\n- a\n- b\n\n## Sub\nEnd"),
     [
-      { type: "heading", text: "One" },
+      { type: "heading", text: "One", level: 1 },
       { type: "paragraph", text: "Intro line\nsecond line" },
       { type: "list", items: ["a", "b"] },
+      { type: "heading", text: "Sub", level: 2 },
       { type: "paragraph", text: "End" },
     ],
   );
@@ -36,6 +37,10 @@ test("default policies are complete and make no refund promises", () => {
       key,
     );
   }
+  // Cancellation charges follow the resort's and booking partners' policies.
+  assert.match(legalDefaults.cancellation, /resort's own cancellation policy/);
+  assert.match(legalDefaults.cancellation, /booking partners involved applies/);
+  assert.match(legalDefaults.cancellation, /after we receive/);
   // The privacy text matches how the website works.
   assert.match(legalDefaults.privacy, /Supabase/);
   assert.match(

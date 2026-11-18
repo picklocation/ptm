@@ -112,35 +112,52 @@ For questions about these terms, see our Contact page.`,
   cancellation: `Last updated: 18 November 2026
 
 # How cancellations work
-Cancellation and refund terms depend on what you booked. They are set out in your written quote and follow the rules of the suppliers involved, such as airlines, hotels and car rental companies, plus any fee we have told you about. We tell you the applicable charges before you confirm a booking.
+PickTheMap arranges your trip with resorts, airlines, hotels, car rental companies and other booking partners. When you cancel, the cancellation policy of the resort or booking partner involved decides what is charged and what is refunded. We show you that policy in your written quote before you confirm a booking, so you know the charges in advance.
 
 # Before you confirm
 Sending an enquiry or receiving a quote costs nothing and creates no booking. You can decline a quote at any time with no charge.
 
+# Charges by type of booking
+## Resorts and stays
+- The resort's own cancellation policy applies. It sets how late you can cancel without charge, how much is charged after that, and when a booking becomes non-refundable.
+- Peak seasons, festival dates, long weekends, special offers and promotional rates are often stricter or non-refundable. Where a resort applies such a rule to your dates, we tell you in your quote.
+- Any advance or deposit is treated according to the resort's policy.
+
+## International holidays
+- The policy of the booking partners involved applies. These can include airlines, hotels, tour operators, car rental companies and local partners, and each has its own rules and deadlines.
+- Flight fares follow the airline's fare rules. Some fares are not refundable once issued, and where the airline allows a refund of taxes, we pass it on.
+- Visa fees, travel insurance and fees already paid to a partner are usually not refundable once processed.
+- Refunds are made according to each partner's policy and are paid to you after we receive them from the partner.
+
+## Self-drive trips
+Car rental charges, deposits and insurance follow the rental company's terms. Hotels and flights in the same trip follow the hotel's and airline's policy. Each is listed in your quote.
+
+## Other holidays in India
+The cancellation terms of the hotels and local partners in your itinerary apply, as set out in your quote.
+
 # Cancelling a confirmed booking
-- Tell us in writing, by email or WhatsApp, as early as you can. The date we receive your request is the cancellation date.
-- Charges depend on how close to departure you cancel and on the supplier terms. Some services can be non-refundable once booked, for example some flight fares, special-rate hotels, visa fees, insurance and service fees. Where we know this, we tell you in your quote.
-- Cancellation charges are the suppliers' charges plus any non-refundable fee we have told you about. We will show you how they are calculated.
+- Tell us in writing, by email or WhatsApp, as early as you can. The date we receive your request is the cancellation date, and it is the date we use to work out the charges that apply.
+- The cancellation charge is the charge made by the resorts and booking partners under their own policies, plus any non-refundable fee we have told you about in your quote. We show you how it is calculated.
 
 # Refunds
-- If a refund is due, we pay it back the way you paid, after deducting the charges above and after we receive the supplier's refund where a supplier is involved.
-- Supplier refunds can take several weeks, and amounts can change with exchange rates and bank charges. We keep you updated and pass on refunds as soon as we receive them.
+- If a refund is due, we pay it back the way you paid, after the charges above, and only after we have received the refund from the resort or booking partner involved.
+- Partner refunds can take several weeks, and amounts can change with exchange rates and bank charges. We keep you updated and pass on each refund as soon as we receive it.
 
-# If we or a supplier cancel
+# If we or a partner cancel
 - If we have to cancel a service we agreed to provide, we will offer you an alternative or a refund of what you paid for that service, less any charges we cannot recover where the cause is outside our control.
-- If a supplier cancels or changes a service, for example an airline changing a flight, we will help you rearrange it and pass on any refund the supplier gives.
+- If a resort or partner cancels or changes a service, for example an airline changing a flight, we will help you rearrange it and pass on any refund they give.
 
 # Changes to a booking
-You can ask to change dates, hotels or travellers. Changes depend on availability and supplier rules and may cost extra. We tell you the cost before we make the change.
+You can ask to change dates, rooms, hotels or travellers. Changes depend on availability and partner rules and may cost extra. We tell you the cost before we make the change.
 
 # Unused services
-No refund is due for services you do not use, such as a missed flight, a late arrival, an early departure or a day you choose to skip, unless the supplier gives one.
+No refund is due for services you do not use, such as a missed flight, a late arrival, an early departure or a day you choose to skip, unless the partner gives one.
 
 # Travel documents
 If you cannot travel because of a refused visa, an invalid passport or missing documents, your booking is treated as a cancellation by you and the charges above apply. Please check visa requirements before you confirm.
 
 # Events beyond anyone's control
-If events beyond our control occur, such as severe weather, natural disasters, strikes, closures or government restrictions, we will work with suppliers to rebook or refund what they allow. We cannot refund what suppliers will not refund.
+If events beyond our control occur, such as severe weather, natural disasters, strikes, closures or government restrictions, we will work with resorts and partners to rebook or refund what they allow. We cannot refund what they will not refund.
 
 # Contact
 To cancel a booking or ask about a refund, contact us using the details on our Contact page.`,

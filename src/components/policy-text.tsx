@@ -5,7 +5,11 @@ export function PolicyText({ text }: { text: string }) {
     <div className="policy-text">
       {parsePolicy(text).map((block, i) =>
         block.type === "heading" ? (
-          <h2 key={i}>{block.text}</h2>
+          block.level === 1 ? (
+            <h2 key={i}>{block.text}</h2>
+          ) : (
+            <h3 key={i}>{block.text}</h3>
+          )
         ) : block.type === "list" ? (
           <ul key={i}>
             {block.items.map((item, j) => (

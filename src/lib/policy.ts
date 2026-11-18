@@ -2,7 +2,7 @@
 // admin) as plain text: "# Heading" lines, "- " bullet lines, and paragraphs
 // separated by blank lines. Everything is rendered as plain text nodes.
 export type PolicyBlock =
-  | { type: "heading"; text: string }
+  | { type: "heading"; text: string; level: 1 | 2 }
   | { type: "paragraph"; text: string }
   | { type: "list"; items: string[] };
 
@@ -22,7 +22,12 @@ export function parsePolicy(text: string): PolicyBlock[] {
     if (!line.trim()) flush();
     else if (/^#{1,3}\s+/.test(line)) {
       flush();
-      blocks.push({ type: "heading", text: line.replace(/^#{1,3}\s+/, "") });
+      blocks.push({
+        type: "heading",
+        text: line.replace(/^#{1,3}\s+/, ""),
+        // "# " is a section heading; "## " and "### " are sub-headings.
+        level: line.startsWith("# ") ? 1 : 2,
+      });
     } else if (/^[-•]\s+/.test(line)) {
       if (paragraph.length) flush();
       list.push(line.replace(/^[-•]\s+/, ""));
