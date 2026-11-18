@@ -7,6 +7,7 @@ import { requireStaff, checkOrigin, errorResponse } from "@/lib/auth";
 import { put, firebaseMode, firebaseApp } from "@/lib/store";
 import { publicAsset } from "@/lib/assets";
 import { supabaseMode, serviceSupabase, databaseError } from "@/lib/supabase";
+import { uploadResolutionError } from "@/lib/validation";
 export async function POST(req: Request) {
   try {
     checkOrigin(req);
@@ -39,6 +40,9 @@ export async function POST(req: Request) {
         !meta.height
       )
         throw new Error();
+      const resolutionError = uploadResolutionError(meta.width, meta.height);
+      if (resolutionError)
+        return Response.json({ error: resolutionError }, { status: 400 });
       // Two fixed sizes, made once: large for detail pages, card for listings.
       const sized = (edge: number, quality: number) =>
         image

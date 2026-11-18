@@ -11,7 +11,7 @@ import {
   isVerifiedStay,
 } from "@/lib/stays";
 import { CatalogueStatus } from "@/components/catalogue-status";
-import { paths } from "@/lib/types";
+import { paths, sectionLabels } from "@/lib/types";
 import { Price, CheckList, TripCard } from "@/components/ui";
 import { Footer } from "@/components/footer";
 export const dynamic = "force-dynamic";
@@ -78,9 +78,7 @@ export default async function Detail({
           <Link
             href={item.kind === "resort" ? "/resorts-and-stays" : `/${section}`}
           >
-            {item.kind === "resort"
-              ? "Resorts & Stays"
-              : section.replaceAll("-", " ")}
+            {item.kind === "resort" ? "Resorts & Stays" : sectionLabels[item.kind]}
           </Link>
           {stayPlace && (
             <>

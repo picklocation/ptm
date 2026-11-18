@@ -149,6 +149,12 @@ export const paths: Record<Kind, string> = {
   resort: "resorts-and-villas",
   destination: "destinations",
 };
+export const sectionLabels: Record<Kind, string> = {
+  holiday: "Holidays",
+  "road-trip": "Europe road trips",
+  resort: "Resorts & villas",
+  destination: "Destinations",
+};
 export const defaultSettings: Settings = {
   whatsapp: "917902220044",
   email: "",
