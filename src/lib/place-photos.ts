@@ -3,7 +3,7 @@ import type { Content } from "./types";
 // Location photographs checked against the place they are assigned to.
 // Files live in public/images/places. `match` lists lower-case names that
 // select the photo; the first stop of a route decides, then title, state and
-// country. Credits are shown on /photo-credits (required for Wikimedia files).
+// country. Credits for Wikimedia files are listed at the end of the Terms page (src/components/photo-credits.tsx); the licences require them.
 export type PlacePhoto = {
   key: string;
   alt: string;

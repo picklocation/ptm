@@ -12,13 +12,13 @@ Updated 15 November 2026. A dated log: each section records a change as it was m
 
 ## Recent changes
 
-| Commit | Change |
-| --- | --- |
-| `5f3c740` | Package formats, country/state/local stops, multiple section assignments and admin filters. |
-| `5f43b64` | Public label changed to the requested “Visa-Free-destinations”. |
-| `f3549be` | Backend/project-specific public cache keys; catalogue failures no longer persist as successful empty lists. |
+| Commit    | Change                                                                                                                     |
+| --------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `5f3c740` | Package formats, country/state/local stops, multiple section assignments and admin filters.                                |
+| `5f43b64` | Public label changed to the requested “Visa-Free-destinations”.                                                            |
+| `f3549be` | Backend/project-specific public cache keys; catalogue failures no longer persist as successful empty lists.                |
 | `02235bb` | Self-hosted Outfit typography, larger hero supporting text, place-specific destination captions and simpler homepage copy. |
-| `ee7a2c2` | Browser favicon, mobile home-screen icons and clearer default tab title. |
+| `ee7a2c2` | Browser favicon, mobile home-screen icons and clearer default tab title.                                                   |
 
 Changes on this branch are cumulative: deploying its latest commit includes earlier changes.
 
@@ -117,3 +117,9 @@ The owner confirmed all four maintenance actions have been run on the live datab
 ## 15 November 2026: editing Resorts & Stays destination photos
 
 Six of the sixteen built-in stay destinations (Kakkadampoyil, Bangalore, Thekkady, Goa, Alleppey, Coorg) had no Destination record, so their card photos could not be changed in admin. Admin → Content & media now has a folded "Resorts & Stays destination photos" list of all sixteen places. A place with a record opens it; a place without one opens a new Destination record already filled in (name, slug, current photo, "include in Resorts & Stays" ticked, display order 900 so it stays out of the homepage Popular row). The owner replaces the cover and publishes. No records are created automatically.
+
+## 18 November 2026: photo credits page removed; privacy, terms and cancellation added
+
+- The `/photo-credits` page and its footer link are removed at the owner's request (the address now returns "not found"). The Wikimedia Commons photographs are used under CC BY / CC BY-SA licences that require attribution, so the credits moved to a collapsed "Photograph credits" section at the end of the Terms page instead of being dropped.
+- `/privacy`, `/terms` and `/cancellation` now show complete built-in text (`src/lib/legal-defaults.ts`) instead of "not published yet". It was written from how the site actually works (enquiry-only, no payments, no analytics, Vercel hosting, Supabase database in Singapore) and follows the usual structure of established travel companies without copying any. Text saved in Admin → Site settings overrides it, and headings (`# Heading`) and bullets (`- item`) in that text are formatted.
+- It is general information, not legal advice. It sets no refund percentages or refund deadlines; those are the owner's business decisions, to be added once decided. It does not name the operating company; pending the owner's confirmation of how PickTheMap relates to the registered enterprise.

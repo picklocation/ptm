@@ -6,6 +6,9 @@ import { Catalogue } from "@/components/catalogue";
 import { visaGuides } from "@/lib/visa-guides";
 import { southIndiaLocations } from "@/lib/south-india";
 import { Footer } from "@/components/footer";
+import { PolicyText } from "@/components/policy-text";
+import { PhotoCredits } from "@/components/photo-credits";
+import { legalDefaults, type PolicyKey } from "@/lib/legal-defaults";
 import { CatalogueStatus } from "@/components/catalogue-status";
 import { inCollection, collectionOptions } from "@/lib/classification";
 const catalogues: Record<
@@ -233,10 +236,15 @@ export default async function Page({
             ))}
           </div>
         ) : (
-          <div className="policy-text">
-            {s[section as "privacy" | "terms" | "cancellation"] ||
-              "Business-approved policy content has not been published yet. Please contact the team for the applicable information before confirming travel arrangements."}
-          </div>
+          <>
+            {/* Text written in admin wins; otherwise the built-in policy. */}
+            <PolicyText
+              text={
+                s[section as PolicyKey] || legalDefaults[section as PolicyKey]
+              }
+            />
+            {section === "terms" && <PhotoCredits />}
+          </>
         )}
       </main>
       <Footer />

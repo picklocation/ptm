@@ -992,7 +992,44 @@ img {
   margin: 20px 10px 20px 0;
 }
 .policy-text {
+  max-width: 760px;
+  line-height: 1.7;
+}
+.policy-text p {
+  margin: 0 0 14px;
   white-space: pre-wrap;
+}
+.policy-text h2 {
+  font-size: 20px;
+  margin: 30px 0 10px;
+}
+.policy-text ul {
+  margin: 0 0 14px;
+  padding-left: 22px;
+  list-style: disc;
+  display: grid;
+  gap: 8px;
+}
+.photo-credits {
+  max-width: 760px;
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.photo-credits summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.photo-credits ul {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 0;
+  display: grid;
+  gap: 12px;
+  font-size: 13px;
+}
+.photo-credits a {
+  text-decoration: underline;
 }
 .contact-box {
   border: 1px solid var(--line);
