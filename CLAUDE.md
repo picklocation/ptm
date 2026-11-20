@@ -26,6 +26,10 @@ PickTheMap is an enquiry-first travel website (custom international holidays, In
 - `mobile-first-ui-and-tests` holds that reverted mobile/Playwright work. It was never ported to the Supabase branch. Do not merge it without the owner's decision.
 - Claude sessions work on their own `claude/...` branch that includes `codex/migrate-supabase`, and fast-forward `codex/migrate-supabase` only when the owner says "merge". Never force-push, reset or revert shared branches.
 
+## GitHub account
+
+All commits and PRs for this repo must use the `svareed` GitHub account - never `sonusadeptmind` (that's the Adeptmind work identity, unrelated to this personal project). Check `git config user.email` and `gh auth status` before committing/pushing if unsure which account is active.
+
 ## Commands
 
 ```bash
@@ -63,6 +67,7 @@ CI (`.github/workflows/checks.yml`) runs typecheck, tests and build on Node 24. 
 - Keep the label **Visa-Free-destinations** exactly. Keep the hero paragraph hidden at 901px and wider. Keep destination rows single-row, manually scrolled, with no repeated places between Popular and International.
 - Visual checks (owner decision, 14 November 2026): an automated browser may be used on a local build, only for changes that affect appearance, with at most two screenshots per change (one desktop, one phone width). Do not use it for other work. iPhone-specific behaviour still needs the owner's own check. Say when visual verification has not happened.
 - Public resorts appear only when published, non-sample and admin-verified. Never invent properties, prices, reviews or guarantees to fill an empty page.
+- Resort pricing (owner decision, 20 November 2026): the `price` field is the lowest real per-person, per-night rate found in the property's source documentation (dividing a shared-room/villa rate by its stated occupancy where that is given), with a 20% markup applied on top before it is stored. Never publish a resort's raw partner/cost rate as the customer-facing price. `priceBasis`/`priceConditions` describe the booking structure for customers; never mention the markup itself in those fields.
 - Sample catalogue records keep their internal `demo` flag and showcase/noindex gating. Do not remove those safeguards or reseed data to mask an outage.
 - Enquiries are saved (idempotent UUID, transactional outbox) before success or WhatsApp is shown. Keep rate limits, honeypot, timing check and origin check. The form has two steps; name, phone and email are mandatory.
 - Live data is changed only by owner-only admin actions the owner presses, never by a script from a session. Each action must be safe to run twice, must keep owner-written text and uploaded photos, and must not change prices.
