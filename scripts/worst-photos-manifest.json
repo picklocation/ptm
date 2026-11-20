@@ -1,0 +1,15 @@
+[
+  { "slug": "malaysia-city-island", "kind": "holiday" },
+  { "slug": "rajasthan-royal-trail", "kind": "holiday" },
+  { "slug": "kerala-hills-backwaters", "kind": "holiday" },
+  { "slug": "kashmir-snow-trail-5-days", "kind": "holiday" },
+  { "slug": "malaysia-culture-coast", "kind": "holiday" },
+  { "slug": "vagamon-short-escape", "kind": "holiday" },
+  { "slug": "bali-slow-days", "kind": "holiday" },
+  { "slug": "swiss-alpine-escape", "kind": "holiday" },
+  { "slug": "kerala-backwater-days", "kind": "holiday" },
+  { "slug": "italy", "kind": "destination" },
+  { "slug": "bali", "kind": "destination" },
+  { "slug": "kochi", "kind": "destination" },
+  { "slug": "varkala", "kind": "destination" }
+]
