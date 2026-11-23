@@ -5,40 +5,13 @@ import { useRouter } from "next/navigation";
 import { Plus, Trash2, ArrowUp, ArrowDown, Upload } from "lucide-react";
 import type { Content } from "@/lib/types";
 import { imageVariant } from "@/lib/assets";
+import { prepareImage, uploadFailure } from "@/lib/shrink-image";
 import { stayTags, type StayDestination } from "@/lib/stays";
 import {
   packageTypes,
   collectionOptions,
   assignedCollections,
 } from "@/lib/classification";
-// Shrink large camera photos in the browser so uploads are quick and stay
-// under the host's request size limit. The server validates and re-encodes.
-export async function shrinkImage(file: File): Promise<File> {
-  try {
-    const bitmap = await createImageBitmap(file, {
-      imageOrientation: "from-image",
-    });
-    const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
-    if (scale === 1 && file.size < 1_500_000) return file;
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.round(bitmap.width * scale);
-    canvas.height = Math.round(bitmap.height * scale);
-    canvas
-      .getContext("2d")!
-      .drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-    bitmap.close();
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/jpeg", 0.92),
-    );
-    return blob && blob.size < file.size
-      ? new File([blob], file.name.replace(/\.\w+$/, "") + ".jpg", {
-          type: "image/jpeg",
-        })
-      : file;
-  } catch {
-    return file;
-  }
-}
 export function ContentEditor({
   initial,
   stayDestinations = [],
@@ -242,11 +215,11 @@ export function ContentEditor({
       for (const [i, file] of files.entries()) {
         setMessage(`Uploading photo ${i + 1} of ${files.length}…`);
         const body = new FormData();
-        body.set("file", await shrinkImage(file));
+        body.set("file", await prepareImage(file));
         body.set("contentId", c.id);
         const r = await fetch("/api/admin/upload", { method: "POST", body });
-        const j = await r.json().catch(() => ({}));
-        if (!r.ok) throw new Error(j.error || "Upload failed.");
+        if (!r.ok) throw new Error(await uploadFailure(r));
+        const j = await r.json();
         added.push(j.url);
       }
       setMessage(

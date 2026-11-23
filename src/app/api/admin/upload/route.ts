@@ -6,33 +6,42 @@ import { getStorage } from "firebase-admin/storage";
 import { requireStaff, checkOrigin, errorResponse } from "@/lib/auth";
 import { put, firebaseMode, firebaseApp } from "@/lib/store";
 import { publicAsset } from "@/lib/assets";
+import { fitSize, largeRule, cardRule, type SizeRule } from "@/lib/image-sizes";
 import { supabaseMode, serviceSupabase, databaseError } from "@/lib/supabase";
-import { uploadResolutionError } from "@/lib/validation";
+// Safety ceilings only. A 100-megapixel camera photo is accepted; the limit
+// stops decompression bombs, not ordinary photos.
+const MAX_UPLOAD = 25 * 1024 * 1024;
+const MAX_PIXELS = 150_000_000;
 export async function POST(req: Request) {
   try {
     checkOrigin(req);
     await requireStaff("content");
-    if (Number(req.headers.get("content-length") || 0) > 9 * 1024 * 1024)
+    // The browser shrinks photos before sending, so real requests are small.
+    // This ceiling only stops abuse; there is no limit on pixel size or shape.
+    if (
+      Number(req.headers.get("content-length") || 0) >
+      MAX_UPLOAD + 1024 * 1024
+    )
       return Response.json(
-        { error: "Choose an image smaller than 8 MB." },
+        { error: "That file is too large to upload." },
         { status: 413 },
       );
     const form = await req.formData();
     const file = form.get("file");
     if (
       !(file instanceof File) ||
-      file.size > 8 * 1024 * 1024 ||
+      file.size > MAX_UPLOAD ||
       !["image/jpeg", "image/png", "image/webp"].includes(file.type)
     )
       return Response.json(
-        { error: "Upload a JPEG, PNG or WebP image under 8 MB." },
+        { error: "Upload a JPEG, PNG or WebP image." },
         { status: 400 },
       );
     const bytes = Buffer.from(await file.arrayBuffer());
     let output: Buffer;
     let card: Buffer;
     try {
-      const image = sharp(bytes, { limitInputPixels: 40000000 });
+      const image = sharp(bytes, { limitInputPixels: MAX_PIXELS });
       const meta = await image.metadata();
       if (
         !["jpeg", "png", "webp"].includes(meta.format || "") ||
@@ -40,23 +49,26 @@ export async function POST(req: Request) {
         !meta.height
       )
         throw new Error();
-      const resolutionError = uploadResolutionError(meta.width, meta.height);
-      if (resolutionError)
-        return Response.json({ error: resolutionError }, { status: 400 });
       // Two fixed sizes, made once: large for detail pages, card for listings.
-      const sized = (edge: number, quality: number) =>
+      // Orientation is applied first, so measure the picture as it will look.
+      const turned = (meta.orientation || 1) >= 5;
+      const width = turned ? meta.height : meta.width;
+      const height = turned ? meta.width : meta.height;
+      const sized = (rule: SizeRule, quality: number) =>
         image
           .clone()
           .rotate()
           .resize({
-            width: edge,
-            height: edge,
+            ...fitSize(width, height, rule),
             fit: "inside",
             withoutEnlargement: true,
           })
           .webp({ quality, effort: 5 })
           .toBuffer();
-      [output, card] = await Promise.all([sized(1600, 80), sized(640, 76)]);
+      [output, card] = await Promise.all([
+        sized(largeRule, 80),
+        sized(cardRule, 76),
+      ]);
     } catch {
       return Response.json(
         { error: "This file could not be validated as a safe image." },

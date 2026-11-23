@@ -127,3 +127,13 @@ Six of the sixteen built-in stay destinations (Kakkadampoyil, Bangalore, Thekkad
 ## 18 November 2026: cancellation charges follow resort and partner policies
 
 At the owner's direction, the built-in Cancellation text now says charges depend on the policy of the resort or booking partner involved, shown in the customer's quote before they confirm: resorts and stays follow the resort's own policy (including stricter peak-season, festival and offer-rate rules); international holidays follow the airlines', hotels', tour operators' and car rental companies' policies, with visa, insurance and already-paid partner fees usually non-refundable; refunds are paid after PickTheMap receives them from the partner. Self-drive trips and other India holidays follow their suppliers. It states no percentages or refund deadlines. The owner confirmed the company name used on the pages is "PickTheMap".
+
+## 23 November 2026: uploads of any size and shape
+
+At the owner's request, photo uploads have no restriction on pixel size or aspect ratio, in every section (packages, Resorts & Stays destinations, the Euro Drive card photo) because they all use the same upload.
+
+- **Removed:** the 40-megapixel limit (a 64-megapixel photo was refused with "could not be validated") and the 8 MB file limit (a 10 MB PNG was refused). Safety ceilings remain: 25 MB and 150 megapixels per file. The admin page prepares each photo in the browser first, so the hosting request limit (about 4.5 MB) is never reached.
+- **Better for extreme shapes:** a 12000 × 500 panorama used to be squeezed to 1600 × 67 and looked blurred when cropped into a card. Sizing now keeps a minimum on the shorter side (`src/lib/image-sizes.ts`). Ordinary photos are sized exactly as before.
+- **Fit:** nothing changes in the layout. Every container already has a fixed size and the global `img` rule sets `object-fit: cover`. One exception was fixed: the thumbnails in the admin photo manager grew with tall photos.
+- **Gallery limit:** still eight photos per record, as decided earlier. That is a count, not a size or shape restriction.
+- **Verified** on a local build: 1,495 photo-in-container checks across 16 public and admin pages at desktop and phone width, with every photo swapped for wide, tall, tiny, square and panorama images, found no container resized, no photo failing to fill its container and no photo not set to cover. Seven test uploads (including a 64-megapixel JPEG, a 10 MB PNG, a 12000 × 500 panorama, a 500 × 12000 strip and a 40 × 40 icon) all uploaded through the real editor at both widths.

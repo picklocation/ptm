@@ -67,7 +67,7 @@ Featured flags and display order control homepage selections. An independent ban
 
 JPEG, PNG and WebP uploads are checked and re-encoded into WebP. Uploaded images stay in a private Supabase bucket; visitors can access them only when used by published content. Approved seed photos and brand assets use a public bucket. The original logo artwork is unchanged.
 
-The app accepts files below 8 MB, but Vercel may impose a smaller request limit. Use compressed web images; if a large upload fails, reduce its size. Initial shared assets occupy about 7 MB.
+Photos of any size and shape can be uploaded. They are prepared in your browser first, so even large camera photos work. The website always fits each photo into its frame by cropping, never by stretching, so a very wide or very tall photo shows its middle. Choose a photo whose important part is near the centre. Initial shared assets occupy about 7 MB.
 
 ## Manage enquiries
 

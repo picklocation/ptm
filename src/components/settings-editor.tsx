@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { imageVariant } from "@/lib/assets";
-import { shrinkImage } from "./content-editor";
+import { prepareImage, uploadFailure } from "@/lib/shrink-image";
 import type { Settings } from "@/lib/types";
 export function SettingsEditor({ initial }: { initial: Settings }) {
   const [s, setS] = useState(initial),
@@ -94,14 +94,14 @@ export function SettingsEditor({ initial }: { initial: Settings }) {
                       setMessage("Uploading photo…");
                       try {
                         const body = new FormData();
-                        body.set("file", await shrinkImage(file));
+                        body.set("file", await prepareImage(file));
                         body.set("contentId", "site-settings");
                         const r = await fetch("/api/admin/upload", {
                           method: "POST",
                           body,
                         });
-                        const j = await r.json().catch(() => ({}));
-                        if (!r.ok) throw new Error(j.error || "Upload failed.");
+                        if (!r.ok) throw new Error(await uploadFailure(r));
+                        const j = await r.json();
                         setS((old) => ({ ...old, driveCardImage: j.url }));
                         setMessage("Photo uploaded. Press Save to use it.");
                       } catch (error) {
