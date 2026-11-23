@@ -14,6 +14,16 @@ export type SizeRule = {
 export const largeRule: SizeRule = { long: 1600, short: 640, maxLong: 8000 };
 export const cardRule: SizeRule = { long: 640, short: 400, maxLong: 3000 };
 
+// Photos shorter than this on their longest side can look soft in large
+// banners. This only ever produces a note for the person uploading; it never
+// blocks an upload.
+export const SHARP_EDGE_PX = 1600;
+export function smallPhotoNote(width: number, height: number, name: string) {
+  if (!width || !height || Math.max(width, height) >= SHARP_EDGE_PX)
+    return null;
+  return `“${name}” is small (${width} × ${height} px) and may look soft in large banners. It was uploaded anyway; a photo at least ${SHARP_EDGE_PX} px wide looks sharper.`;
+}
+
 // Output size for an image of `width` x `height`. Never enlarges the original.
 // A 4:3 photo comes out 1600 x 1200 (large) and 640 x 480 (card), as before.
 // A 12000 x 500 panorama keeps its height instead of shrinking to 1600 x 67,

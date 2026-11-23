@@ -14,7 +14,7 @@ How this was checked: source and Git history read; typecheck clean, 39 unit test
 | Vercel function region | Changed from Washington (`iad1`) to Singapore (`sin1`) to sit beside the database | Owner reported |
 | Supabase region | Singapore (`ap-southeast-1`) | Owner screenshot |
 | Vercel plan | Hobby | Owner screenshot. Check Vercel's terms on commercial use |
-| How Production updates | Manual promotion of a `codex/migrate-supabase` deployment. Pushes create Previews only | Owner screenshot |
+| How Production updates | Until 18 Nov: manual promotion from `codex/migrate-supabase`. Since then the live site is built from `prod` (observed: it shows changes merged there); merging into `prod` publishes. Confirm the Vercel Production branch setting in the dashboard | Observed on the live site |
 | Which commit is live | **Unknown.** Last merge was `d677145` | |
 | Owner actions on the live database | All four run by the owner; wording action reported 157 packages tidied | Owner screenshot, 15 November |
 
@@ -54,7 +54,11 @@ The owner ran all four on the live database and asked for the buttons to be remo
 | Match photos to locations | Gives sample records still on shared stock photos the photo for their own place; uploads are kept | `/api/admin/content/photos` |
 | Tidy package wording | Removes demonstration wording, generic accommodation notes and stock gallery photos, and fixes text slips, in sample holidays and destinations; owner-written text is kept | `/api/admin/content/wording` |
 
-## Awaiting merge into `codex/migrate-supabase`
+## Branch changes (found 23 November 2026)
+
+`codex/migrate-supabase` no longer exists on GitHub; `prod` is the live line. History before 18 November was rewritten (same files, new commit IDs). Unmerged branches from another contributor add scripts that change live packages, rewrite the upload route into a shared module and add project rules; they are not reviewed or merged.
+
+## Awaiting merge (old list, now merged or superseded)
 
 `1a57597` Euro Drive card photo setting · `b66c273` wording clean-up · `eb517ae` two-step enquiry form · `d602115` accommodation notes and galleries removed.
 

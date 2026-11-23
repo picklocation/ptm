@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { imageVariant } from "@/lib/assets";
 import { prepareImage, uploadFailure } from "@/lib/shrink-image";
+import { smallPhotoNote } from "@/lib/image-sizes";
 import type { Settings } from "@/lib/types";
 export function SettingsEditor({ initial }: { initial: Settings }) {
   const [s, setS] = useState(initial),
@@ -92,9 +93,16 @@ export function SettingsEditor({ initial }: { initial: Settings }) {
                       if (!file) return;
                       setBusy(true);
                       setMessage("Uploading photo…");
+                      let note: string | null = null;
                       try {
                         const body = new FormData();
-                        body.set("file", await prepareImage(file));
+                        const prepared = await prepareImage(file);
+                        note = smallPhotoNote(
+                          prepared.width,
+                          prepared.height,
+                          file.name,
+                        );
+                        body.set("file", prepared.file);
                         body.set("contentId", "site-settings");
                         const r = await fetch("/api/admin/upload", {
                           method: "POST",
@@ -103,7 +111,9 @@ export function SettingsEditor({ initial }: { initial: Settings }) {
                         if (!r.ok) throw new Error(await uploadFailure(r));
                         const j = await r.json();
                         setS((old) => ({ ...old, driveCardImage: j.url }));
-                        setMessage("Photo uploaded. Press Save to use it.");
+                        setMessage(
+                          `Photo uploaded. Press Save to use it.${note ? " " + note : ""}`,
+                        );
                       } catch (error) {
                         setMessage(
                           error instanceof Error

@@ -137,3 +137,9 @@ At the owner's request, photo uploads have no restriction on pixel size or aspec
 - **Fit:** nothing changes in the layout. Every container already has a fixed size and the global `img` rule sets `object-fit: cover`. One exception was fixed: the thumbnails in the admin photo manager grew with tall photos.
 - **Gallery limit:** still eight photos per record, as decided earlier. That is a count, not a size or shape restriction.
 - **Verified** on a local build: 1,495 photo-in-container checks across 16 public and admin pages at desktop and phone width, with every photo swapped for wide, tall, tiny, square and panorama images, found no container resized, no photo failing to fill its container and no photo not set to cover. Seven test uploads (including a 64-megapixel JPEG, a 10 MB PNG, a 12000 × 500 panorama, a 500 × 12000 strip and a 40 × 40 icon) all uploaded through the real editor at both widths.
+
+## 23 November 2026: small-photo note, minimum-size rule removed, branch changes
+
+- **Minimum upload size removed.** The live site had a rule (merged to `prod` on 18 November from another contributor's pull request) that refused photos whose longest side was under 1600 px. It is removed, as the owner asked for no size or shape restrictions.
+- **Non-blocking note instead.** After an upload, a photo under 1600 px on its longest side gets a note beside the success message ("is small (800 × 600 px) and may look soft in large banners. It was uploaded anyway"). It never refuses an upload. This is for the editor only; visitors see nothing.
+- **Branches.** `codex/migrate-supabase` no longer exists; `prod` is the live line and this work was merged into it at the owner's instruction. The notes in `CLAUDE.md` were updated to match.

@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { fitSize, largeRule, cardRule } from "../src/lib/image-sizes";
+import {
+  fitSize,
+  largeRule,
+  cardRule,
+  smallPhotoNote,
+} from "../src/lib/image-sizes";
 const large = (w: number, h: number) => fitSize(w, h, largeRule);
 const card = (w: number, h: number) => fitSize(w, h, cardRule);
 test("ordinary photos are sized as before", () => {
@@ -9,6 +14,16 @@ test("ordinary photos are sized as before", () => {
   assert.deepEqual(large(4000, 2250), { width: 1600, height: 900 });
   assert.deepEqual(card(4000, 3000), { width: 640, height: 480 });
   assert.deepEqual(card(3000, 4000), { width: 480, height: 640 });
+});
+test("small photos get a note but are never blocked", () => {
+  const note = smallPhotoNote(800, 600, "beach.jpg");
+  assert.match(note || "", /small \(800 × 600 px\)/);
+  assert.match(note || "", /uploaded anyway/);
+  assert.equal(smallPhotoNote(1600, 400, "wide.jpg"), null);
+  assert.equal(smallPhotoNote(400, 1600, "tall.jpg"), null);
+  assert.equal(smallPhotoNote(4000, 3000, "big.jpg"), null);
+  // A browser that could not read the photo gives no size; no note then.
+  assert.equal(smallPhotoNote(0, 0, "unknown.jpg"), null);
 });
 test("small photos are never enlarged", () => {
   assert.deepEqual(large(40, 40), { width: 40, height: 40 });

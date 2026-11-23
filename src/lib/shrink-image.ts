@@ -42,11 +42,15 @@ const toBlob = (canvas: HTMLCanvasElement, quality: number) =>
     canvas.toBlob(resolve, "image/jpeg", quality),
   );
 
-export async function prepareImage(file: File): Promise<File> {
+// Returns the file to send and the original's size in pixels (0 if the browser
+// could not read it).
+export async function prepareImage(
+  file: File,
+): Promise<{ file: File; width: number; height: number }> {
   const image = await decode(file);
   if (!image) {
     // The browser could not read it. Send it as it is if the host will take it.
-    if (file.size <= MAX_BYTES) return file;
+    if (file.size <= MAX_BYTES) return { file, width: 0, height: 0 };
     throw new Error(
       "This photo could not be prepared in your browser. Try a JPEG or PNG under 4 MB.",
     );
@@ -60,7 +64,8 @@ export async function prepareImage(file: File): Promise<File> {
       height = Math.max(1, Math.round(height * shrink));
     }
     const resized = width < image.width || height < image.height;
-    if (!resized && file.size <= 1_500_000) return file;
+    const original = { width: image.width, height: image.height };
+    if (!resized && file.size <= 1_500_000) return { file, ...original };
     for (let attempt = 0; attempt < 5; attempt++) {
       const canvas = document.createElement("canvas");
       canvas.width = width;
@@ -74,14 +79,17 @@ export async function prepareImage(file: File): Promise<File> {
       for (const quality of [0.9, 0.8, 0.7]) {
         const blob = await toBlob(canvas, quality);
         if (blob && blob.size <= MAX_BYTES)
-          return new File([blob], file.name.replace(/\.\w+$/, "") + ".jpg", {
-            type: "image/jpeg",
-          });
+          return {
+            file: new File([blob], file.name.replace(/\.\w+$/, "") + ".jpg", {
+              type: "image/jpeg",
+            }),
+            ...original,
+          };
       }
       width = Math.max(1, Math.round(width * 0.8));
       height = Math.max(1, Math.round(height * 0.8));
     }
-    if (file.size <= MAX_BYTES) return file;
+    if (file.size <= MAX_BYTES) return { file, ...original };
     throw new Error(
       "This photo is too large to upload from this browser. Try a smaller version of it.",
     );

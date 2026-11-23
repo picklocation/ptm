@@ -6,6 +6,7 @@ import { Plus, Trash2, ArrowUp, ArrowDown, Upload } from "lucide-react";
 import type { Content } from "@/lib/types";
 import { imageVariant } from "@/lib/assets";
 import { prepareImage, uploadFailure } from "@/lib/shrink-image";
+import { smallPhotoNote } from "@/lib/image-sizes";
 import { stayTags, type StayDestination } from "@/lib/stays";
 import {
   packageTypes,
@@ -204,6 +205,7 @@ export function ContentEditor({
   async function uploadPhotos(list: FileList | null, limit: number) {
     const files = Array.from(list || []);
     const added: string[] = [];
+    const notes: string[] = [];
     if (!files.length) return added;
     setBusy(true);
     setError("");
@@ -215,7 +217,10 @@ export function ContentEditor({
       for (const [i, file] of files.entries()) {
         setMessage(`Uploading photo ${i + 1} of ${files.length}…`);
         const body = new FormData();
-        body.set("file", await prepareImage(file));
+        const prepared = await prepareImage(file);
+        const note = smallPhotoNote(prepared.width, prepared.height, file.name);
+        if (note) notes.push(note);
+        body.set("file", prepared.file);
         body.set("contentId", c.id);
         const r = await fetch("/api/admin/upload", { method: "POST", body });
         if (!r.ok) throw new Error(await uploadFailure(r));
@@ -223,7 +228,7 @@ export function ContentEditor({
         added.push(j.url);
       }
       setMessage(
-        `${added.length === 1 ? "Photo" : added.length + " photos"} uploaded. Add descriptions and save your changes.`,
+        `${added.length === 1 ? "Photo" : added.length + " photos"} uploaded. Add descriptions and save your changes.${notes.length ? " " + notes.join(" ") : ""}`,
       );
     } catch (e) {
       setMessage("");
